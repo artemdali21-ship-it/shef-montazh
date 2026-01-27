@@ -516,7 +516,7 @@ export default function ApplicationConfirmationScreen() {
 
             {/* Secondary Button */}
             <button
-              onClick={() => router.push('/my-applications')}
+              onClick={() => router.push('/applications')}
               onMouseEnter={() => setHoveredButton('secondary')}
               onMouseLeave={() => setHoveredButton(null)}
               style={{

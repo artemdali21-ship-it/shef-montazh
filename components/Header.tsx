@@ -71,7 +71,7 @@ export function Header({
         </button>
       ) : showNotifications ? (
         <button 
-          onClick={() => router.push('/notifications')} 
+          onClick={() => router.push('/settings/notifications')} 
           className="relative w-10 h-10 flex items-center justify-center rounded-full"
           style={{
             background: 'rgba(255, 255, 255, 0.15)',
