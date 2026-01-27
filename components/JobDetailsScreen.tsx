@@ -74,10 +74,10 @@ const JobDetailsScreen = () => {
         flexDirection: 'column',
       }}
     >
-      {/* DECORATIVE ELEMENTS */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
+      {/* DECORATIVE ELEMENTS - БЕЗ BLUR */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-30 z-0">
         <img src="/images/helmet-silver.png" className="absolute top-10 right-10 w-20 h-20" alt="" />
-        <img src="/images/carabiner.png" className="absolute bottom-20 left-10 w-16 h-16 opacity-50" alt="" />
+        <img src="/images/carabiner.png" className="absolute bottom-20 left-10 w-16 h-16 opacity-60" alt="" />
       </div>
 
       {/* HEADER */}
@@ -418,7 +418,7 @@ const JobDetailsScreen = () => {
 
             <div style={{ background: 'rgba(255, 214, 10, 0.1)', border: '1px solid rgba(255, 214, 10, 0.2)', borderRadius: '12px', padding: '12px', marginTop: '16px', display: 'flex', gap: '8px' }}>
               <AlertCircle size={14} color="#FFD60A" style={{ flexShrink: 0, marginTop: '2px' }} />
-              <p style={{ fontSize: '12px', color: '#9B9B9B', fontFamily: 'Montserrat, system-ui, sans-serif', lineHeight: 1.5 }}>
+              <p style={{ fontSize: '12px', color: '#FFFFFF', fontFamily: 'Montserrat, system-ui, sans-serif', lineHeight: 1.5 }}>
                 Оплата производится напрямую заказчиком после выполнения работ. Платформа не участвует в денежных расчетах.
               </p>
             </div>
