@@ -254,8 +254,8 @@ export default function ProfileScreen() {
         <div
           style={{
             paddingTop: '64px',
-            paddingBottom: '120px',
-            minHeight: '100vh',
+            paddingBottom: '140px',
+            height: 'calc(100vh - 64px)',
             overflowY: 'auto',
             overflowX: 'hidden',
             WebkitOverflowScrolling: 'touch',
