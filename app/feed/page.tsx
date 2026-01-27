@@ -1,4 +1,5 @@
 import JobFeedScreen from '@/components/JobFeedScreen'
+import WorkerLayout from '@/components/layouts/WorkerLayout'
 
 export const metadata = {
   title: 'Лента смен - ШЕФ-МОНТАЖ',
@@ -6,5 +7,9 @@ export const metadata = {
 }
 
 export default function FeedPage() {
-  return <JobFeedScreen />
+  return (
+    <WorkerLayout>
+      <JobFeedScreen />
+    </WorkerLayout>
+  )
 }
