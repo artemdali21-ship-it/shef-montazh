@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import {
   Building2,
   Bell,
@@ -17,10 +16,10 @@ import {
   Activity,
   FileText,
   BarChart3,
-  HardHat,
 } from 'lucide-react'
 import { Header } from './Header'
 import { BottomNav } from './BottomNav'
+import CreateShiftScreen from './CreateShiftScreen'
 
 const clientData = {
   company: {
@@ -96,6 +95,7 @@ const quickActions = [
 
 export default function ClientDashboardScreen() {
   const [fabHovered, setFabHovered] = useState(false)
+  const [showCreateShift, setShowCreateShift] = useState(false)
 
   return (
     <div
@@ -226,7 +226,10 @@ export default function ClientDashboardScreen() {
 
           {/* Notifications Button */}
           <button
-            onClick={() => console.log('Open notifications')}
+            onClick={() => {
+              // TODO: Navigate to notifications page
+              console.log('[v0] Open notifications')
+            }}
             style={{
               width: '40px',
               height: '40px',
@@ -361,8 +364,11 @@ export default function ClientDashboardScreen() {
               {/* Action Buttons */}
               <div style={{ display: 'flex', gap: '10px' }}>
                 {/* Top Up Button */}
-                <button
-                  onClick={() => console.log('Top up balance')}
+          <button
+            onClick={() => {
+              // TODO: Navigate to payment/top-up page
+              console.log('[v0] Open top up balance')
+            }}
                   style={{
                     flex: 1,
                     height: '48px',
@@ -408,7 +414,10 @@ export default function ClientDashboardScreen() {
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                   }}
-                  onClick={() => console.log('View payment history')}
+                  onClick={() => {
+                    // TODO: Navigate to payment history
+                    console.log('[v0] View payment history')
+                  }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
                   }}
@@ -512,7 +521,10 @@ export default function ClientDashboardScreen() {
                 Активные смены
               </h2>
               <button
-                onClick={() => console.log('View all shifts')}
+                onClick={() => {
+                  // TODO: Navigate to all shifts view
+                  console.log('[v0] View all shifts')
+                }}
                 style={{
                   fontFamily: "'Montserrat', sans-serif",
                   fontWeight: 600,
@@ -745,7 +757,12 @@ export default function ClientDashboardScreen() {
                 return (
                   <button
                     key={idx}
-                    onClick={() => console.log(`Action: ${action.label}`)}
+                    onClick={() => {
+                      if (action.label === 'Создать смену') {
+                        setShowCreateShift(true)
+                      }
+                      console.log(`[v0] Action: ${action.label}`)
+                    }}
                     style={{
                       height: '100px',
                       background: 'rgba(169, 169, 169, 0.2)',
@@ -816,7 +833,10 @@ export default function ClientDashboardScreen() {
 
         {/* CREATE SHIFT FAB */}
         <button
-          onClick={() => console.log('Create shift - MAIN CTA')}
+          onClick={() => {
+            setShowCreateShift(true)
+            console.log('[v0] Open create shift modal')
+          }}
           style={{
             position: 'fixed',
             bottom: '24px',
@@ -866,6 +886,39 @@ export default function ClientDashboardScreen() {
           }
         }
       `}</style>
+
+      {/* CREATE SHIFT MODAL */}
+      {showCreateShift && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0, 0, 0, 0.6)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 50,
+          backdropFilter: 'blur(4px)',
+          WebkitBackdropFilter: 'blur(4px)',
+        }}>
+          <div style={{
+            position: 'relative',
+            width: '90%',
+            maxWidth: '600px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            background: '#1A1A1A',
+            borderRadius: '16px',
+          }}>
+            <CreateShiftScreen 
+              onClose={() => setShowCreateShift(false)}
+              onSuccess={() => {
+                setShowCreateShift(false)
+                console.log('[v0] Shift created successfully')
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

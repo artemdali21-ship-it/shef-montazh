@@ -44,7 +44,7 @@ const requirements = [
 
 const rateSuggestions = [1500, 2000, 2500, 3000, 3500];
 
-export default function CreateShiftScreen() {
+export default function CreateShiftScreen({ onClose, onSuccess }: { onClose?: () => void; onSuccess?: () => void }) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     title: '',
@@ -117,7 +117,9 @@ export default function CreateShiftScreen() {
   };
 
   const handleCreateShift = () => {
-    console.log('Creating shift:', formData);
+    console.log('[v0] Creating shift:', formData);
+    // TODO: Send to API to create shift
+    if (onSuccess) onSuccess();
     alert('Смена успешно создана!');
   };
 
@@ -210,7 +212,10 @@ export default function CreateShiftScreen() {
           }}
         >
           <button
-            onClick={() => console.log('Close form')}
+            onClick={() => {
+              if (onClose) onClose()
+              console.log('[v0] Close shift creation form')
+            }}
             style={{
               width: '40px',
               height: '40px',
