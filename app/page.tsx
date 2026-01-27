@@ -183,7 +183,11 @@ export default function OnboardingScreen() {
               style={{ filter: 'brightness(1.05) contrast(1.05)' }}
               crossOrigin="anonymous"
               onError={(e) => {
+                console.log('[v0] Image failed to load:', slides[currentSlide].image)
                 e.currentTarget.src = '/placeholder.svg'
+              }}
+              onLoad={() => {
+                console.log('[v0] Image loaded successfully:', slides[currentSlide].image)
               }}
             />
           </div>
