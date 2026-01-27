@@ -242,6 +242,8 @@ export default function WorkerCategoriesPage() {
         WebkitBackdropFilter: 'blur(20px)',
         borderTop: '1px solid rgba(255, 255, 255, 0.1)',
         flexShrink: 0,
+        position: 'relative',
+        zIndex: 30,
       }} className="px-4 py-4">
         <div className="max-w-2xl mx-auto">
           <button
