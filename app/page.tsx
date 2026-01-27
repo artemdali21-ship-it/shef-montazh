@@ -40,17 +40,17 @@ export default function OnboardingScreen() {
     {
       title: 'Найди проверенного монтажника',
       subtitle: 'Смотри рейтинг, отзывы и опыт',
-      image: '/helmet-single.png',
+      image: '/helmet333.png',
     },
     {
       title: 'Гарантия выполнения работ',
       subtitle: 'Система штрафов за срывы смен',
-      image: '/helmet-single.png',
+      image: '/helmet333.png',
     },
     {
       title: 'Быстрая оплата и поддержка',
       subtitle: 'Рассчитываемся в день завершения работ',
-      image: '/helmet-single.png',
+      image: '/helmet333.png',
     },
   ]
 
