@@ -139,22 +139,6 @@ export default function OnboardingScreen() {
             filter: 'drop-shadow(0 6px 16px rgba(0, 0, 0, 0.3))',
           }}
         />
-        <img
-          src="/images/carabiner.png"
-          alt=""
-          className="absolute"
-          style={{
-            width: '140px',
-            height: 'auto',
-            bottom: '8%',
-            left: '6%',
-            transform: 'rotate(-35deg)',
-            opacity: 0.75,
-            zIndex: 1,
-            animation: 'float 8s ease-in-out infinite 1.2s',
-            filter: 'drop-shadow(0 8px 20px rgba(232, 93, 47, 0.35))',
-          }}
-        />
       </div>
 
       <style>{`
