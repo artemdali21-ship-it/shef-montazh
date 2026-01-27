@@ -238,6 +238,8 @@ export default function RatingReviewScreen() {
         backgroundAttachment: 'fixed',
         fontFamily: "'Montserrat', system-ui, -apple-system, sans-serif",
         position: 'relative',
+        overflowY: 'auto',
+        overflowX: 'hidden',
       }}
     >
       <div
