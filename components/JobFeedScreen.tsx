@@ -197,7 +197,7 @@ export default function JobFeedScreen() {
                     e.stopPropagation()
                     console.log(`Apply to job ${job.id}`)
                   }}
-                  className="w-full h-11 rounded-2xl font-bold text-white flex items-center justify-center gap-2 transition-all duration-200"
+                  className="w-full h-12 rounded-2xl font-bold text-white flex items-center justify-center gap-2 transition-all duration-200"
                   style={{
                     background: '#E85D2F',
                     boxShadow: '0 4px 12px rgba(232, 93, 47, 0.25)',

@@ -60,7 +60,7 @@ export const UserCard: React.FC<UserCardProps> = ({
             )}
           </div>
           
-          <div className="flex items-center gap-1 mb-2">
+          <div className="flex items-center gap-2 mb-3">
             <Star className="w-4 h-4 text-[#FFD60A] fill-[#FFD60A]" strokeWidth={1.5} />
             <span className="text-sm font-montserrat font-700 text-white">
               {rating.toFixed(1)}

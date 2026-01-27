@@ -331,7 +331,7 @@ export default function EditProfile() {
                     <button
                       key={spec.id}
                       onClick={() => toggleSpecialization(spec.id)}
-                      className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center justify-center ${
+                      className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center justify-center ${
                         isSelected
                           ? 'bg-[#E85D2F]/10 border-[#E85D2F]'
                           : 'bg-white/5 border-white/10 hover:border-white/20'

@@ -141,7 +141,7 @@ export default function ChatDetailScreen({
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
         {/* Date Divider */}
         <div className="flex items-center justify-center">
-          <div className="bg-white/5 backdrop-blur-sm px-3 py-1 rounded-full">
+          <div className="bg-white/5 backdrop-blur-sm px-3 py-2 rounded-full">
             <span className="text-xs text-[#9B9B9B] font-semibold">Сегодня</span>
           </div>
         </div>
@@ -177,7 +177,7 @@ export default function ChatDetailScreen({
       </div>
 
       {/* Quick Actions Bar */}
-      <div className="bg-white/5 border-t border-white/10 px-4 py-2">
+      <div className="bg-white/5 border-t border-white/10 px-4 py-3">
         <div className="flex items-center gap-3">
           <button className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
             <MapPin className="w-4 h-4 text-[#FFD60A]" strokeWidth={1.5} />

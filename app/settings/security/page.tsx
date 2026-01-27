@@ -244,7 +244,7 @@ export default function SecuritySettings() {
                         <div className="flex items-center gap-2">
                           <p className="font-montserrat font-600 text-white">{feature.title}</p>
                           {feature.recommended && (
-                            <span className="text-xs bg-[#E85D2F] text-white px-2 py-1 rounded font-montserrat font-600">
+                            <span className="text-xs bg-[#E85D2F] text-white px-3 py-2 rounded font-montserrat font-600">
                               Рекомендуется
                             </span>
                           )}
@@ -291,7 +291,7 @@ export default function SecuritySettings() {
                       <p className="font-montserrat font-600 text-white flex items-center gap-2">
                         {session.device}
                         {session.current && (
-                          <span className="text-xs bg-[#E85D2F] text-white px-2 py-1 rounded font-montserrat font-600">
+                          <span className="text-xs bg-[#E85D2F] text-white px-3 py-2 rounded font-montserrat font-600">
                             Текущее
                           </span>
                         )}

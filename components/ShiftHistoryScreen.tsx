@@ -64,7 +64,7 @@ export default function ShiftHistory() {
           </h3>
           
           <div className="space-y-3">
-            <div className="flex items-start gap-3 p-3 bg-[#BFFF00]/10 border border-[#BFFF00]/20 rounded-lg">
+            <div className="flex items-start gap-3 p-4 bg-[#BFFF00]/10 border border-[#BFFF00]/20 rounded-lg">
               <CheckCircle className="w-5 h-5 text-[#BFFF00] flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <div className="font-600 mb-1">Оплата через самозанятого (СЗ)</div>
@@ -74,7 +74,7 @@ export default function ShiftHistory() {
               </div>
             </div>
             
-            <div className="flex items-start gap-3 p-3 bg-white/5 rounded-lg">
+            <div className="flex items-start gap-3 p-4 bg-white/5 rounded-lg">
               <FileText className="w-5 h-5 text-[#9B9B9B] flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <div className="font-600 mb-1">Договор ГПХ</div>
@@ -145,7 +145,7 @@ export default function ShiftHistory() {
         <div className="bg-white/5 rounded-xl p-4">
           <h3 className="font-700 mb-3">Документы</h3>
           <div className="space-y-2">
-            <button className="w-full flex items-center justify-between p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
+            <button className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
               <div className="flex items-center gap-3">
                 <FileText className="w-5 h-5 text-[#9B9B9B]" />
                 <span className="font-600">Акт выполненных работ</span>

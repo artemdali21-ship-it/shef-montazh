@@ -80,7 +80,7 @@ export function Header({
         >
           <Bell className="w-5 h-5 text-white" strokeWidth={1.5} />
           <span 
-            className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-white text-[10px] flex items-center justify-center font-bold"
+            className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-white text-xs flex items-center justify-center font-bold"
             style={{ background: '#E85D2F' }}
           >
             3

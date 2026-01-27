@@ -18,6 +18,7 @@ interface Chat {
 export default function MessagesListScreen({ onSelectChat }: { onSelectChat: (chatId: string) => void }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState('all')
+  const unreadCount = 3; // Declare unreadCount variable
 
   const chats: Chat[] = [
     {
@@ -69,8 +70,8 @@ export default function MessagesListScreen({ onSelectChat }: { onSelectChat: (ch
           <h1 className="text-white font-bold text-xl">Сообщения</h1>
           <div className="relative">
             <MessageCircle className="w-5 h-5 text-white" strokeWidth={1.5} />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#E85D2F] rounded-full text-white text-[9px] font-bold flex items-center justify-center">
-              3
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#E85D2F] rounded-full text-white text-xs font-bold flex items-center justify-center">
+              {unreadCount}
             </span>
           </div>
         </div>
@@ -90,7 +91,7 @@ export default function MessagesListScreen({ onSelectChat }: { onSelectChat: (ch
         </div>
 
         {/* Filters */}
-        <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-3 px-4 pb-4 overflow-x-auto scrollbar-hide">
           {[
             { id: 'all', label: 'Все', count: 3 },
             { id: 'unread', label: 'Непрочитанные', count: 3 },
@@ -160,7 +161,7 @@ export default function MessagesListScreen({ onSelectChat }: { onSelectChat: (ch
                 </div>
 
                 {chat.shiftTitle && (
-                  <div className="flex items-center gap-1 mb-1">
+                  <div className="flex items-center gap-2 mb-2">
                     <Clock className="w-3 h-3 text-[#FFD60A]" />
                     <span className="text-xs text-[#FFD60A] font-semibold truncate">{chat.shiftTitle}</span>
                   </div>
@@ -175,7 +176,7 @@ export default function MessagesListScreen({ onSelectChat }: { onSelectChat: (ch
                 </p>
               </div>
 
-                    <ChevronRight className="w-5 h-5 text-[#6B6B6B] flex-shrink-0" strokeWidth={1.5} />
+              <ChevronRight className="w-5 h-5 text-[#6B6B6B] flex-shrink-0" strokeWidth={1.5} />
             </div>
           </button>
         ))}

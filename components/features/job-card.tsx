@@ -71,7 +71,7 @@ export const JobCard: React.FC<JobCardProps> = ({
           />
           
           <div className="flex-1 min-w-0">
-            <h3 className="font-montserrat font-700 text-white mb-1 truncate">
+            <h3 className="font-montserrat font-700 text-white mb-2 truncate">
               {title}
             </h3>
             <div className="flex items-center gap-2">

@@ -223,7 +223,7 @@ export default function Settings() {
                   <span className="text-sm text-[#9B9B9B] font-montserrat font-500">{user.completedShifts} смен</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="px-2 py-1 bg-[#BFFF00]/10 border border-[#BFFF00]/30 rounded-md">
+                  <div className="px-3 py-2 bg-[#BFFF00]/10 border border-[#BFFF00]/30 rounded-md">
                     <span className="text-xs text-[#BFFF00] font-montserrat font-700 uppercase">Монтажник</span>
                   </div>
                 </div>
