@@ -176,7 +176,7 @@ export default function Settings() {
 
       <NoisePattern />
 
-      <div className="relative z-10 pb-24">
+      <div className="relative z-10 pb-24 flex flex-col h-full overflow-y-auto">
         {/* Header */}
         <header className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-md border-b border-white/10 z-20">
           <div className="h-16 flex items-center justify-between px-4">

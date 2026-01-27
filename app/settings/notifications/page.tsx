@@ -124,7 +124,7 @@ export default function NotificationsSettings() {
     >
       <NoisePattern />
 
-      <div className="relative z-10">
+      <div className="relative z-10 flex flexlex-col h-full">
         {/* Header */}
         <header className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-md border-b border-white/10 z-20">
           <div className="h-16 flex items-center justify-between px-4">
@@ -136,7 +136,7 @@ export default function NotificationsSettings() {
           </div>
         </header>
 
-        <div className="px-4 py-6 space-y-6 pb-24">
+        <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 pb-24">
           {/* Channels Section */}
           <div>
             <h3 className="text-xs font-montserrat font-700 text-[#9B9B9B] uppercase tracking-wider mb-3 px-1">

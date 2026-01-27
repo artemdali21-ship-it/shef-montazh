@@ -62,7 +62,7 @@ export default function About() {
     }}>
       <NoisePattern />
 
-      <div className="relative z-10">
+      <div className="relative z-10 flex flex-col h-full overflow-y-auto">
         <header style={{
           position: 'relative',
           background: 'rgba(42, 42, 42, 0.6)',
