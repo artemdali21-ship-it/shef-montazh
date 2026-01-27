@@ -92,15 +92,15 @@ export default function OnboardingScreen() {
       {/* FLOATING 3D ELEMENTS */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <img
-          src="/images/drill.png"
+          src="/images/carabiner.png"
           alt=""
           style={{
             position: 'fixed',
             top: '8%',
             right: '5%',
-            width: '128px',
+            width: '140px',
             height: 'auto',
-            opacity: 0.45,
+            opacity: 0.65,
             transform: 'rotate(12deg)',
             zIndex: 1,
             pointerEvents: 'none',
