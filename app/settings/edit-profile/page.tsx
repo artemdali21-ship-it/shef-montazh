@@ -121,32 +121,31 @@ export default function EditProfile() {
         }} />
       </div>
 
-      <div className="relative z-10">
-        <header style={{
-          position: 'relative',
-          background: 'rgba(42, 42, 42, 0.6)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-          zIndex: 20,
-          flexShrink: 0,
-        }}>
-          <div className="h-16 flex items-center justify-between px-4">
-            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
-              <ArrowLeft className="w-5 h-5 text-white" />
-            </button>
-            <h1 className="text-white font-montserrat font-700 text-xl">Редактировать профиль</h1>
-            <button 
-              onClick={handleSave}
-              disabled={!hasChanges}
-              className={`w-10 h-10 flex items-center justify-center ${
-                hasChanges ? 'text-[#E85D2F]' : 'text-[#6B6B6B]'
-              }`}
-            >
-              <Save className="w-5 h-5" />
-            </button>
-          </div>
-        </header>
+      <header style={{
+        position: 'relative',
+        background: 'rgba(42, 42, 42, 0.6)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        zIndex: 20,
+        flexShrink: 0,
+      }}>
+        <div className="h-16 flex items-center justify-between px-4">
+          <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
+            <ArrowLeft className="w-5 h-5 text-white" />
+          </button>
+          <h1 className="text-white font-montserrat font-700 text-xl">Редактировать профиль</h1>
+          <button 
+            onClick={handleSave}
+            disabled={!hasChanges}
+            className={`w-10 h-10 flex items-center justify-center ${
+              hasChanges ? 'text-[#E85D2F]' : 'text-[#6B6B6B]'
+            }`}
+          >
+            <Save className="w-5 h-5" />
+          </button>
+        </div>
+      </header>
 
       <div style={{
         flex: 1,
@@ -471,31 +470,28 @@ export default function EditProfile() {
             </div>
           </div>
         </div>
-
-        {/* Save Button (Bottom Fixed) */}
-        {hasChanges && (
-          <div style={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            padding: 16,
-            background: 'rgba(42, 42, 42, 0.6)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-            zIndex: 20,
-          }}>
-            <button
-              onClick={handleSave}
-              className="w-full h-14 bg-[#E85D2F] hover:bg-[#D94D1F] rounded-xl font-montserrat font-700 text-white transition-colors flex items-center justify-center gap-2"
-            >
-              <Save className="w-5 h-5" />
-              Сохранить изменения
-            </button>
-          </div>
-        )}
       </div>
+
+      {/* Save Button (Bottom Fixed) */}
+      {hasChanges && (
+        <div style={{
+          position: 'relative',
+          background: 'rgba(42, 42, 42, 0.6)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+          zIndex: 20,
+          padding: 16,
+        }}>
+          <button
+            onClick={handleSave}
+            className="w-full max-w-4xl mx-auto h-14 bg-[#E85D2F] hover:bg-[#D94D1F] rounded-xl font-montserrat font-700 text-white transition-colors flex items-center justify-center gap-2"
+          >
+            <Save className="w-5 h-5" />
+            Сохранить изменения
+          </button>
+        </div>
+      )}
     </div>
   );
 }
