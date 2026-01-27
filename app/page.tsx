@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronRight } from 'lucide-react'
 import Image from 'next/image'
+import { useTelegram } from '@/lib/telegram'
 
 const AsteriskIcon = () => (
   <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -35,6 +36,14 @@ const NoisePattern = () => (
 export default function OnboardingScreen() {
   const router = useRouter()
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [tgUser, setTgUser] = useState<any>(null)
+  const tg = useTelegram()
+
+  useEffect(() => {
+    if (tg?.user) {
+      setTgUser(tg.user)
+    }
+  }, [tg])
 
   const slides = [
     {
@@ -55,6 +64,7 @@ export default function OnboardingScreen() {
   ]
 
   const handleNext = () => {
+    tg?.haptic('light')
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(currentSlide + 1)
     } else {
@@ -63,6 +73,7 @@ export default function OnboardingScreen() {
   }
 
   const handleSkip = () => {
+    tg?.haptic('light')
     router.push('/role-select')
   }
 

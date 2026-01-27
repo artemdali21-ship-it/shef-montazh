@@ -1,5 +1,6 @@
 import React from "react"
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import { Montserrat, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
@@ -49,6 +50,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" suppressHydrationWarning>
+      <head>
+        <Script 
+          src="https://telegram.org/js/telegram-web-app.js" 
+          strategy="beforeInteractive"
+        />
+      </head>
       <body className={`${_montserrat.variable} ${_geistMono.variable} min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] text-white`}>
         <TelegramProvider>
           {children}
