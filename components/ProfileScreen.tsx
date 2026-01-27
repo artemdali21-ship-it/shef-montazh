@@ -156,23 +156,6 @@ export default function ProfileScreen() {
           maxWidth: '100%',
         }}
       />
-      {/* FLOATING CONCRETE 7 - Profile */}
-      <img
-        src="/images/concrete-7.png"
-        alt=""
-        style={{
-          position: 'fixed',
-          top: '5%',
-          right: '5%',
-          width: '112px',
-          height: 'auto',
-          opacity: 0.08,
-          transform: 'rotate(18deg)',
-          zIndex: 0,
-          pointerEvents: 'none',
-          animation: 'float 6s ease-in-out infinite',
-        }}
-      />
       {/* HELMET - Profile only */}
       <img
         src="/images/helmet.png"
