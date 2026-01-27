@@ -175,8 +175,16 @@ export default function Settings() {
 
       <NoisePattern />
 
-      {/* 3D decorative elements - HIDDEN FOR TELEGRAM MINI APP */}
-      {/* Removed to prevent overflow issues in Telegram Mini App */}
+      {/* Header with Profile Info */}
+      <header style={{
+        position: 'relative',
+        background: 'rgba(26, 26, 26, 0.7)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        zIndex: 20,
+        flexShrink: 0,
+      }}>
         </header>
 
         {/* Profile Card */}
