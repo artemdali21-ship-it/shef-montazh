@@ -248,7 +248,10 @@ export default function ProfileScreen() {
         <div
           style={{
             paddingTop: '64px',
-            paddingBottom: '32px',
+            paddingBottom: '96px',
+            minHeight: '100vh',
+            overflowY: 'auto',
+            overflowX: 'hidden',
           }}
         >
           {/* PROFILE HERO SECTION */}

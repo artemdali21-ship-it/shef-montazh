@@ -153,8 +153,8 @@ export default function EditProfile() {
         overflowX: 'hidden',
         position: 'relative',
         zIndex: 10,
-      }} className="px-4 py-6">
-        <div className="max-w-4xl mx-auto pb-32">
+      }} className="px-4 py-6 pb-24">
+        <div className="max-w-4xl mx-auto pb-24">
           {/* Avatar Section */}
           <div>
             <h3 className="text-xs font-montserrat font-700 text-white uppercase tracking-wider mb-3 px-1">
