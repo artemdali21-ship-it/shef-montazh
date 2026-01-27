@@ -454,6 +454,50 @@ const JobDetailsScreen = () => {
         </section>
       </div>
 
+      {/* FIXED CTA BUTTON */}
+      <div style={{
+        position: 'fixed',
+        bottom: '80px',
+        left: 0,
+        right: 0,
+        padding: '16px 20px',
+        background: 'rgba(26, 26, 26, 0.95)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        zIndex: 20,
+        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+      }}>
+        <button
+          onClick={() => {
+            router.push(`/application?jobId=${jobDetails.id}`)
+            console.log(`[v0] Applying to job ${jobDetails.id}`)
+          }}
+          disabled={isApplying}
+          style={{
+            width: '100%',
+            height: '56px',
+            background: '#E85D2F',
+            color: 'white',
+            fontSize: '16px',
+            fontWeight: 700,
+            borderRadius: '16px',
+            border: 'none',
+            cursor: isApplying ? 'not-allowed' : 'pointer',
+            opacity: isApplying ? 0.7 : 1,
+            transition: 'all 0.3s',
+            fontFamily: 'Montserrat, system-ui, sans-serif',
+          }}
+          onMouseEnter={(e) => {
+            if (!isApplying) (e.target as HTMLButtonElement).style.background = '#D94D1F'
+          }}
+          onMouseLeave={(e) => {
+            if (!isApplying) (e.target as HTMLButtonElement).style.background = '#E85D2F'
+          }}
+        >
+          {isApplying ? 'Отправка...' : 'Откликнуться'}
+        </button>
+      </div>
+
       {/* BOTTOM NAVIGATION */}
       <BottomNav userType="worker" />
     </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   Building2,
   Bell,
@@ -94,6 +95,7 @@ const quickActions = [
 ]
 
 export default function ClientDashboardScreen() {
+  const router = useRouter()
   const [fabHovered, setFabHovered] = useState(false)
   const [showCreateShift, setShowCreateShift] = useState(false)
 
@@ -543,6 +545,10 @@ export default function ClientDashboardScreen() {
             {activeShifts.map((shift) => (
               <div
                 key={shift.id}
+                onClick={() => {
+                  router.push(`/monitoring?shiftId=${shift.id}`)
+                  console.log(`[v0] View monitoring for shift ${shift.id}`)
+                }}
                 style={{
                   background: 'rgba(169, 169, 169, 0.2)',
                   backdropFilter: 'blur(10px)',
