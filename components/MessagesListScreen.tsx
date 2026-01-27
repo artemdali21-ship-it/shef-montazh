@@ -56,7 +56,13 @@ export default function MessagesListScreen({ onSelectChat }: { onSelectChat: (ch
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A]">
+    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] relative">
+      {/* DECORATIVE ELEMENTS */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
+        <img src="/images/chain.png" className="absolute top-20 left-10 w-20 h-20" alt="" />
+        <img src="/images/wrench.png" className="absolute bottom-20 right-10 w-24 h-24 opacity-50" alt="" />
+      </div>
+
       {/* Header */}
       <header className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-md border-b border-white/10 z-20">
         <div className="h-16 flex items-center justify-between px-4">

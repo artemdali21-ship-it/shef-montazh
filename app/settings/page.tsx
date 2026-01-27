@@ -154,8 +154,7 @@ export default function Settings() {
   }
 
   return (
-    <div
-      style={{
+    <div style={{
       height: '100vh',
       backgroundImage: 'url(/images/bg-dashboard.jpg)',
       backgroundSize: 'cover',
@@ -168,8 +167,13 @@ export default function Settings() {
       bottom: 0,
       display: 'flex',
       flexDirection: 'column',
-      }}
-    >
+    }}>
+      {/* DECORATIVE ELEMENTS */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
+        <img src="/images/bolts.png" className="absolute top-10 right-10 w-20 h-20" alt="" />
+        <img src="/images/carabiner.png" className="absolute bottom-20 left-10 w-16 h-16 opacity-50" alt="" />
+      </div>
+
       <NoisePattern />
 
       <div className="relative z-10 pb-24">

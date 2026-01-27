@@ -98,6 +98,12 @@ export default function JobFeedScreen() {
         backgroundAttachment: 'fixed',
       }}
     >
+      {/* DECORATIVE ELEMENTS */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
+        <img src="/images/wrench.png" className="absolute bottom-20 left-10 w-24 h-24" alt="" />
+        <img src="/images/chain.png" className="absolute top-1/3 right-10 w-20 h-20 opacity-50" alt="" />
+      </div>
+
       {/* HEADER */}
       <Header title="Лента смен" showBack={false} showNotifications={true} />
 
