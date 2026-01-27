@@ -131,44 +131,55 @@ Telegram: @shef_montazh_support`;
 
   return (
     <div style={{
-      minHeight: '100vh',
+      height: '100vh',
       backgroundImage: 'url(/images/bg-dashboard.jpg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundAttachment: 'fixed',
-      position: 'relative',
-      overflow: 'hidden',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      display: 'flex',
+      flexDirection: 'column',
     }}>
       <NoisePattern />
 
-      <div className="relative z-10">
-        <header style={{
-          position: 'sticky',
-          top: 0,
-          background: 'rgba(42, 42, 42, 0.6)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-          zIndex: 20,
-        }}>
-          <div className="h-16 flex items-center justify-between px-4">
-            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
-              <ArrowLeft className="w-5 h-5 text-white" />
-            </button>
-            <h1 className="text-white font-montserrat font-700 text-lg text-center flex-1">Пользовательское соглашение</h1>
-            <button
-              onClick={copyToClipboard}
-              className="w-10 h-10 flex items-center justify-center"
-            >
-              <Copy className={`w-5 h-5 ${copied ? 'text-[#BFFF00]' : 'text-white'}`} />
-            </button>
-          </div>
-        </header>
+      <header style={{
+        position: 'relative',
+        background: 'rgba(42, 42, 42, 0.6)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        zIndex: 20,
+        flexShrink: 0,
+      }}>
+        <div className="h-16 flex items-center justify-between px-4">
+          <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
+            <ArrowLeft className="w-5 h-5 text-white" />
+          </button>
+          <h1 className="text-white font-montserrat font-700 text-lg text-center flex-1">Пользовательское соглашение</h1>
+          <button
+            onClick={copyToClipboard}
+            className="w-10 h-10 flex items-center justify-center"
+          >
+            <Copy className={`w-5 h-5 ${copied ? 'text-[#BFFF00]' : 'text-white'}`} />
+          </button>
+        </div>
+      </header>
 
-        <div className="px-4 py-6 pb-24 max-w-4xl mx-auto">
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6 prose prose-invert max-w-none">
+      <div style={{
+        flex: 1,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        position: 'relative',
+        zIndex: 10,
+      }} className="px-4 py-6">
+        <div className="max-w-4xl mx-auto pb-24">
+          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
             <div className="text-white font-montserrat text-sm leading-relaxed space-y-4">
-              <p className="text-xs text-[#9B9B9B]">Дата обновления: 15 января 2026</p>
+              <p className="text-xs text-white font-500">Дата обновления: 15 января 2026</p>
               
               <h2 className="text-xl font-700 text-white mt-6">1. Общие положения</h2>
               <p>Настоящее Пользовательское соглашение регулирует отношения между ООО "ШЕФ-МОНТАЖ" и пользователями Telegram Mini App «ШЕФ-МОНТАЖ».</p>

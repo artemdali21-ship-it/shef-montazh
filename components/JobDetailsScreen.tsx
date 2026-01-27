@@ -59,14 +59,27 @@ const JobDetailsScreen = () => {
 
   return (
     <div
-      className="w-full min-h-screen flex flex-col"
       style={{
-        backgroundImage: 'url(/images/gradient-bg.png)',
+        height: '100vh',
+        backgroundImage: 'url(/images/bg-dashboard.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
+      {/* DECORATIVE ELEMENTS */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
+        <img src="/images/helmet-silver.png" className="absolute top-10 right-10 w-20 h-20" alt="" />
+        <img src="/images/carabiner.png" className="absolute bottom-20 left-10 w-16 h-16 opacity-50" alt="" />
+      </div>
+
       {/* HEADER */}
       <Header 
         title="Детали смены" 
@@ -75,17 +88,22 @@ const JobDetailsScreen = () => {
         onBack={() => router.back()}
       />
 
-      {/* MAIN CONTENT */}
-      <div className="flex-1 mt-16 pb-32">
-        {/* HERO SECTION */}
+      {/* SCROLLABLE CONTENT */}
+      <div style={{
+        flex: 1,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        position: 'relative',
+        zIndex: 10,
+      }} className="px-4 py-6">
+        {/* HERO SECTION - ТОЛЬКО ЗДЕСЬ ОРАНЖЕВЫЙ ГРАДИЕНТ */}
         <section
           style={{
-            background: `url('/images/gradient-bg.png') center/cover no-repeat`,
-            backgroundAttachment: 'local',
+            background: 'linear-gradient(135deg, #E85D2F 0%, #D94D1F 100%)',
             padding: '28px 20px',
             borderRadius: '0 0 24px 24px',
             marginBottom: '20px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+            boxShadow: '0 8px 32px rgba(232, 93, 47, 0.3)',
             position: 'relative',
           }}
         >

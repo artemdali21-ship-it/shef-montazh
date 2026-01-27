@@ -81,7 +81,7 @@ export default function LoginScreen() {
       <div className="relative z-10">
         <header className="h-16 flex items-center px-4">
           <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
-            <ArrowLeft className="w-5 h-5 text-white" />
+            <ArrowLeft className="w-5 h-5 text-white" strokeWidth={1.5} />
           </button>
         </header>
 
@@ -94,7 +94,7 @@ export default function LoginScreen() {
           {error && (
             <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-6">
               <div className="flex gap-3">
-                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" strokeWidth={1.5} />
                 <p className="text-sm text-red-500 font-semibold">{error}</p>
               </div>
             </div>
@@ -104,7 +104,7 @@ export default function LoginScreen() {
             <div>
               <label className="block text-sm font-semibold text-white mb-2">Номер телефона</label>
               <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#9B9B9B]" />
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#9B9B9B]" strokeWidth={1.5} />
                 <input
                   type="tel"
                   placeholder="+7 (900) 123-45-67"
@@ -131,7 +131,7 @@ export default function LoginScreen() {
                   className="w-full h-14 bg-white/5 border border-white/10 rounded-xl px-4 pr-12 text-white placeholder:text-[#6B6B6B] font-medium focus:outline-none focus:border-[#E85D2F]/50"
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2">
-                  {showPassword ? <EyeOff className="w-5 h-5 text-[#9B9B9B]" /> : <Eye className="w-5 h-5 text-[#9B9B9B]" />}
+                  {showPassword ? <EyeOff className="w-5 h-5 text-[#9B9B9B]" strokeWidth={1.5} /> : <Eye className="w-5 h-5 text-[#9B9B9B]" strokeWidth={1.5} />}
                 </button>
               </div>
             </div>

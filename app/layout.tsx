@@ -48,14 +48,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ru" className={_montserrat.variable}>
-      <head>
-        <meta name="theme-color" content="#2A2A2A" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <script src="https://telegram.org/js/telegram-web-app.js" async />
-      </head>
-      <body className={`font-montserrat antialiased overflow-hidden`}>
+    <html lang="ru" suppressHydrationWarning>
+      <body className={`${_montserrat.variable} ${_geistMono.variable} min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] text-white`}>
         <TelegramProvider>
           {children}
         </TelegramProvider>

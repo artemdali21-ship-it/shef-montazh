@@ -90,6 +90,8 @@ export default function ActiveShiftScreen() {
         backgroundAttachment: 'fixed',
         fontFamily: 'Montserrat, system-ui, -apple-system, sans-serif',
         position: 'relative',
+        overflowY: 'auto',
+        overflowX: 'hidden',
       }}
     >
       <div
@@ -210,7 +212,7 @@ export default function ActiveShiftScreen() {
         </header>
 
         {/* CONTENT */}
-        <div style={{ paddingTop: '64px', paddingBottom: '160px' }}>
+        <div style={{ paddingTop: '64px', paddingBottom: '160px', overflowY: 'auto', maxHeight: 'calc(100vh - 64px)' }}>
           {/* STATUS BANNER */}
           <div
             style={{

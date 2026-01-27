@@ -108,18 +108,23 @@ export default function NotificationsSettings() {
   return (
     <div
       style={{
-        minHeight: '100vh',
-        backgroundImage: 'url(/images/bg-dashboard.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-        position: 'relative',
-        overflow: 'hidden',
+      height: '100vh',
+      backgroundImage: 'url(/images/bg-dashboard.jpg)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundAttachment: 'fixed',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      display: 'flex',
+      flexDirection: 'column',
       }}
     >
       <NoisePattern />
 
-      <div className="relative z-10">
+      <div className="relative z-10 flex flex-col h-full">
         {/* Header */}
         <header className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-md border-b border-white/10 z-20">
           <div className="h-16 flex items-center justify-between px-4">
@@ -131,7 +136,7 @@ export default function NotificationsSettings() {
           </div>
         </header>
 
-        <div className="px-4 py-6 space-y-6 pb-8">
+        <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 pb-24">
           {/* Channels Section */}
           <div>
             <h3 className="text-xs font-montserrat font-700 text-[#9B9B9B] uppercase tracking-wider mb-3 px-1">

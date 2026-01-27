@@ -46,7 +46,7 @@ export function Header({
             border: '1px solid rgba(255, 255, 255, 0.2)',
           }}
         >
-          <ArrowLeft className="w-5 h-5 text-white" />
+          <ArrowLeft className="w-5 h-5 text-white" strokeWidth={1.5} />
         </button>
       ) : (
         <div className="w-10" />
@@ -67,7 +67,7 @@ export function Header({
             border: '1px solid rgba(255, 255, 255, 0.2)',
           }}
         >
-          <Share2 className="w-5 h-5 text-white" />
+          <Share2 className="w-5 h-5 text-white" strokeWidth={1.5} />
         </button>
       ) : showNotifications ? (
         <button 
@@ -78,9 +78,9 @@ export function Header({
             border: '1px solid rgba(255, 255, 255, 0.2)',
           }}
         >
-          <Bell className="w-5 h-5 text-white" />
+          <Bell className="w-5 h-5 text-white" strokeWidth={1.5} />
           <span 
-            className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-white text-[10px] flex items-center justify-center font-bold"
+            className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-white text-xs flex items-center justify-center font-bold"
             style={{ background: '#E85D2F' }}
           >
             3

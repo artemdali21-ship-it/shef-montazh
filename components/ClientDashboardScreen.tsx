@@ -108,6 +108,8 @@ export default function ClientDashboardScreen() {
         backgroundAttachment: 'fixed',
         fontFamily: "'Montserrat', system-ui, -apple-system, sans-serif",
         position: 'relative',
+        overflowY: 'auto',
+        overflowX: 'hidden',
       }}
     >
       <div
@@ -263,7 +265,7 @@ export default function ClientDashboardScreen() {
         </header>
 
         {/* CONTENT */}
-        <div style={{ paddingTop: '80px', paddingBottom: '120px' }}>
+        <div style={{ paddingTop: '80px', paddingBottom: '120px', overflowY: 'auto', maxHeight: 'calc(100vh - 80px)' }}>
           {/* HERO SECTION */}
           <div
             style={{

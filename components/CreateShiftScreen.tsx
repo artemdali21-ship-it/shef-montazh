@@ -135,6 +135,7 @@ export default function CreateShiftScreen() {
         backgroundAttachment: 'fixed',
         fontFamily: "'Montserrat', system-ui, -apple-system, sans-serif",
         position: 'relative',
+        overflow: 'hidden',
       }}
     >
       {/* Dark overlay */}
@@ -283,7 +284,13 @@ export default function CreateShiftScreen() {
         </div>
 
         {/* Content */}
-        <div style={{ paddingTop: '67px', paddingBottom: step === 1 ? '120px' : '80px' }}>
+        <div style={{ 
+          paddingTop: '67px', 
+          paddingBottom: step === 1 ? '120px' : '80px',
+          maxHeight: 'calc(100vh - 67px)',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+        }}>
           {step === 1 ? (
             <div style={{ padding: '24px 20px' }}>
               {/* Job Details Section */}

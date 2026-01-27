@@ -1,5 +1,7 @@
 'use client'
 
+import React from "react"
+
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
@@ -210,14 +212,19 @@ export default function MyApplicationsScreen() {
   return (
     <div
       style={{
-        width: '100%',
-        minHeight: '100vh',
+        height: '100vh',
         backgroundImage: 'url(/images/bg-dashboard.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
         fontFamily: 'Montserrat, system-ui, -apple-system, sans-serif',
-        position: 'relative',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
       <div
@@ -232,7 +239,7 @@ export default function MyApplicationsScreen() {
           zIndex: 1,
         }}
       />
-      {/* FLOATING DECORATIVE ELEMENT - Helmet */}
+      {/* FLOATING DECORATIVE ELEMENTS */}
       <img
         src="/images/helmet.png"
         alt=""
@@ -248,7 +255,6 @@ export default function MyApplicationsScreen() {
           pointerEvents: 'none',
         }}
       />
-      {/* FLOATING CONCRETE 6 - My Applications */}
       <img
         src="/images/concrete-6.png"
         alt=""
@@ -265,7 +271,6 @@ export default function MyApplicationsScreen() {
           animation: 'float 6s ease-in-out infinite',
         }}
       />
-      {/* FLOATING WRENCH KEY - My Applications */}
       <img
         src="/images/wrench-key.png"
         alt=""
@@ -282,83 +287,87 @@ export default function MyApplicationsScreen() {
           animation: 'float 6s ease-in-out infinite 1s',
         }}
       />
-      <div style={{ position: 'relative', zIndex: 2 }}>
-        {/* HEADER */}
-        <header
+
+      {/* HEADER - FIXED */}
+      <header
+        style={{
+          position: 'relative',
+          zIndex: 20,
+          flexShrink: 0,
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          height: '64px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingLeft: '20px',
+          paddingRight: '20px',
+          background: 'rgba(42, 42, 42, 0.6)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+        }}
+      >
+        <button
+          onClick={() => router.back()}
           style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 50,
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-            height: '64px',
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            background: 'rgba(255, 255, 255, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingLeft: '20px',
-            paddingRight: '20px',
-            background: 'transparent',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
+            justifyContent: 'center',
+            cursor: 'pointer',
           }}
         >
-          <button
-            onClick={() => router.back()}
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-            }}
-          >
-            <ArrowLeft size={20} color="#FFFFFF" />
-          </button>
+          <ArrowLeft size={20} color="#FFFFFF" />
+        </button>
 
-          <h1
-            style={{
-              fontWeight: 700,
-              fontSize: '16px',
-              color: '#FFFFFF',
-              flex: 1,
-              textAlign: 'center',
-            }}
-          >
-            Мои отклики
-          </h1>
+        <h1
+          style={{
+            fontWeight: 700,
+            fontSize: '16px',
+            color: '#FFFFFF',
+            flex: 1,
+            textAlign: 'center',
+          }}
+        >
+          Мои отклики
+        </h1>
 
-          <button
-            onClick={() => console.log('Open advanced filters')}
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-            }}
-          >
-            <SlidersHorizontal size={18} color="#FFFFFF" />
-          </button>
-        </header>
+        <button
+          onClick={() => console.log('Open advanced filters')}
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            background: 'rgba(255, 255, 255, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          <SlidersHorizontal size={18} color="#FFFFFF" />
+        </button>
+      </header>
 
-        {/* CONTENT */}
-        <div style={{ paddingTop: '64px' }}>
+      {/* SCROLLABLE CONTENT */}
+      <div style={{
+        flex: 1,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        position: 'relative',
+        zIndex: 10,
+      }} className="pb-24">
           {/* STATS SUMMARY */}
           <div
             style={{
               marginTop: '0px',
               marginBottom: '0px',
-              marginLeft: '-20px',
-              marginRight: '-20px',
+              marginLeft: '0px',
+              marginRight: '0px',
               background: 'rgba(255, 255, 255, 0.05)',
               backdropFilter: 'blur(20px)',
               WebkitBackdropFilter: 'blur(20px)',
@@ -411,7 +420,7 @@ export default function MyApplicationsScreen() {
                     marginBottom: '8px',
                   }}
                 >
-                  <stat.icon size={16} color={stat.color} />
+                  {React.createElement(stat.icon, { size: 16, color: stat.color })}
                 </div>
                 <p
                   style={{
@@ -441,9 +450,8 @@ export default function MyApplicationsScreen() {
           {/* FILTER TABS */}
           <div
             style={{
-              position: 'sticky',
-              top: '64px',
-              zIndex: 40,
+              position: 'relative',
+              zIndex: 30,
               background: 'rgba(26, 26, 26, 0.95)',
               backdropFilter: 'blur(20px)',
               WebkitBackdropFilter: 'blur(20px)',
@@ -507,7 +515,7 @@ export default function MyApplicationsScreen() {
           {/* APPLICATIONS LIST */}
           <div
             style={{
-              padding: '0 20px 32px 20px',
+              padding: '0 20px 100px 20px',
               display: 'flex',
               flexDirection: 'column',
               gap: '12px',
@@ -810,15 +818,10 @@ export default function MyApplicationsScreen() {
               })
             )}
           </div>
-        </div>
       </div>
-      {/* CSS ANIMATION */}
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
-        }
-      `}</style>
+
+      {/* BOTTOM NAVIGATION */}
+      <BottomNav userType="worker" />
     </div>
   )
 }

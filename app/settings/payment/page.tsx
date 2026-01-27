@@ -78,63 +78,74 @@ export default function PaymentMethods() {
 
   return (
     <div style={{
-      minHeight: '100vh',
+      height: '100vh',
       backgroundImage: 'url(/images/bg-dashboard.jpg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundAttachment: 'fixed',
-      position: 'relative',
-      overflow: 'hidden',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      display: 'flex',
+      flexDirection: 'column',
     }}>
       <NoisePattern />
 
-      <div className="relative z-10">
-        <header style={{
-          position: 'sticky',
-          top: 0,
-          background: 'rgba(42, 42, 42, 0.6)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-          zIndex: 20,
-        }}>
-          <div className="h-16 flex items-center justify-between px-4">
-            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
-              <ArrowLeft className="w-5 h-5 text-white" />
-            </button>
-            <h1 className="text-white font-montserrat font-700 text-xl">Способы оплаты</h1>
-            <div className="w-10"></div>
-          </div>
+      <header style={{
+        position: 'relative',
+        background: 'rgba(42, 42, 42, 0.6)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        zIndex: 20,
+        flexShrink: 0,
+      }}>
+        <div className="h-16 flex items-center justify-between px-4">
+          <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
+            <ArrowLeft className="w-5 h-5 text-white" />
+          </button>
+          <h1 className="text-white font-montserrat font-700 text-xl">Способы оплаты</h1>
+          <div className="w-10"></div>
+        </div>
 
-          <div className="flex border-b border-white/10">
-            <button
-              onClick={() => setActiveTab('receiving')}
-              className={`flex-1 h-12 font-montserrat font-700 text-sm transition-all relative ${
-                activeTab === 'receiving' ? 'text-white' : 'text-[#9B9B9B]'
-              }`}
-            >
-              Получение оплаты
-              {activeTab === 'receiving' && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E85D2F]"></div>
-              )}
-            </button>
-            <button
-              onClick={() => setActiveTab('history')}
-              className={`flex-1 h-12 font-montserrat font-700 text-sm transition-all relative ${
-                activeTab === 'history' ? 'text-white' : 'text-[#9B9B9B]'
-              }`}
-            >
-              История выплат
-              {activeTab === 'history' && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E85D2F]"></div>
-              )}
-            </button>
-          </div>
-        </header>
+        <div className="flex border-b border-white/10">
+          <button
+            onClick={() => setActiveTab('receiving')}
+            className={`flex-1 h-12 font-montserrat font-700 text-sm transition-all relative ${
+              activeTab === 'receiving' ? 'text-white' : 'text-white/50'
+            }`}
+          >
+            Получение оплаты
+            {activeTab === 'receiving' && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E85D2F]"></div>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('history')}
+            className={`flex-1 h-12 font-montserrat font-700 text-sm transition-all relative ${
+              activeTab === 'history' ? 'text-white' : 'text-white/50'
+            }`}
+          >
+            История выплат
+            {activeTab === 'history' && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E85D2F]"></div>
+            )}
+          </button>
+        </div>
+      </header>
 
-        <div className="px-4 py-6 pb-24">
+      <div style={{
+        flex: 1,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        position: 'relative',
+        zIndex: 10,
+      }} className="px-4 py-6">
+        <div>
           {activeTab === 'receiving' ? (
-            <div className="space-y-6">
+            <div className="space-y-6 max-w-4xl mx-auto pb-24">
               <div className="bg-gradient-to-r from-[#BFFF00]/10 to-[#BFFF00]/5 border border-[#BFFF00]/30 rounded-xl p-5">
                 <div className="flex items-start gap-3 mb-4">
                   <div className="w-12 h-12 bg-[#BFFF00] rounded-lg flex items-center justify-center flex-shrink-0">
@@ -304,7 +315,7 @@ export default function PaymentMethods() {
               </div>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-3 max-w-4xl mx-auto pb-24">
               <div className="grid grid-cols-3 gap-3 mb-3">
                 <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
                   <p className="text-2xl font-montserrat font-800 text-white mb-1">35.5K</p>

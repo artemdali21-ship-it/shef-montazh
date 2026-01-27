@@ -55,17 +55,18 @@ export function BottomNav({ userType }: BottomNavProps) {
             <button
               key={tab.path}
               onClick={() => router.push(tab.path)}
-              className="flex flex-col items-center gap-1 py-2 px-4 rounded-lg transition-all"
+              className="flex flex-col items-center gap-2 py-2 px-4 rounded-lg transition-all"
               style={{
                 background: active ? 'rgba(232, 93, 47, 0.2)' : 'transparent',
               }}
             >
               <Icon 
-                className="w-6 h-6" 
+                className="w-5 h-5"
+                strokeWidth={1.5}
                 style={{ color: active ? '#E85D2F' : 'rgba(255, 255, 255, 0.6)' }}
               />
               <span
-                className="text-[10px] font-medium font-montserrat"
+                className="text-xs font-medium font-montserrat"
                 style={{ color: active ? '#E85D2F' : 'rgba(255, 255, 255, 0.6)' }}
               >
                 {tab.label}

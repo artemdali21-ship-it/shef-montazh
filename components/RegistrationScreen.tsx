@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ArrowLeft, Phone, Mail, User, Eye, EyeOff, Shield } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const NoisePattern = () => (
   <svg
@@ -27,9 +27,13 @@ const NoisePattern = () => (
 
 export default function RegistrationScreen() {
   const router = useRouter()
-  const [step, setStep] = useState(1)
-  const [userType, setUserType] = useState<'worker' | 'client' | 'shef' | null>(null)
+  const searchParams = useSearchParams()
+  const roleFromQuery = searchParams?.get('role') as 'worker' | 'client' | 'shef' | null
+  
+  const [step, setStep] = useState(roleFromQuery ? 2 : 1)
+  const [userType, setUserType] = useState<'worker' | 'client' | 'shef' | null>(roleFromQuery || null)
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
     phone: '',
     email: '',
@@ -38,6 +42,14 @@ export default function RegistrationScreen() {
     confirmPassword: '',
   })
   const [errors, setErrors] = useState<any>({})
+
+  useEffect(() => {
+    if (roleFromQuery) {
+      setUserType(roleFromQuery)
+      localStorage.setItem('userRole', roleFromQuery)
+      setStep(2)
+    }
+  }, [roleFromQuery])
 
   const validatePhone = (phone: string) => {
     const phoneRegex = /^(\+7|8)?[\s-]?\(?[0-9]{3}\)?[\s-]?[0-9]{3}[\s-]?[0-9]{2}[\s-]?[0-9]{2}$/
@@ -77,15 +89,28 @@ export default function RegistrationScreen() {
 
   const handleSubmit = async () => {
     if (!validateForm()) return
-    router.push('/verify-phone')
+    
+    // Redirect based on user type after registration
+    if (userType === 'worker') {
+      router.push('/feed')
+    } else if (userType === 'client') {
+      router.push('/dashboard')
+    } else if (userType === 'shef') {
+      router.push('/feed')
+    }
   }
 
   return (
     <div style={{
-      minHeight: '100vh',
+      height: '100vh',
       background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)',
-      position: 'relative',
-      overflow: 'hidden',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      display: 'flex',
+      flexDirection: 'column',
     }}>
       <NoisePattern />
       {/* 3D decorative elements */}
@@ -107,208 +132,118 @@ export default function RegistrationScreen() {
       }}>
         <img src="/images/chain.png" alt="" style={{ width: '180px', height: '180px', objectFit: 'contain' }} />
       </div>
-      <div className="relative z-10">
-        <header className="h-16 flex items-center justify-between px-4">
-          <button
-            onClick={() => (step === 1 ? router.back() : setStep(1))}
-            className="w-10 h-10 flex items-center justify-center"
-          >
-            <ArrowLeft className="w-5 h-5 text-white" />
-          </button>
-          <div className="flex items-center gap-2">
-            <div className={`h-1 w-8 rounded-full ${step >= 1 ? 'bg-[#E85D2F]' : 'bg-white/20'}`}></div>
-            <div className={`h-1 w-8 rounded-full ${step >= 2 ? 'bg-[#E85D2F]' : 'bg-white/20'}`}></div>
-          </div>
-          <div className="w-10"></div>
-        </header>
+      
+      <header style={{
+        position: 'relative',
+        flexShrink: 0,
+        height: '4rem',
+        zIndex: 20,
+      }} className="flex items-center justify-between px-4">
+        <button
+          onClick={() => (step === 1 ? router.back() : setStep(1))}
+          className="w-10 h-10 flex items-center justify-center"
+        >
+          <ArrowLeft className="w-5 h-5 text-white" strokeWidth={1.5} />
+        </button>
+        <div className="flex items-center gap-2">
+          <div className={`h-1 w-8 rounded-full ${step >= 1 ? 'bg-[#E85D2F]' : 'bg-white/20'}`}></div>
+          <div className={`h-1 w-8 rounded-full ${step >= 2 ? 'bg-[#E85D2F]' : 'bg-white/20'}`}></div>
+        </div>
+        <div className="w-10"></div>
+      </header>
 
-        <div className="px-4 py-6">
-          {step === 1 && (
+      <div style={{
+        flex: 1,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        position: 'relative',
+        zIndex: 10,
+      }} className="px-4 py-6">
+        <div className="max-w-md mx-auto pb-32">
+          {/* SKIP ROLE SELECTION IF PROVIDED VIA QUERY PARAMS - ONLY SHOW FORM */}
+          {step === 2 && (
             <div className="space-y-6">
               <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Кто вы?</h1>
-                <p className="text-[#9B9B9B] font-medium">Выберите роль, чтобы мы настроили интерфейс под вас</p>
+                <h1 className="text-3xl font-bold text-white mb-2">Регистрация</h1>
+                <p className="text-[#9B9B9B] font-medium">Введите ваши контактные данные</p>
               </div>
 
-              <div className="space-y-3">
-                {[
-                  {
-                    type: 'worker',
-                    icon: User,
-                    title: 'Я монтажник',
-                    description: 'Ищу смены и зарабатываю',
-                    color: '#BFFF00',
-                  },
-                  {
-                    type: 'client',
-                    icon: Shield,
-                    title: 'Я заказчик',
-                    description: 'Ищу проверенных исполнителей',
-                    color: '#E85D2F',
-                  },
-                  {
-                    type: 'shef',
-                    icon: Shield,
-                    title: 'Я шеф-монтажник',
-                    description: 'Координирую бригады',
-                    color: '#FFD60A',
-                  },
-                ].map((option) => {
-                  const Icon = option.icon
-                  return (
-                    <button
-                      key={option.type}
-                      onClick={() => {
-                        setUserType(option.type as any)
-                        setStep(2)
-                      }}
-                      className={`w-full p-5 rounded-xl border-2 transition-all ${
-                        userType === option.type ? 'bg-white/10 border-[#E85D2F]' : 'bg-white/5 border-white/10 hover:border-white/20'
-                      }`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${option.color}20` }}>
-                          <Icon className="w-7 h-7" style={{ color: option.color }} />
-                        </div>
-                        <div className="flex-1 text-left">
-                          <h3 className="font-bold text-white mb-1">{option.title}</h3>
-                          <p className="text-sm text-[#9B9B9B] font-medium">{option.description}</p>
-                        </div>
-                      </div>
-                    </button>
-                  )
-                })}
+              <div className="space-y-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
+                    placeholder="Номер телефона"
+                  />
+                  <Phone className="absolute top-1/2 left-4 transform -translate-y-1/2 w-5 h-5 text-white/50 pointer-events-none" />
+                </div>
+                <div className="relative">
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
+                    placeholder="Email"
+                  />
+                  <Mail className="absolute top-1/2 left-4 transform -translate-y-1/2 w-5 h-5 text-white/50 pointer-events-none" />
+                </div>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.fullName}
+                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
+                    placeholder="Полное имя"
+                  />
+                  <User className="absolute top-1/2 left-4 transform -translate-y-1/2 w-5 h-5 text-white/50 pointer-events-none" />
+                </div>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="w-full pl-4 pr-12 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
+                    placeholder="Пароль"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white/50 hover:text-white/70 transition-colors"
+                  >
+                    {showPassword ? <Eye className="w-5 h-5" strokeWidth={1.5} /> : <EyeOff className="w-5 h-5" strokeWidth={1.5} />}
+                  </button>
+                </div>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    className="w-full pl-4 pr-12 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
+                    placeholder="Подтвердите пароль"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white/50 hover:text-white/70 transition-colors"
+                  >
+                    {showConfirmPassword ? <Eye className="w-5 h-5" strokeWidth={1.5} /> : <EyeOff className="w-5 h-5" strokeWidth={1.5} />}
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
 
-          {step === 2 && (
-            <div className="space-y-6 pb-32">
-              <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Создайте аккаунт</h1>
-                <p className="text-[#9B9B9B] font-medium">Заполните данные для регистрации</p>
+              <div className="space-y-2">
+                <button
+                  onClick={handleSubmit}
+                  className="w-full p-4 rounded-xl bg-[#E85D2F] text-white font-bold hover:bg-[#E85D2F]/80"
+                >
+                  Продолжить
+                </button>
               </div>
-
-              <form className="space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-white mb-2">Номер телефона *</label>
-                  <div className="relative">
-                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#9B9B9B]" />
-                    <input
-                      type="tel"
-                      placeholder="+7 (900) 123-45-67"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className={`w-full h-14 bg-white/5 border rounded-xl pl-12 pr-4 text-white placeholder:text-[#6B6B6B] font-medium focus:outline-none ${
-                        errors.phone ? 'border-red-500' : 'border-white/10 focus:border-[#E85D2F]/50'
-                      }`}
-                    />
-                  </div>
-                  {errors.phone && <p className="text-xs text-red-500 mt-1 font-medium">{errors.phone}</p>}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-white mb-2">Email *</label>
-                  <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#9B9B9B]" />
-                    <input
-                      type="email"
-                      placeholder="your@email.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className={`w-full h-14 bg-white/5 border rounded-xl pl-12 pr-4 text-white placeholder:text-[#6B6B6B] font-medium focus:outline-none ${
-                        errors.email ? 'border-red-500' : 'border-white/10 focus:border-[#E85D2F]/50'
-                      }`}
-                    />
-                  </div>
-                  {errors.email && <p className="text-xs text-red-500 mt-1 font-medium">{errors.email}</p>}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-white mb-2">Полное имя *</label>
-                  <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#9B9B9B]" />
-                    <input
-                      type="text"
-                      placeholder="Иван Иванов"
-                      value={formData.fullName}
-                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                      className={`w-full h-14 bg-white/5 border rounded-xl pl-12 pr-4 text-white placeholder:text-[#6B6B6B] font-medium focus:outline-none ${
-                        errors.fullName ? 'border-red-500' : 'border-white/10 focus:border-[#E85D2F]/50'
-                      }`}
-                    />
-                  </div>
-                  {errors.fullName && <p className="text-xs text-red-500 mt-1 font-medium">{errors.fullName}</p>}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-white mb-2">Пароль *</label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Минимум 6 символов"
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className={`w-full h-14 bg-white/5 border rounded-xl px-4 pr-12 text-white placeholder:text-[#6B6B6B] font-medium focus:outline-none ${
-                        errors.password ? 'border-red-500' : 'border-white/10 focus:border-[#E85D2F]/50'
-                      }`}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2"
-                    >
-                      {showPassword ? <EyeOff className="w-5 h-5 text-[#9B9B9B]" /> : <Eye className="w-5 h-5 text-[#9B9B9B]" />}
-                    </button>
-                  </div>
-                  {errors.password && <p className="text-xs text-red-500 mt-1 font-medium">{errors.password}</p>}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-white mb-2">Повторите пароль *</label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Повторите пароль"
-                      value={formData.confirmPassword}
-                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                      className={`w-full h-14 bg-white/5 border rounded-xl px-4 text-white placeholder:text-[#6B6B6B] font-medium focus:outline-none ${
-                        errors.confirmPassword ? 'border-red-500' : 'border-white/10 focus:border-[#E85D2F]/50'
-                      }`}
-                    />
-                  </div>
-                  {errors.confirmPassword && <p className="text-xs text-red-500 mt-1 font-medium">{errors.confirmPassword}</p>}
-                </div>
-
-                <div className="bg-white/5 rounded-lg p-4">
-                  <p className="text-xs text-[#9B9B9B] font-medium leading-relaxed">
-                    Нажимая "Зарегистрироваться", вы соглашаетесь с{' '}
-                    <button className="text-[#E85D2F] underline">Условиями использования</button> и{' '}
-                    <button className="text-[#E85D2F] underline">Политикой конфиденциальности</button>
-                  </p>
-                </div>
-              </form>
             </div>
           )}
         </div>
-
-        {step === 2 && (
-          <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/90 backdrop-blur-md border-t border-white/10">
-            <button
-              onClick={handleSubmit}
-              className="w-full h-14 bg-[#E85D2F] hover:bg-[#D94D1F] active:scale-95 rounded-xl font-bold text-white transition-all"
-            >
-              Зарегистрироваться
-            </button>
-
-            <div className="text-center mt-3">
-              <span className="text-sm text-[#9B9B9B] font-medium">Уже есть аккаунт? </span>
-              <button onClick={() => router.push('/login')} className="text-sm text-[#E85D2F] font-bold underline">
-                Войти
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )

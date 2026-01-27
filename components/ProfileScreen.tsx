@@ -118,6 +118,12 @@ export default function ProfileScreen() {
         position: 'relative',
       }}
     >
+      {/* DECORATIVE ELEMENTS */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
+        <img src="/images/tape-2.png" className="absolute top-10 left-1/4 w-16 h-16" alt="" />
+        <img src="/images/cable-coil.png" className="absolute bottom-20 right-10 w-20 h-20 opacity-50" alt="" />
+      </div>
+
       <div
         style={{
           position: 'fixed',
@@ -248,7 +254,10 @@ export default function ProfileScreen() {
         <div
           style={{
             paddingTop: '64px',
-            paddingBottom: '32px',
+            paddingBottom: '96px',
+            minHeight: '100vh',
+            overflowY: 'auto',
+            overflowX: 'hidden',
           }}
         >
           {/* PROFILE HERO SECTION */}

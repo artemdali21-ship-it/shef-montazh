@@ -114,31 +114,65 @@ export default function ProfileSetupPage() {
   const renderStep = () => {
     if (!userType) {
       return (
-        <div className="space-y-6">
-          <h2 className="text-3xl font-700 text-white mb-8">Кто вы?</h2>
-          <div className="space-y-4">
+        <div className="space-y-6 py-4">
+          <div>
+            <h1 className="text-4xl font-800 text-white mb-2 text-balance">Кто вы?</h1>
+            <p className="text-white/60 font-500">Выберите подходящий статус</p>
+          </div>
+          
+          <div className="space-y-3 pt-4">
             <button
               onClick={() => handleUserTypeSelect('worker')}
-              className="w-full p-6 bg-white/10 hover:bg-white/15 border-2 border-white/30 hover:border-brand-orange rounded-2xl text-left transition-all active:scale-95"
+              className="w-full group relative overflow-hidden rounded-2xl transition-all active:scale-95"
             >
-              <h3 className="text-lg font-700 text-white mb-2">Монтажник / Исполнитель</h3>
-              <p className="text-sm text-text-secondary font-500">Заполните профиль и найдите заказы</p>
+              <div className="absolute inset-0 bg-gradient-to-br from-[#E85D2F]/20 to-[#E85D2F]/5 group-hover:from-[#E85D2F]/30 group-hover:to-[#E85D2F]/15 transition-all" />
+              <div className="relative p-6 border-2 border-[#E85D2F]/50 group-hover:border-[#E85D2F] rounded-2xl backdrop-blur-sm transition-all">
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 rounded-xl bg-[#BFFF00]/20 border border-[#BFFF00]/50 flex items-center justify-center flex-shrink-0 group-hover:bg-[#BFFF00]/30 transition-all">
+                    <span className="text-2xl">🔧</span>
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-lg font-800 text-white mb-1">Монтажник / Исполнитель</h3>
+                    <p className="text-sm text-white/60 font-500">Заполните профиль и находите заказы</p>
+                  </div>
+                </div>
+              </div>
             </button>
             
             <button
               onClick={() => handleUserTypeSelect('client')}
-              className="w-full p-6 bg-white/10 hover:bg-white/15 border-2 border-white/30 hover:border-brand-orange rounded-2xl text-left transition-all active:scale-95"
+              className="w-full group relative overflow-hidden rounded-2xl transition-all active:scale-95"
             >
-              <h3 className="text-lg font-700 text-white mb-2">Заказчик</h3>
-              <p className="text-sm text-text-secondary font-500">Регистр компании или агентства</p>
+              <div className="absolute inset-0 bg-gradient-to-br from-[#E85D2F]/20 to-[#E85D2F]/5 group-hover:from-[#E85D2F]/30 group-hover:to-[#E85D2F]/15 transition-all" />
+              <div className="relative p-6 border-2 border-white/20 group-hover:border-[#E85D2F]/50 rounded-2xl backdrop-blur-sm transition-all">
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 rounded-xl bg-white/10 border border-white/30 flex items-center justify-center flex-shrink-0 group-hover:bg-white/15 transition-all">
+                    <span className="text-2xl">🏢</span>
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-lg font-800 text-white mb-1">Заказчик</h3>
+                    <p className="text-sm text-white/60 font-500">Регистрация компании или агентства</p>
+                  </div>
+                </div>
+              </div>
             </button>
             
             <button
               onClick={() => handleUserTypeSelect('shef')}
-              className="w-full p-6 bg-white/10 hover:bg-white/15 border-2 border-white/30 hover:border-brand-orange rounded-2xl text-left transition-all active:scale-95"
+              className="w-full group relative overflow-hidden rounded-2xl transition-all active:scale-95"
             >
-              <h3 className="text-lg font-700 text-white mb-2">Шеф-монтажник / Бригадир</h3>
-              <p className="text-sm text-text-secondary font-500">Управляйте бригадой и проектами</p>
+              <div className="absolute inset-0 bg-gradient-to-br from-[#E85D2F]/20 to-[#E85D2F]/5 group-hover:from-[#E85D2F]/30 group-hover:to-[#E85D2F]/15 transition-all" />
+              <div className="relative p-6 border-2 border-white/20 group-hover:border-[#E85D2F]/50 rounded-2xl backdrop-blur-sm transition-all">
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 rounded-xl bg-white/10 border border-white/30 flex items-center justify-center flex-shrink-0 group-hover:bg-white/15 transition-all">
+                    <span className="text-2xl">👨‍💼</span>
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-lg font-800 text-white mb-1">Шеф-монтажник / Бригадир</h3>
+                    <p className="text-sm text-white/60 font-500">Управляйте бригадой и проектами</p>
+                  </div>
+                </div>
+              </div>
             </button>
           </div>
         </div>
@@ -445,13 +479,18 @@ export default function ProfileSetupPage() {
 
   return (
     <div style={{
-      minHeight: '100vh',
+      height: '100vh',
       backgroundImage: 'url(/images/bg-dashboard.jpg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundAttachment: 'fixed',
-      position: 'relative',
-      overflow: 'hidden',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      display: 'flex',
+      flexDirection: 'column',
     }}>
       <NoisePattern />
       
@@ -465,51 +504,65 @@ export default function ProfileSetupPage() {
         <img src="/images/helmet.png" alt="" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
       </div>
 
-      <div className="relative z-10 min-h-screen flex flex-col">
-        <header className="h-16 flex items-center justify-between px-4">
-          <button onClick={handleBack} className="w-10 h-10 flex items-center justify-center">
-            <ChevronLeft className="w-5 h-5 text-white" />
-          </button>
-          
-          {userType && (
-            <div className="text-xs font-600 text-text-secondary">
-              Шаг {step} из {getMaxSteps()}
-            </div>
-          )}
-          
-          <div className="w-10"></div>
-        </header>
-
-        <main className="flex-1 flex flex-col justify-center px-4 py-8">
-          <div className="max-w-md mx-auto w-full">
-            {renderStep()}
+      <header style={{
+        position: 'relative',
+        background: 'rgba(42, 42, 42, 0.6)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        zIndex: 20,
+        flexShrink: 0,
+        height: '4rem',
+      }} className="flex items-center justify-between px-4">
+        <button onClick={handleBack} className="w-10 h-10 flex items-center justify-center">
+          <ChevronLeft className="w-5 h-5 text-white" />
+        </button>
+        
+        {userType && (
+          <div className="text-xs font-600 text-white/50">
+            Шаг {step} из {getMaxSteps()}
           </div>
+        )}
+        
+        <div className="w-10"></div>
+      </header>
+
+      <div style={{
+        flex: 1,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        position: 'relative',
+        zIndex: 10,
+      }} className="px-4 py-6">
+        <main className="max-w-md mx-auto w-full pb-32">
+          {renderStep()}
         </main>
-
-        <footer style={{
-          background: 'rgba(42, 42, 42, 0.7)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderTop: 'none',
-        }} className="h-24 flex items-center justify-center px-4">
-          <div className="max-w-md w-full space-y-3">
-            <button
-              onClick={handleNext}
-              disabled={
-                (step === 0 && !userType) ||
-                (step === 1 && userType === 'worker' && !formData.name) ||
-                (step === 1 && userType === 'client' && !formData.companyName)
-              }
-              className="w-full h-14 bg-brand-orange hover:bg-brand-orange-dark active:scale-95 disabled:opacity-50 rounded-xl font-700 text-white transition-all"
-            >
-              {step === getMaxSteps() ? 'Завершить' : 'Далее'}
-            </button>
-            {step > 0 && (
-              <p className="text-xs text-center text-text-tertiary font-500">Можно пропустить и заполнить позже</p>
-            )}
-          </div>
-        </footer>
       </div>
+
+      <footer style={{
+        background: 'rgba(42, 42, 42, 0.7)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+        flexShrink: 0,
+      }} className="px-4 py-6">
+        <div className="max-w-md mx-auto space-y-3">
+          <button
+            onClick={handleNext}
+            disabled={
+              (step === 0 && !userType) ||
+              (step === 1 && userType === 'worker' && !formData.name) ||
+              (step === 1 && userType === 'client' && !formData.companyName)
+            }
+            className="w-full h-14 bg-[#E85D2F] hover:bg-[#D84A20] active:scale-95 disabled:opacity-50 rounded-xl font-700 text-white transition-all"
+          >
+            {step === getMaxSteps() ? 'Завершить' : 'Далее'}
+          </button>
+          {step > 0 && (
+            <p className="text-xs text-center text-white/50 font-500">Можно пропустить и заполнить позже</p>
+          )}
+        </div>
+      </footer>
     </div>
   )
 }

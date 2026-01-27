@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import RegistrationScreen from '@/components/RegistrationScreen'
 
 export const metadata = {
@@ -6,5 +7,9 @@ export const metadata = {
 }
 
 export default function RegisterPage() {
-  return <RegistrationScreen />
+  return (
+    <Suspense fallback={<div className="w-screen h-screen bg-[#1A1A1A]" />}>
+      <RegistrationScreen />
+    </Suspense>
+  )
 }

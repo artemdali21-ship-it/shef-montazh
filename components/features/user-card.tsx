@@ -56,12 +56,12 @@ export const UserCard: React.FC<UserCardProps> = ({
               {name}
             </h3>
             {verified && (
-              <CheckCircle className="w-4 h-4 text-[#BFFF00] flex-shrink-0" />
+              <CheckCircle className="w-4 h-4 text-[#BFFF00] flex-shrink-0" strokeWidth={1.5} />
             )}
           </div>
           
-          <div className="flex items-center gap-1 mb-2">
-            <Star className="w-4 h-4 text-[#FFD60A] fill-[#FFD60A]" />
+          <div className="flex items-center gap-2 mb-3">
+            <Star className="w-4 h-4 text-[#FFD60A] fill-[#FFD60A]" strokeWidth={1.5} />
             <span className="text-sm font-montserrat font-700 text-white">
               {rating.toFixed(1)}
             </span>
@@ -71,7 +71,7 @@ export const UserCard: React.FC<UserCardProps> = ({
           </div>
 
           <div className="flex items-center gap-2 text-sm text-[#9B9B9B]">
-            <MapPin className="w-3 h-3" />
+            <MapPin className="w-3 h-3" strokeWidth={1.5} />
             <span className="font-montserrat font-500">{location}</span>
           </div>
         </div>

@@ -98,11 +98,17 @@ export default function JobFeedScreen() {
         backgroundAttachment: 'fixed',
       }}
     >
+      {/* DECORATIVE ELEMENTS */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
+        <img src="/images/wrench.png" className="absolute bottom-20 left-10 w-24 h-24" alt="" />
+        <img src="/images/chain.png" className="absolute top-1/3 right-10 w-20 h-20 opacity-50" alt="" />
+      </div>
+
       {/* HEADER */}
       <Header title="Лента смен" showBack={false} showNotifications={true} />
 
       {/* JOB CARDS FEED */}
-      <div className="flex-1 overflow-y-auto pt-24 pb-32 px-5 font-sans">
+      <div className="flex-1 overflow-y-auto pt-24 pb-24 px-5 font-sans">
         <div className="flex flex-col gap-4">
           {filteredJobs.length > 0 ? (
             filteredJobs.map((job) => (
@@ -191,7 +197,7 @@ export default function JobFeedScreen() {
                     e.stopPropagation()
                     console.log(`Apply to job ${job.id}`)
                   }}
-                  className="w-full h-11 rounded-2xl font-bold text-white flex items-center justify-center gap-2 transition-all duration-200"
+                  className="w-full h-12 rounded-2xl font-bold text-white flex items-center justify-center gap-2 transition-all duration-200"
                   style={{
                     background: '#E85D2F',
                     boxShadow: '0 4px 12px rgba(232, 93, 47, 0.25)',

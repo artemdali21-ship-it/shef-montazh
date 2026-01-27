@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { MapPin, Clock, Wrench, TrendingUp, ChevronRight } from 'lucide-react';
+import { MapPin, Clock, Wrench, TrendingUp, ChevronRight, Star } from 'lucide-react';
 import { CustomAvatar } from '../custom/custom-avatar';
 import { CustomBadge } from '../custom/custom-badge';
 
@@ -71,7 +71,7 @@ export const JobCard: React.FC<JobCardProps> = ({
           />
           
           <div className="flex-1 min-w-0">
-            <h3 className="font-montserrat font-700 text-white mb-1 truncate">
+            <h3 className="font-montserrat font-700 text-white mb-2 truncate">
               {title}
             </h3>
             <div className="flex items-center gap-2">
@@ -79,7 +79,7 @@ export const JobCard: React.FC<JobCardProps> = ({
                 {client.name}
               </p>
               <div className="flex items-center gap-1">
-                <span className="text-sm text-[#FFD60A]">★</span>
+                <Star className="w-4 h-4 text-[#FFD60A] fill-[#FFD60A]" strokeWidth={1.5} />
                 <span className="text-sm text-white font-montserrat font-600">
                   {client.rating.toFixed(1)}
                 </span>
@@ -88,7 +88,7 @@ export const JobCard: React.FC<JobCardProps> = ({
           </div>
         </div>
 
-        <ChevronRight className="w-5 h-5 text-[#6B6B6B] flex-shrink-0" />
+        <ChevronRight className="w-5 h-5 text-[#6B6B6B] flex-shrink-0" strokeWidth={1.5} />
       </div>
 
       {/* Badges */}
@@ -97,7 +97,7 @@ export const JobCard: React.FC<JobCardProps> = ({
         
         {toolsRequired && (
           <CustomBadge variant="info" size="sm">
-            <Wrench className="w-3 h-3 mr-1" />
+            <Wrench className="w-4 h-4 mr-1" strokeWidth={1.5} />
             Свой инструмент
           </CustomBadge>
         )}
@@ -108,7 +108,7 @@ export const JobCard: React.FC<JobCardProps> = ({
         
         {premium && (
           <CustomBadge variant="warning" size="sm">
-            <TrendingUp className="w-3 h-3 mr-1" />
+            <TrendingUp className="w-4 h-4 mr-1" strokeWidth={1.5} />
             VIP
           </CustomBadge>
         )}
@@ -121,14 +121,14 @@ export const JobCard: React.FC<JobCardProps> = ({
       {/* Info Grid */}
       <div className="grid grid-cols-2 gap-3 mb-3 pb-3 border-b border-white/10">
         <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-[#9B9B9B]" />
+          <MapPin className="w-4 h-4 text-[#9B9B9B]" strokeWidth={1.5} />
           <span className="text-sm text-white font-montserrat font-500 truncate">
             {location}
           </span>
         </div>
         
         <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-[#9B9B9B]" />
+          <Clock className="w-4 h-4 text-[#9B9B9B]" strokeWidth={1.5} />
           <span className="text-sm text-white font-montserrat font-500">
             {duration}
           </span>

@@ -144,18 +144,23 @@ export default function Help() {
   return (
     <div
       style={{
-        minHeight: '100vh',
-        backgroundImage: 'url(/images/bg-dashboard.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-        position: 'relative',
-        overflow: 'hidden',
+      height: '100vh',
+      backgroundImage: 'url(/images/bg-dashboard.jpg)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundAttachment: 'fixed',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      display: 'flex',
+      flexDirection: 'column',
       }}
     >
       <NoisePattern />
 
-      <div className="relative z-10 pb-24">
+      <div className="relative z-10 pb-24 flex flex-col h-full overflow-y-auto">
         {/* Header */}
         <header style={{
           position: 'sticky',
