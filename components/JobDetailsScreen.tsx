@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Header } from './Header'
 import { BottomNav } from './BottomNav'
 import { CompletionActions } from './shift/CompletionActions'
-import { RatingModal } from './modals/RatingModal'
+import { RatingModal } from './rating/RatingModal'
 
 const JobDetailsScreen = () => {
   const router = useRouter()
@@ -72,10 +72,15 @@ const JobDetailsScreen = () => {
     console.log('[v0] Worker confirmed completion')
   }
 
-  const handleRatingSubmit = (rating: number, comment: string) => {
-    setShiftStatus('completed')
-    console.log('[v0] Rating submitted:', { rating, comment })
-    setShowRatingModal(false)
+  const handleRatingSubmit = async (rating: number, comment: string) => {
+    try {
+      setShiftStatus('completed')
+      console.log('[v0] Rating submitted:', { rating, comment })
+      // TODO: Save rating to database
+      setShowRatingModal(false)
+    } catch (error) {
+      console.error('[v0] Error submitting rating:', error)
+    }
   }
 
   return (
@@ -534,7 +539,10 @@ const JobDetailsScreen = () => {
       {/* RATING MODAL */}
       <RatingModal
         isOpen={showRatingModal}
-        userRole={userRole}
+        shiftId={`${jobDetails.id}`}
+        ratedUserId="worker-123"
+        ratedUserName="Иван Петров"
+        ratedUserRole="worker"
         onClose={() => setShowRatingModal(false)}
         onSubmit={handleRatingSubmit}
       />
