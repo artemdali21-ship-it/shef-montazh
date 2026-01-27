@@ -164,7 +164,7 @@ export default function ApplicationConfirmationScreen() {
             }}
           >
             <img
-              src="/images/d0-a4-d0-ab-d0-92-d0-90.png"
+              src="/helmet-single.png"
               alt="Шеф-монтаж каска"
               style={{
                 width: '320px',
@@ -516,7 +516,7 @@ export default function ApplicationConfirmationScreen() {
 
             {/* Secondary Button */}
             <button
-              onClick={() => router.push('/my-applications')}
+              onClick={() => router.push('/applications')}
               onMouseEnter={() => setHoveredButton('secondary')}
               onMouseLeave={() => setHoveredButton(null)}
               style={{

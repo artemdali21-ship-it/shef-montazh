@@ -6,7 +6,7 @@
 
 # 📋 ТЗ ДЛЯ V0.DEV — ЭКРАН 11: "ДАШБОРД ШЕФ-МОНТАЖНИКА"
 
-```
+\`\`\`
 Create a mobile-first React component for crew management dashboard of "ШЕФ-МОНТАЖ" platform.
 This is SCREEN 11 - the interface for Шеф-монтажник (crew coordinator/foreman).
 
@@ -137,13 +137,13 @@ Card:
 
 Grid: 3 columns, equal width, with dividers
 
-```jsx
+\`\`\`jsx
 const stats = [
   { label: 'Смен закрыто', value: 132, icon: 'CheckCircle', color: '#BFFF00' },
   { label: 'Моя ставка', value: '3 500 ₽', icon: 'Wallet', color: '#E85D2F' },
   { label: 'Рейтинг', value: '4.8', icon: 'Star', color: '#FFD60A' }
 ];
-```
+\`\`\`
 
 Stat item:
 - Display: flex, flex-direction: column, align-items: center, gap: 8px
@@ -187,7 +187,7 @@ Section header (flex, space-between, align-items: center, margin-bottom: 14px):
 Workers container:
 - Display: flex, flex-direction: column, gap: 10px
 
-```jsx
+\`\`\`jsx
 const crewMembers = [
   {
     id: 1,
@@ -234,7 +234,7 @@ const crewMembers = [
     canRate: false
   }
 ];
-```
+\`\`\`
 
 WORKER CARD STYLING:
 --------------------
@@ -344,7 +344,7 @@ Section header:
 Actions grid:
 - Display: grid, grid-template-columns: repeat(2, 1fr), gap: 10px
 
-```jsx
+\`\`\`jsx
 const quickActions = [
   { 
     id: 'confirm_all',
@@ -379,7 +379,7 @@ const quickActions = [
     disabled: false
   }
 ];
-```
+\`\`\`
 
 ACTION CARD STYLING:
 - Height: 100px
@@ -428,14 +428,14 @@ Card:
 - Padding: 20px
 
 Checklist items:
-```jsx
+\`\`\`jsx
 const acceptanceChecklist = [
   { id: 1, label: 'Все работы выполнены', checked: false },
   { id: 2, label: 'Инструмент собран', checked: false },
   { id: 3, label: 'Площадка убрана', checked: false },
   { id: 4, label: 'Нет замечаний по качеству', checked: false }
 ];
-```
+\`\`\`
 
 CHECKLIST ITEM:
 - Display: flex, gap: 12px, align-items: center
@@ -571,14 +571,14 @@ Border-top: 1px solid rgba(255, 255, 255, 0.08)
 Z-index: 10
 
 Nav items (flex, justify: space-around):
-```jsx
+\`\`\`jsx
 const navItems = [
   { id: 'shifts', icon: 'Calendar', label: 'Смены' },
   { id: 'crew', icon: 'Users', label: 'Бригада', active: true },
   { id: 'earnings', icon: 'Wallet', label: 'Заработок' },
   { id: 'profile', icon: 'User', label: 'Профиль' }
 ];
-```
+\`\`\`
 
 Nav item:
 - Display: flex, flex-direction: column, align-items: center, gap: 4px
@@ -624,7 +624,7 @@ INTERACTIVE BEHAVIOR
 STATE MANAGEMENT
 ═══════════════════════════════════════
 
-```jsx
+\`\`\`jsx
 const [dashboardData, setDashboardData] = useState({
   shef: {
     name: 'Игорь Петров',
@@ -654,7 +654,7 @@ const allChecked = acceptance.checklist.every(item => item.checked);
 
 // Workers on site count
 const workersOnSite = crew.filter(w => w.status === 'on_site').length;
-```
+\`\`\`
 
 ═══════════════════════════════════════
 TECHNICAL REQUIREMENTS
@@ -723,7 +723,7 @@ INFORMATION HIERARCHY:
 3. Quick actions (common tasks)
 4. Acceptance workflow (critical gate)
 5. Stats (performance tracking)
-```
+\`\`\`
 
 ---
 

@@ -5,7 +5,7 @@ export function HeroCard() {
     <div className="mb-10 rounded-3xl overflow-hidden relative aspect-video shadow-sm">
       {/* Photo */}
       <img
-        src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=500&h=310&fit=crop"
+        src="/hero-construction.svg"
         alt="Construction workers"
         className="w-full h-full object-cover"
         style={{ filter: 'saturate(0.9)' }}

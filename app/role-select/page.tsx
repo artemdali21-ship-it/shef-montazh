@@ -41,7 +41,7 @@ export default function RoleSelectScreen() {
     },
     {
       id: 'worker',
-      icon: '/images/role-wrench.png',
+      icon: '/toolbox-box.png',
       title: 'Исполнитель',
       subtitle: 'Монтажник, декоратор, техник',
       color: '#FFD60A',
@@ -93,7 +93,7 @@ export default function RoleSelectScreen() {
           }}
         />
         <img
-          src="/images/role-wrench.png"
+          src="/toolbox-box.png"
           alt=""
           style={{
             position: 'fixed',

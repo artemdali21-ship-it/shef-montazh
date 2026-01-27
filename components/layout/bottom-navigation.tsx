@@ -15,10 +15,8 @@ export const BottomNavigation: React.FC = () => {
   const pathname = usePathname();
 
   const navItems: NavItem[] = [
-    { icon: Home, label: 'Главная', path: '/' },
-    { icon: Search, label: 'Поиск', path: '/search' },
-    { icon: Plus, label: 'Создать', path: '/create' },
-    { icon: MessageSquare, label: 'Чаты', path: '/messages', badge: 3 },
+    { icon: Home, label: 'Смены', path: '/feed' },
+    { icon: Search, label: 'Заявки', path: '/applications' },
     { icon: User, label: 'Профиль', path: '/profile' }
   ];
 

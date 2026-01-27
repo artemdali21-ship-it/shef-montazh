@@ -71,7 +71,7 @@ export default function ProfileSetupScreen() {
         opacity: 0.15,
         pointerEvents: 'none',
       }}>
-        <img src="/images/tape.png" alt="" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
+        <img src="/images/tape-main.png" alt="" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
       </div>
       <div style={{
         position: 'absolute',

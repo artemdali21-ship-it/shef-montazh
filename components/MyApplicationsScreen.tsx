@@ -241,7 +241,7 @@ export default function MyApplicationsScreen() {
       />
       {/* FLOATING DECORATIVE ELEMENTS */}
       <img
-        src="/images/helmet.png"
+        src="/images/helmet-silver.png"
         alt=""
         style={{
           position: 'fixed',
