@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { ArrowLeft, ExternalLink, FileText, Shield, Info, 
-         Heart, Users, Award, TrendingUp } from 'lucide-react';
+         Heart, Users, Award, TrendingUp, HandshakeIcon, Zap, DollarSign, Code } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { NoisePattern } from '@/components/noise-pattern';
 
@@ -16,9 +16,9 @@ export default function About() {
   ];
 
   const team = [
-    { name: 'Артём Полищук', role: 'Founder & CEO', avatar: 'АП' },
-    { name: 'Никита Галюзов', role: 'Co-Founder', avatar: 'НГ' },
-    { name: 'Команда разработки', role: 'Development Team', avatar: '👨‍💻' }
+    { name: 'Артём Полищук', role: 'Founder & CEO', icon: 'AP', color: '#E85D2F' },
+    { name: 'Никита Галюзов', role: 'Co-Founder', icon: 'НГ', color: '#BFFF00' },
+    { name: 'Команда разработки', role: 'Development Team', icon: 'Code', useIcon: true, color: '#E85D2F' }
   ];
 
   const legalDocs = [
@@ -158,29 +158,32 @@ export default function About() {
                 <div className="space-y-3">
                   {[
                     {
-                      emoji: '🤝',
+                      icon: HandshakeIcon,
                       title: 'Проблема доверия',
                       text: 'Система рейтингов и подтверждений вместо хаоса в чатах'
                     },
                     {
-                      emoji: '💰',
+                      icon: DollarSign,
                       title: 'Прозрачность оплаты',
                       text: 'Честные договорённости без "кидков" и задержек'
                     },
                     {
-                      emoji: '⚡',
+                      icon: Zap,
                       title: 'Скорость подбора',
                       text: 'Найти бригаду за 5 минут вместо 4 часов поиска'
                     }
-                  ].map((item, index) => (
-                    <div key={index} className="bg-white/5 border border-white/10 rounded-xl p-4 flex gap-3">
-                      <div className="text-2xl flex-shrink-0">{item.emoji}</div>
-                      <div>
-                        <h4 className="font-montserrat font-700 text-white mb-1">{item.title}</h4>
-                        <p className="text-sm text-white font-montserrat font-500">{item.text}</p>
+                  ].map((item, index) => {
+                    const Icon = item.icon;
+                    return (
+                      <div key={index} className="bg-white/5 border border-white/10 rounded-xl p-4 flex gap-3">
+                        <Icon className="w-6 h-6 text-[#E85D2F] flex-shrink-0" />
+                        <div>
+                          <h4 className="font-montserrat font-700 text-white mb-1">{item.title}</h4>
+                          <p className="text-sm text-white font-montserrat font-500">{item.text}</p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
@@ -191,10 +194,15 @@ export default function About() {
                 <div className="space-y-3">
                   {team.map((member, index) => (
                     <div key={index} className="bg-white/5 border border-white/10 rounded-xl p-4 flex items-center gap-3">
-                      <div className="w-12 h-12 bg-gradient-to-br from-[#E85D2F] to-[#D94D1F] rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-lg font-montserrat font-800 text-white">
-                          {member.avatar}
-                        </span>
+                      <div className="w-12 h-12 bg-gradient-to-br rounded-full flex items-center justify-center flex-shrink-0"
+                        style={{ backgroundImage: `linear-gradient(135deg, ${member.color} 0%, ${member.color}dd 100%)` }}>
+                        {member.useIcon ? (
+                          <Code className="w-6 h-6 text-white" />
+                        ) : (
+                          <span className="text-lg font-montserrat font-800 text-white">
+                            {member.icon}
+                          </span>
+                        )}
                       </div>
                       <div>
                         <h4 className="font-montserrat font-700 text-white mb-0.5">{member.name}</h4>
@@ -221,7 +229,7 @@ export default function About() {
 
               <div className="text-center pt-4">
                 <p className="text-xs text-white font-montserrat font-500 leading-relaxed">
-                  Сделано с ❤️ в Москве<br />
+                  Сделано с <Heart className="w-4 h-4 text-[#E85D2F] inline" /> в Москве<br />
                   © 2026 ШЕФ-МОНТАЖ. Все права защищены.
                 </p>
               </div>
