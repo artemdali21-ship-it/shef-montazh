@@ -95,16 +95,18 @@ const JobDetailsScreen = () => {
         overflowX: 'hidden',
         position: 'relative',
         zIndex: 10,
-      }} className="px-4 py-6">
+        paddingBottom: '120px',
+      }} className="px-4 pt-6">
         {/* HERO SECTION - ТОЛЬКО ЗДЕСЬ ОРАНЖЕВЫЙ ГРАДИЕНТ */}
         <section
           style={{
             background: 'linear-gradient(135deg, #E85D2F 0%, #D94D1F 100%)',
-            padding: '28px 20px',
-            borderRadius: '0 0 24px 24px',
-            marginBottom: '20px',
+            padding: '24px 20px',
+            borderRadius: '24px',
+            marginBottom: '24px',
             boxShadow: '0 8px 32px rgba(232, 93, 47, 0.3)',
             position: 'relative',
+            zIndex: 1,
           }}
         >
           {/* Badges */}
@@ -195,7 +197,7 @@ const JobDetailsScreen = () => {
         </section>
 
         {/* INFO CARDS */}
-        <section style={{ padding: '0 20px', marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <section style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {infoCards.map((card, idx) => {
             const IconComponent = card.icon
             return (
@@ -282,7 +284,7 @@ const JobDetailsScreen = () => {
         </section>
 
         {/* REQUIREMENTS SECTION */}
-        <section style={{ padding: '0 20px', marginBottom: '20px' }}>
+        <section style={{ marginBottom: '24px' }}>
           <h2
             style={{
               fontSize: '18px',
@@ -335,7 +337,7 @@ const JobDetailsScreen = () => {
         </section>
 
         {/* DESCRIPTION SECTION */}
-        <section style={{ padding: '0 20px', marginBottom: '20px' }}>
+        <section style={{ marginBottom: '24px' }}>
           <h2
             style={{
               fontSize: '18px',
@@ -372,7 +374,7 @@ const JobDetailsScreen = () => {
         </section>
 
         {/* PAYMENT CONDITIONS SECTION */}
-        <section style={{ padding: '0 20px', marginBottom: '20px' }}>
+        <section style={{ marginBottom: '24px' }}>
           <h2
             style={{
               fontSize: '18px',
@@ -424,7 +426,7 @@ const JobDetailsScreen = () => {
         </section>
 
         {/* ESCROW SECTION */}
-        <section style={{ padding: '0 20px', marginBottom: '20px' }}>
+        <section style={{ marginBottom: '32px' }}>
           <h3
             style={{
               fontSize: '17px',
