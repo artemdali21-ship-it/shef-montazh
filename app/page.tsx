@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronRight } from 'lucide-react'
+import Image from 'next/image'
 
 const AsteriskIcon = () => (
   <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -172,11 +173,13 @@ export default function OnboardingScreen() {
             height: '200px',
             boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
           }}>
-            <img
+            <Image
               src={slides[currentSlide].image || "/placeholder.svg"}
               alt={slides[currentSlide].title}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
               style={{ filter: 'brightness(1.05) contrast(1.05)' }}
+              priority
             />
           </div>
 
