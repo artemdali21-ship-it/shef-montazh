@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ArrowLeft } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const NoisePattern = () => (
   <svg
@@ -27,8 +27,16 @@ const NoisePattern = () => (
 
 export default function PhoneVerificationScreen() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const role = searchParams?.get('role') as 'worker' | 'client' | 'shef' | null
   const [code, setCode] = useState(['', '', '', '', '', ''])
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (role) {
+      localStorage.setItem('userRole', role)
+    }
+  }, [role])
 
   const handleCodeChange = (index: number, value: string) => {
     if (value.length > 1) return
@@ -49,7 +57,16 @@ export default function PhoneVerificationScreen() {
 
     setLoading(true)
     setTimeout(() => {
-      router.push('/profile-setup')
+      // Route based on role
+      if (role === 'worker') {
+        router.push('/feed')
+      } else if (role === 'client') {
+        router.push('/dashboard')
+      } else if (role === 'shef') {
+        router.push('/shef-dashboard')
+      } else {
+        router.push('/profile-setup')
+      }
       setLoading(false)
     }, 1500)
   }

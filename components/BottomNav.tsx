@@ -1,14 +1,28 @@
 'use client';
 import { useRouter, usePathname } from 'next/navigation';
 import { Briefcase, FileText, User, LayoutDashboard, Zap } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface BottomNavProps {
-  userType: 'worker' | 'b2b' | 'shef';
+  userType?: 'worker' | 'client' | 'shef';
 }
 
-export function BottomNav({ userType }: BottomNavProps) {
+export function BottomNav({ userType: propsUserType }: BottomNavProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const [userType, setUserType] = useState<'worker' | 'client' | 'shef'>(propsUserType || 'worker');
+
+  useEffect(() => {
+    // Get role from props or localStorage
+    if (propsUserType) {
+      setUserType(propsUserType);
+    } else {
+      const storedRole = localStorage.getItem('userRole') as 'worker' | 'client' | 'shef' | null;
+      if (storedRole) {
+        setUserType(storedRole);
+      }
+    }
+  }, [propsUserType]);
   
   const workerTabs = [
     { icon: Briefcase, label: 'Смены', path: '/feed' },
@@ -16,7 +30,7 @@ export function BottomNav({ userType }: BottomNavProps) {
     { icon: User, label: 'Профиль', path: '/profile' },
   ];
   
-  const b2bTabs = [
+  const clientTabs = [
     { icon: LayoutDashboard, label: 'Панель', path: '/dashboard' },
     { icon: Zap, label: 'Смены', path: '/monitoring' },
     { icon: User, label: 'Профиль', path: '/profile' },
@@ -28,7 +42,7 @@ export function BottomNav({ userType }: BottomNavProps) {
     { icon: User, label: 'Профиль', path: '/profile' },
   ];
   
-  const tabs = userType === 'worker' ? workerTabs : userType === 'b2b' ? b2bTabs : shefTabs;
+  const tabs = userType === 'worker' ? workerTabs : userType === 'client' ? clientTabs : shefTabs;
   
   const isActive = (path: string) => {
     if (path === '/feed') return pathname === '/feed' || pathname === '/';

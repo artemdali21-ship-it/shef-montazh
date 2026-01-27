@@ -90,14 +90,9 @@ export default function RegistrationScreen() {
   const handleSubmit = async () => {
     if (!validateForm()) return
     
-    // Redirect based on user type after registration
-    if (userType === 'worker') {
-      router.push('/feed')
-    } else if (userType === 'client') {
-      router.push('/dashboard')
-    } else if (userType === 'shef') {
-      router.push('/feed')
-    }
+    // Save role and redirect to phone verification with role parameter
+    localStorage.setItem('userRole', userType || 'worker')
+    router.push(`/verify-phone?role=${userType || 'worker'}`)
   }
 
   return (
