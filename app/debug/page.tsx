@@ -63,9 +63,8 @@ export default function DebugPage() {
   const percentage = totalCount > 0 ? Math.round((passedCount / totalCount) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#A0A0A0] via-[#8B8B8B] to-[#7A7A7A] p-6 overflow-y-auto pb-32">
-      {/* Header */}
-      <div className="max-w-4xl mx-auto mb-8">
+    <div className="w-full h-screen overflow-y-auto bg-gradient-to-br from-[#A0A0A0] via-[#8B8B8B] to-[#7A7A7A]">
+      <div className="p-6 pb-32">
         <h1 className="text-3xl font-extrabold text-white mb-2">
           Самодиагностика приложения
         </h1>
@@ -302,6 +301,7 @@ export default function DebugPage() {
           Вернуться на главную
         </a>
       </div>
+    </div>
     </div>
   );
 }
