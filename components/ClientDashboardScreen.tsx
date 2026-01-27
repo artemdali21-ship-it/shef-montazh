@@ -265,7 +265,7 @@ export default function ClientDashboardScreen() {
         </header>
 
         {/* CONTENT */}
-        <div style={{ paddingTop: '80px', paddingBottom: '120px' }}>
+        <div style={{ paddingTop: '80px', paddingBottom: '120px', overflowY: 'auto', maxHeight: 'calc(100vh - 80px)' }}>
           {/* HERO SECTION */}
           <div
             style={{

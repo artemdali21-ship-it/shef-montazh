@@ -212,7 +212,7 @@ export default function ActiveShiftScreen() {
         </header>
 
         {/* CONTENT */}
-        <div style={{ paddingTop: '64px', paddingBottom: '160px' }}>
+        <div style={{ paddingTop: '64px', paddingBottom: '160px', overflowY: 'auto', maxHeight: 'calc(100vh - 64px)' }}>
           {/* STATUS BANNER */}
           <div
             style={{

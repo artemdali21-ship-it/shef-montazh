@@ -244,7 +244,7 @@ export default function ShefDashboardScreen() {
         </header>
 
         {/* CONTENT */}
-        <div style={{ paddingTop: '80px', paddingBottom: '120px', paddingLeft: '20px', paddingRight: '20px' }}>
+        <div style={{ paddingTop: '80px', paddingBottom: '120px', paddingLeft: '20px', paddingRight: '20px', overflowY: 'auto', maxHeight: 'calc(100vh - 80px)' }}>
           {/* ACTIVE SHIFT BANNER */}
           <div
             style={{

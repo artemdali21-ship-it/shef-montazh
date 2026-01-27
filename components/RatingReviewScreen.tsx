@@ -335,7 +335,7 @@ export default function RatingReviewScreen() {
         </div>
 
         {/* CONTENT */}
-        <div style={{ paddingTop: '80px', paddingBottom: '120px' }}>
+        <div style={{ paddingTop: '80px', paddingBottom: '120px', overflowY: 'auto', maxHeight: 'calc(100vh - 80px)' }}>
           {/* SHIFT INFO CARD */}
           <div style={{ padding: '20px' }}>
             <div
