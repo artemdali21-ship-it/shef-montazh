@@ -293,7 +293,7 @@ export default function DebugPage() {
       </div>
 
       {/* Link to main */}
-      <div className="max-w-4xl mx-auto mt-8 text-center">
+      <div className="max-w-4xl mx-auto mt-8 text-center pb-8">
         <a 
           href="/"
           className="inline-block px-8 py-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl font-semibold text-white hover:bg-white/15 transition-all"
@@ -301,7 +301,6 @@ export default function DebugPage() {
           Вернуться на главную
         </a>
       </div>
-    </div>
     </div>
   );
 }
