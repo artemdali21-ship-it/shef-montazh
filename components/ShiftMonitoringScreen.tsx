@@ -25,6 +25,7 @@ import {
 import { useEffect, useState } from 'react';
 import { Header } from './Header';
 import { BottomNav } from './BottomNav';
+import { WorkerStatusList } from './monitoring/WorkerStatusList';
 
 export default function ShiftMonitoringScreen() {
   const router = useRouter()
@@ -42,40 +43,38 @@ export default function ShiftMonitoringScreen() {
 
   const workers = [
     {
-      id: 1,
+      id: '1',
       name: 'Никита Соколов',
-      role: 'Монтажник',
-      status: 'on_site',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=1',
+      status: 'checked_in' as const,
       checkInTime: '18:05',
-      rating: 4.9,
-      shiftCount: 47,
+      checkInPhoto: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=300&fit=crop',
+      lateMinutes: 0,
     },
     {
-      id: 2,
+      id: '2',
       name: 'Игорь Петров',
-      role: 'Шеф-монтажник',
-      status: 'on_site',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=2',
+      status: 'checked_in' as const,
       checkInTime: '17:58',
-      rating: 4.8,
-      shiftCount: 132,
+      checkInPhoto: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=300&fit=crop',
+      lateMinutes: 0,
     },
     {
-      id: 3,
+      id: '3',
       name: 'Алексей Морозов',
-      role: 'Монтажник',
-      status: 'on_site',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=3',
+      status: 'checked_in' as const,
       checkInTime: '18:12',
-      rating: 4.7,
-      shiftCount: 28,
+      checkInPhoto: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=300&fit=crop',
+      lateMinutes: 0,
     },
     {
-      id: 4,
+      id: '4',
       name: 'Дмитрий Волков',
-      role: 'Монтажник',
-      status: 'pending',
-      checkInTime: null,
-      rating: 4.6,
-      shiftCount: 19,
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=4',
+      status: 'on_way' as const,
+      lateMinutes: 15,
     },
   ];
 
@@ -594,210 +593,7 @@ export default function ShiftMonitoringScreen() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {workers.map((worker) => (
-              <div
-                key={worker.id}
-                style={{
-                  background: 'rgba(169, 169, 169, 0.2)',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '14px',
-                  padding: '16px',
-                  display: 'flex',
-                  gap: '14px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  position: 'relative',
-                  overflow: 'hidden',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(169, 169, 169, 0.3)';
-                  e.currentTarget.style.transform = 'translateX(2px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(169, 169, 169, 0.2)';
-                  e.currentTarget.style.transform = 'translateX(0)';
-                }}
-              >
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    top: 0,
-                    bottom: 0,
-                    width: '4px',
-                    background: getStatusColor(worker.status),
-                    borderRadius: '14px 0 0 14px',
-                  }}
-                />
-
-                <div
-                  style={{
-                    width: '56px',
-                    height: '56px',
-                    borderRadius: '50%',
-                    background: 'rgba(232, 93, 47, 0.2)',
-                    border: '2px solid rgba(255, 255, 255, 0.1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'relative',
-                    flexShrink: 0,
-                  }}
-                >
-                  <User size={28} color="#E85D2F" />
-                  <div
-                    style={{
-                      position: 'absolute',
-                      bottom: '-2px',
-                      right: '-2px',
-                      width: '20px',
-                      height: '20px',
-                      borderRadius: '50%',
-                      background: getStatusColor(worker.status),
-                      border: '2px solid #2A2A2A',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    {getStatusIcon(worker.status)}
-                  </div>
-                </div>
-
-                <div style={{ flex: 1 }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                      marginBottom: '6px',
-                    }}
-                  >
-                    <h4
-                      style={{
-                        fontFamily: "'Montserrat', sans-serif",
-                        fontWeight: 700,
-                        fontSize: '15px',
-                        color: '#FFFFFF',
-                      }}
-                    >
-                      {worker.name}
-                    </h4>
-                    <button
-                      style={{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '8px',
-                        background: 'rgba(255, 255, 255, 0.08)',
-                        border: 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <MessageCircle size={16} color="#FFFFFF" />
-                    </button>
-                  </div>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '8px',
-                      alignItems: 'center',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: "'Montserrat', sans-serif",
-                        fontWeight: 500,
-                        fontSize: '12px',
-                        color: '#FFFFFF',
-                      }}
-                    >
-                      {worker.role}
-                    </span>
-                    <span style={{ color: '#FFFFFF' }}>•</span>
-                    <div
-                      style={{
-                        display: 'flex',
-                        gap: '3px',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Star size={12} fill="#FFD60A" color="#FFD60A" />
-                      <span
-                        style={{
-                          fontFamily: "'Montserrat', sans-serif",
-                          fontWeight: 600,
-                          fontSize: '12px',
-                          color: '#FFD60A',
-                        }}
-                      >
-                        {worker.rating}
-                      </span>
-                    </div>
-                    <span
-                      style={{
-                        fontFamily: "'Montserrat', sans-serif",
-                        fontWeight: 500,
-                        fontSize: '12px',
-                        color: '#FFFFFF',
-                      }}
-                    >
-                      • {worker.shiftCount} смен
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '8px',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'inline-flex',
-                        gap: '5px',
-                        alignItems: 'center',
-                        padding: '5px 10px',
-                        borderRadius: '6px',
-                        background: getStatusBgColor(worker.status),
-                        border: `1px solid ${getStatusColor(worker.status)}`,
-                        fontFamily: "'Montserrat', sans-serif",
-                        fontWeight: 700,
-                        fontSize: '10px',
-                        color: getStatusColor(worker.status),
-                        letterSpacing: '0.5px',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      <MapPin size={10} />
-                      {worker.status === 'on_site' && 'НА ОБЪЕКТЕ'}
-                      {worker.status === 'pending' && 'ОЖИДАЕТ'}
-                    </div>
-                    {worker.status === 'on_site' && (
-                      <span
-                        style={{
-                          fontFamily: "'Montserrat', sans-serif",
-                          fontWeight: 500,
-                          fontSize: '11px',
-                          color: '#FFFFFF',
-                          display: 'flex',
-                          gap: '4px',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <Check size={10} /> Вышел в {worker.checkInTime}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
+            <WorkerStatusList workers={workers} shiftStartTime={shiftData.startTime} />
           </div>
         </div>
 
