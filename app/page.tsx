@@ -45,12 +45,12 @@ export default function OnboardingScreen() {
     {
       title: 'Гарантия выполнения работ',
       subtitle: 'Система штрафов за срывы смен',
-      image: '/images/helmets-3-hard-hats.png',
+      image: '/helmet333.png',
     },
     {
       title: 'Быстрая оплата и поддержка',
       subtitle: 'Рассчитываемся в день завершения работ',
-      image: '/images/helmets-3-hard-hats.png',
+      image: '/helmet333.png',
     },
   ]
 
