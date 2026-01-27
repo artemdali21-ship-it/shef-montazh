@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ArrowLeft, Phone, Mail, User, Eye, EyeOff, Shield } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const NoisePattern = () => (
   <svg
@@ -27,8 +27,11 @@ const NoisePattern = () => (
 
 export default function RegistrationScreen() {
   const router = useRouter()
-  const [step, setStep] = useState(1)
-  const [userType, setUserType] = useState<'worker' | 'client' | 'shef' | null>(null)
+  const searchParams = useSearchParams()
+  const roleFromQuery = searchParams?.get('role') as 'worker' | 'client' | 'shef' | null
+  
+  const [step, setStep] = useState(roleFromQuery ? 2 : 1)
+  const [userType, setUserType] = useState<'worker' | 'client' | 'shef' | null>(roleFromQuery || null)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
@@ -39,6 +42,14 @@ export default function RegistrationScreen() {
     confirmPassword: '',
   })
   const [errors, setErrors] = useState<any>({})
+
+  useEffect(() => {
+    if (roleFromQuery) {
+      setUserType(roleFromQuery)
+      localStorage.setItem('userRole', roleFromQuery)
+      setStep(2)
+    }
+  }, [roleFromQuery])
 
   const validatePhone = (phone: string) => {
     const phoneRegex = /^(\+7|8)?[\s-]?\(?[0-9]{3}\)?[\s-]?[0-9]{3}[\s-]?[0-9]{2}[\s-]?[0-9]{2}$/
@@ -78,7 +89,15 @@ export default function RegistrationScreen() {
 
   const handleSubmit = async () => {
     if (!validateForm()) return
-    router.push('/verify-phone')
+    
+    // Redirect based on user type after registration
+    if (userType === 'worker') {
+      router.push('/feed')
+    } else if (userType === 'client') {
+      router.push('/dashboard')
+    } else if (userType === 'shef') {
+      router.push('/feed')
+    }
   }
 
   return (
@@ -141,64 +160,7 @@ export default function RegistrationScreen() {
         zIndex: 10,
       }} className="px-4 py-6">
         <div className="max-w-md mx-auto pb-32">
-          {step === 1 && (
-            <div className="space-y-6">
-              <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Кто вы?</h1>
-                <p className="text-[#9B9B9B] font-medium">Выберите роль, чтобы мы настроили интерфейс под вас</p>
-              </div>
-
-              <div className="space-y-3">
-                {[
-                  {
-                    type: 'worker',
-                    icon: User,
-                    title: 'Я монтажник',
-                    description: 'Ищу смены и зарабатываю',
-                    color: '#BFFF00',
-                  },
-                  {
-                    type: 'client',
-                    icon: Shield,
-                    title: 'Я заказчик',
-                    description: 'Ищу проверенных исполнителей',
-                    color: '#E85D2F',
-                  },
-                  {
-                    type: 'shef',
-                    icon: Shield,
-                    title: 'Я шеф-монтажник',
-                    description: 'Координирую бригады',
-                    color: '#FFD60A',
-                  },
-                ].map((option) => {
-                  const Icon = option.icon
-                  return (
-                    <button
-                      key={option.type}
-                      onClick={() => {
-                        setUserType(option.type as any)
-                        setStep(2)
-                      }}
-                      className={`w-full p-5 rounded-xl border-2 transition-all ${
-                        userType === option.type ? 'bg-white/10 border-[#E85D2F]' : 'bg-white/5 border-white/10 hover:border-white/20'
-                      }`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${option.color}20` }}>
-                          <Icon className="w-7 h-7" style={{ color: option.color }} />
-                        </div>
-                        <div className="flex-1 text-left">
-                          <h3 className="font-bold text-white mb-1">{option.title}</h3>
-                          <p className="text-sm text-[#9B9B9B] font-medium">{option.description}</p>
-                        </div>
-                      </div>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
+          {/* SKIP ROLE SELECTION IF PROVIDED VIA QUERY PARAMS - ONLY SHOW FORM */}
           {step === 2 && (
             <div className="space-y-6">
               <div>
