@@ -92,7 +92,7 @@ export default function OnboardingScreen() {
       {/* FLOATING 3D ELEMENTS */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <img
-          src="/images/tape-2.png"
+          src="/images/drill.png"
           alt=""
           style={{
             position: 'fixed',
@@ -100,7 +100,7 @@ export default function OnboardingScreen() {
             right: '5%',
             width: '128px',
             height: 'auto',
-            opacity: 0.15,
+            opacity: 0.45,
             transform: 'rotate(12deg)',
             zIndex: 1,
             pointerEvents: 'none',
@@ -117,10 +117,10 @@ export default function OnboardingScreen() {
             bottom: '30%',
             left: '5%',
             transform: 'rotate(20deg)',
-            opacity: 0.35,
+            opacity: 0.55,
             zIndex: 5,
             animation: 'float 6s ease-in-out infinite 1s',
-            filter: 'drop-shadow(0 4px 12px rgba(255, 214, 10, 0.15))',
+            filter: 'drop-shadow(0 4px 12px rgba(255, 214, 10, 0.25))',
           }}
         />
         <img
@@ -133,7 +133,7 @@ export default function OnboardingScreen() {
             bottom: '12%',
             right: '5%',
             transform: 'rotate(-30deg)',
-            opacity: 0.5,
+            opacity: 0.65,
             animation: 'float 6s ease-in-out infinite 0.3s',
           }}
         />

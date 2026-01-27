@@ -77,7 +77,7 @@ export default function RoleSelectScreen() {
       {/* FLOATING 3D ELEMENTS */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <img
-          src="/images/role-helmet.png"
+          src="/images/wrench.png"
           alt=""
           style={{
             position: 'fixed',
@@ -85,7 +85,7 @@ export default function RoleSelectScreen() {
             right: '6%',
             width: '160px',
             height: 'auto',
-            opacity: 0.25,
+            opacity: 0.5,
             zIndex: 1,
             pointerEvents: 'none',
             animation: 'float 7s ease-in-out infinite',
@@ -93,7 +93,7 @@ export default function RoleSelectScreen() {
           }}
         />
         <img
-          src="/toolbox-box.png"
+          src="/images/drill.png"
           alt=""
           style={{
             position: 'fixed',
@@ -101,16 +101,16 @@ export default function RoleSelectScreen() {
             left: '8%',
             width: '120px',
             height: 'auto',
-            opacity: 0.2,
+            opacity: 0.55,
             transform: 'rotate(-25deg)',
             zIndex: 0,
             pointerEvents: 'none',
             animation: 'float 8s ease-in-out infinite 0.5s',
-            filter: 'drop-shadow(0 10px 30px rgba(255, 214, 10, 0.15))',
+            filter: 'drop-shadow(0 10px 30px rgba(255, 214, 10, 0.25))',
           }}
         />
         <img
-          src="/images/role-building.png"
+          src="/images/pliers.png"
           alt=""
           style={{
             position: 'fixed',
@@ -118,12 +118,12 @@ export default function RoleSelectScreen() {
             right: '10%',
             width: '140px',
             height: 'auto',
-            opacity: 0.15,
+            opacity: 0.6,
             transform: 'translateY(-50%)',
             zIndex: 0,
             pointerEvents: 'none',
             animation: 'float 9s ease-in-out infinite 1s',
-            filter: 'drop-shadow(0 10px 30px rgba(232, 93, 47, 0.15))',
+            filter: 'drop-shadow(0 10px 30px rgba(232, 93, 47, 0.25))',
           }}
         />
       </div>

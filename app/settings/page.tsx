@@ -171,7 +171,6 @@ export default function Settings() {
       {/* DECORATIVE ELEMENTS */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
         <img src="/images/bolts.png" className="absolute top-10 right-10 w-20 h-20" alt="" />
-        <img src="/images/carabiner.png" className="absolute bottom-20 left-10 w-16 h-16 opacity-50" alt="" />
       </div>
 
       <NoisePattern />

@@ -12,11 +12,11 @@ export const images = {
   roleWrench: '/images/wrench.png',
 
   // Floating 3D elements
-  carabiner: '/images/carabiner.png',
   bolts: '/images/bolts.png',
-  cablCoil: '/images/cable-coil.png',
   chain: '/images/chain.png',
   wrench: '/images/wrench.png',
+  drill: '/images/drill.png',
+  pliers: '/images/pliers.png',
 
   // Header helmet for job feed
   headerHelmet: '/images/helmet.png',

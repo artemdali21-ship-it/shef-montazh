@@ -173,6 +173,23 @@ export default function ProfileScreen() {
           animation: 'float 6s ease-in-out infinite',
         }}
       />
+      {/* HELMET - Profile only */}
+      <img
+        src="/images/helmet.png"
+        alt=""
+        style={{
+          position: 'fixed',
+          bottom: '15%',
+          left: '5%',
+          width: '140px',
+          height: 'auto',
+          opacity: 0.65,
+          transform: 'rotate(-15deg)',
+          zIndex: 1,
+          pointerEvents: 'none',
+          animation: 'float 8s ease-in-out infinite 0.7s',
+        }}
+      />
       <div style={{ position: 'relative', zIndex: 2 }}>
         {/* HEADER */}
         <header
@@ -804,6 +821,13 @@ export default function ProfileScreen() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(var(--rotate, 0deg)); }
+          50% { transform: translateY(-20px) rotate(var(--rotate, 0deg)); }
+        }
+      `}</style>
     </div>
   )
 }
