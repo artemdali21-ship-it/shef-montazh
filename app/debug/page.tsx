@@ -21,10 +21,10 @@ export default function DebugPage() {
   ];
 
   const images = [
-    'toolbox.png', 'helmet-silver.png', 'building.png',
+    'toolbox-box.png', 'helmet-silver.png', 'building.png',
     'carabiner.png', 'wrench.png', 'tape-2.png',
     'bolts.png', 'chain.png', 'cable-coil.png',
-    'helmets-3-hard-hats.png'
+    'helmet333.png'
   ];
 
   // Проверка изображений
@@ -35,7 +35,7 @@ export default function DebugPage() {
         const image = new Image();
         image.onload = () => resolve({ name: img, loaded: true });
         image.onerror = () => resolve({ name: img, loaded: false });
-        image.src = `/images/${img}`;
+        image.src = `/${img}`;
       });
       imgResults.push(result);
     }
@@ -72,10 +72,14 @@ export default function DebugPage() {
             rounded: false
           };
 
-          // Фон
-          const bodyBg = window.getComputedStyle(body).background || '';
-          const htmlBg = window.getComputedStyle(html).background || '';
-          checks.background = bodyBg.includes('139') || htmlBg.includes('139') || bodyBg.includes('8B8B8B');
+          // Фон - проверка наличия цвета #8B8B8B или gradient-bg
+          const bodyBg = window.getComputedStyle(body).backgroundImage || '';
+          const htmlBg = window.getComputedStyle(html).backgroundImage || '';
+          const bodyStyle = body.getAttribute('style') || '';
+          const htmlStyle = html.getAttribute('style') || '';
+          checks.background = bodyBg.includes('gradient') || htmlBg.includes('gradient') || 
+                            bodyStyle.includes('gradient') || htmlStyle.includes('gradient') ||
+                            bodyBg.includes('8B8B8B') || htmlBg.includes('8B8B8B');
 
           // Glassmorphism
           checks.glassmorphism = doc.querySelectorAll('[class*="backdrop-blur"]').length > 0;
