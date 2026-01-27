@@ -2,6 +2,7 @@
 import React from 'react';
 import { Clock, MapPin, Users, DollarSign, AlertCircle } from 'lucide-react';
 import { CustomBadge } from '../custom/custom-badge';
+import { StarRating } from '../rating/StarRating';
 
 export type ShiftStatus = 'upcoming' | 'active' | 'completed' | 'cancelled';
 
@@ -9,6 +10,8 @@ interface ShiftCardProps {
   id: string;
   title: string;
   client: string;
+  clientRating?: number;
+  clientReviewCount?: number;
   location: string;
   date: string;
   time: string;
@@ -32,6 +35,8 @@ const statusConfig: Record<ShiftStatus, { label: string; color: string }> = {
 export const ShiftCard: React.FC<ShiftCardProps> = ({
   title,
   client,
+  clientRating,
+  clientReviewCount,
   location,
   date,
   time,
@@ -71,6 +76,17 @@ export const ShiftCard: React.FC<ShiftCardProps> = ({
           <p className="text-sm text-[#9B9B9B] font-montserrat font-500 mb-1">
             {client}
           </p>
+          
+          {clientRating !== undefined && (
+            <div className="mb-2">
+              <StarRating 
+                rating={clientRating} 
+                reviewCount={clientReviewCount}
+                size="sm"
+                showNumber={true}
+              />
+            </div>
+          )}
           
           <CustomBadge variant="default" size="sm">
             {category}
