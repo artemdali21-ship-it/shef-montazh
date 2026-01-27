@@ -41,6 +41,26 @@ export const metadata: Metadata = {
     ],
     apple: '/apple-icon.png',
   },
+  openGraph: {
+    title: 'ШЕФ-МОНТАЖ',
+    description: 'Маркетплейс монтажников для мероприятий',
+    url: 'https://v0-sh-ef-montaz-h.vercel.app',
+    type: 'website',
+    images: [
+      {
+        url: 'https://v0-sh-ef-montaz-h.vercel.app/images/helmets-3-hard-hats.png',
+        width: 1200,
+        height: 630,
+        alt: 'ШЕФ-МОНТАЖ',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ШЕФ-МОНТАЖ',
+    description: 'Маркетплейс монтажников для мероприятий',
+    images: ['https://v0-sh-ef-montaz-h.vercel.app/images/helmets-3-hard-hats.png'],
+  },
 }
 
 export default function RootLayout({
