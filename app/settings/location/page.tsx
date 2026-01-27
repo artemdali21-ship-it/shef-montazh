@@ -59,13 +59,18 @@ export default function LocationSettings() {
 
   return (
     <div style={{
-      minHeight: '100vh',
+      height: '100vh',
       backgroundImage: 'url(/images/bg-dashboard.jpg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundAttachment: 'fixed',
-      position: 'relative',
-      overflow: 'hidden',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      display: 'flex',
+      flexDirection: 'column',
       paddingBottom: 96,
     }}>
       <NoisePattern />

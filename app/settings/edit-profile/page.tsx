@@ -70,14 +70,18 @@ export default function EditProfile() {
 
   return (
     <div style={{
-      minHeight: '100vh',
+      height: '100vh',
       backgroundImage: 'url(/images/bg-dashboard.jpg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundAttachment: 'fixed',
-      position: 'relative',
-      overflow: 'hidden',
-      paddingBottom: 96,
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      display: 'flex',
+      flexDirection: 'column',
     }}>
       <NoisePattern />
 
@@ -119,13 +123,13 @@ export default function EditProfile() {
 
       <div className="relative z-10">
         <header style={{
-          position: 'sticky',
-          top: 0,
+          position: 'relative',
           background: 'rgba(42, 42, 42, 0.6)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
           zIndex: 20,
+          flexShrink: 0,
         }}>
           <div className="h-16 flex items-center justify-between px-4">
             <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
@@ -144,7 +148,14 @@ export default function EditProfile() {
           </div>
         </header>
 
-        <div className="px-4 py-6 space-y-6">
+      <div style={{
+        flex: 1,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        position: 'relative',
+        zIndex: 10,
+      }} className="px-4 py-6">
+        <div className="max-w-4xl mx-auto pb-32">
           {/* Avatar Section */}
           <div>
             <h3 className="text-xs font-montserrat font-700 text-white uppercase tracking-wider mb-3 px-1">
