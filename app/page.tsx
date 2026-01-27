@@ -104,7 +104,7 @@ export default function OnboardingScreen() {
             width: '80px',
             height: 'auto',
             bottom: '55%',
-            right: '8%',
+            left: '8%',
             transform: 'rotate(25deg)',
             opacity: 0.55,
             animation: 'float 5s ease-in-out infinite 0.5s',
@@ -172,14 +172,17 @@ export default function OnboardingScreen() {
           <div className="relative rounded-2xl overflow-hidden mb-6 shadow-lg flex-shrink-0" style={{
             height: '200px',
             boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+            backgroundColor: '#333333',
           }}>
-            <Image
+            <img
               src={slides[currentSlide].image || "/placeholder.svg"}
               alt={slides[currentSlide].title}
-              fill
-              className="object-cover"
+              className="w-full h-full object-cover"
               style={{ filter: 'brightness(1.05) contrast(1.05)' }}
-              priority
+              crossOrigin="anonymous"
+              onError={(e) => {
+                e.currentTarget.src = '/placeholder.svg'
+              }}
             />
           </div>
 
