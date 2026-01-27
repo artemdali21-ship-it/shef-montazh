@@ -40,17 +40,17 @@ export default function OnboardingScreen() {
     {
       title: 'Найди проверенного монтажника',
       subtitle: 'Смотри рейтинг, отзывы и опыт',
-      image: '/images/img-2922.png',
+      image: '/images/d0-9a-d0-b0-d1-81-d0-ba-d0-b8-203-d1-88-d1-82.png',
     },
     {
       title: 'Гарантия выполнения работ',
       subtitle: 'Система штрафов за срывы смен',
-      image: '/images/img-2922.png',
+      image: '/images/d0-9a-d0-b0-d1-81-d0-ba-d0-b8-203-d1-88-d1-82.png',
     },
     {
       title: 'Быстрая оплата и поддержка',
       subtitle: 'Рассчитываемся в день завершения работ',
-      image: '/images/img-2922.png',
+      image: '/images/d0-9a-d0-b0-d1-81-d0-ba-d0-b8-203-d1-88-d1-82.png',
     },
   ]
 
@@ -101,13 +101,15 @@ export default function OnboardingScreen() {
           alt=""
           className="absolute"
           style={{
-            width: '80px',
+            width: '100px',
             height: 'auto',
-            bottom: '55%',
-            left: '8%',
-            transform: 'rotate(25deg)',
-            opacity: 0.55,
+            bottom: '15%',
+            right: '6%',
+            transform: 'rotate(-15deg)',
+            opacity: 0.65,
+            zIndex: 50,
             animation: 'float 5s ease-in-out infinite 0.5s',
+            filter: 'drop-shadow(0 8px 24px rgba(255, 214, 10, 0.3))',
           }}
         />
         <img
