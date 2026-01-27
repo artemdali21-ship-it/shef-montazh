@@ -277,8 +277,8 @@ export default function ClientDashboardScreen() {
               minHeight: '200px',
             }}
           >
-            {/* 3D Hard Hat Decoration */}
-            <div
+            {/* 3D Hard Hat Decoration - HIDDEN for Telegram Mini App */}
+            {/* <div
               style={{
                 position: 'absolute',
                 top: '-20px',
@@ -288,7 +288,7 @@ export default function ClientDashboardScreen() {
               }}
             >
               <HardHat size={180} color="#E85D2F" />
-            </div>
+            </div> */}
 
             {/* Content */}
             <div style={{ position: 'relative', zIndex: 2 }}>

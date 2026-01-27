@@ -1055,8 +1055,6 @@ export default function CreateShiftScreen() {
               {/* Live Calculation Card */}
               <div
                 style={{
-                  position: 'sticky',
-                  bottom: '80px',
                   marginLeft: '-20px',
                   marginRight: '-20px',
                   marginBottom: '20px',
