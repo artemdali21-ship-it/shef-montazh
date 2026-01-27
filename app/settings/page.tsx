@@ -176,16 +176,8 @@ export default function Settings() {
 
       <NoisePattern />
 
-      <div className="relative z-10 pb-24 flex flex-col h-full overflow-y-auto">
-        {/* Header */}
-        <header className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-md border-b border-white/10 z-20">
-          <div className="h-16 flex items-center justify-between px-4">
-            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
-              <ArrowLeft className="w-5 h-5 text-white" strokeWidth={1.5} />
-            </button>
-            <h1 className="font-montserrat font-700 text-xl text-white">Настройки</h1>
-            <div className="w-10"></div>
-          </div>
+      {/* 3D decorative elements - HIDDEN FOR TELEGRAM MINI APP */}
+      {/* Removed to prevent overflow issues in Telegram Mini App */}
         </header>
 
         {/* Profile Card */}

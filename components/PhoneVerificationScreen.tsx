@@ -59,7 +59,7 @@ export default function PhoneVerificationScreen() {
     setTimeout(() => {
       // Route based on role
       if (role === 'worker') {
-        router.push('/feed')
+        router.push('/worker-categories')
       } else if (role === 'client') {
         router.push('/dashboard')
       } else if (role === 'shef') {
