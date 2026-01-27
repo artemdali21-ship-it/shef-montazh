@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { MapPin, Clock, Wrench, TrendingUp, ChevronRight } from 'lucide-react';
+import { MapPin, Clock, Wrench, TrendingUp, ChevronRight, Star } from 'lucide-react';
 import { CustomAvatar } from '../custom/custom-avatar';
 import { CustomBadge } from '../custom/custom-badge';
 
@@ -79,7 +79,7 @@ export const JobCard: React.FC<JobCardProps> = ({
                 {client.name}
               </p>
               <div className="flex items-center gap-1">
-                <span className="text-sm text-[#FFD60A]">★</span>
+                <Star className="w-4 h-4 text-[#FFD60A] fill-[#FFD60A]" strokeWidth={1.5} />
                 <span className="text-sm text-white font-montserrat font-600">
                   {client.rating.toFixed(1)}
                 </span>
