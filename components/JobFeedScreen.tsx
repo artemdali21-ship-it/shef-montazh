@@ -90,7 +90,7 @@ export default function JobFeedScreen() {
 
   return (
     <div
-      className="w-full min-h-screen flex flex-col"
+      className="w-full h-screen flex flex-col"
       style={{
         backgroundImage: 'url(/images/gradient-bg.png)',
         backgroundSize: 'cover',
@@ -108,7 +108,7 @@ export default function JobFeedScreen() {
       <Header title="Лента смен" showBack={false} showNotifications={true} />
 
       {/* JOB CARDS FEED */}
-      <div className="flex-1 overflow-y-auto pt-24 pb-24 px-5 font-sans">
+      <div className="flex-1 overflow-y-auto pt-24 pb-32 px-5 font-sans">
         <div className="flex flex-col gap-4">
           {filteredJobs.length > 0 ? (
             filteredJobs.map((job) => (
