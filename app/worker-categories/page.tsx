@@ -41,7 +41,6 @@ export default function WorkerCategoriesPage() {
       backgroundPosition: 'center',
       backgroundColor: '#0F172A',
       position: 'relative',
-      overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
     }}>
