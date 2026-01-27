@@ -61,7 +61,8 @@ export function BottomNav({ userType }: BottomNavProps) {
               }}
             >
               <Icon 
-                className="w-6 h-6" 
+                className="w-5 h-5"
+                strokeWidth={1.5}
                 style={{ color: active ? '#E85D2F' : 'rgba(255, 255, 255, 0.6)' }}
               />
               <span

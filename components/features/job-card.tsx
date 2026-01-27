@@ -88,7 +88,7 @@ export const JobCard: React.FC<JobCardProps> = ({
           </div>
         </div>
 
-        <ChevronRight className="w-5 h-5 text-[#6B6B6B] flex-shrink-0" />
+        <ChevronRight className="w-5 h-5 text-[#6B6B6B] flex-shrink-0" strokeWidth={1.5} />
       </div>
 
       {/* Badges */}
@@ -97,7 +97,7 @@ export const JobCard: React.FC<JobCardProps> = ({
         
         {toolsRequired && (
           <CustomBadge variant="info" size="sm">
-            <Wrench className="w-3 h-3 mr-1" />
+            <Wrench className="w-4 h-4 mr-1" strokeWidth={1.5} />
             Свой инструмент
           </CustomBadge>
         )}
@@ -108,7 +108,7 @@ export const JobCard: React.FC<JobCardProps> = ({
         
         {premium && (
           <CustomBadge variant="warning" size="sm">
-            <TrendingUp className="w-3 h-3 mr-1" />
+            <TrendingUp className="w-4 h-4 mr-1" strokeWidth={1.5} />
             VIP
           </CustomBadge>
         )}
@@ -121,14 +121,14 @@ export const JobCard: React.FC<JobCardProps> = ({
       {/* Info Grid */}
       <div className="grid grid-cols-2 gap-3 mb-3 pb-3 border-b border-white/10">
         <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-[#9B9B9B]" />
+          <MapPin className="w-4 h-4 text-[#9B9B9B]" strokeWidth={1.5} />
           <span className="text-sm text-white font-montserrat font-500 truncate">
             {location}
           </span>
         </div>
         
         <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-[#9B9B9B]" />
+          <Clock className="w-4 h-4 text-[#9B9B9B]" strokeWidth={1.5} />
           <span className="text-sm text-white font-montserrat font-500">
             {duration}
           </span>

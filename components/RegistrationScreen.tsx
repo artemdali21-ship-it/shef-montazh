@@ -143,7 +143,7 @@ export default function RegistrationScreen() {
           onClick={() => (step === 1 ? router.back() : setStep(1))}
           className="w-10 h-10 flex items-center justify-center"
         >
-          <ArrowLeft className="w-5 h-5 text-white" />
+          <ArrowLeft className="w-5 h-5 text-white" strokeWidth={1.5} />
         </button>
         <div className="flex items-center gap-2">
           <div className={`h-1 w-8 rounded-full ${step >= 1 ? 'bg-[#E85D2F]' : 'bg-white/20'}`}></div>
@@ -212,7 +212,7 @@ export default function RegistrationScreen() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white/50 hover:text-white/70 transition-colors"
                   >
-                    {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                    {showPassword ? <Eye className="w-5 h-5" strokeWidth={1.5} /> : <EyeOff className="w-5 h-5" strokeWidth={1.5} />}
                   </button>
                 </div>
                 <div className="relative">
@@ -228,7 +228,7 @@ export default function RegistrationScreen() {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white/50 hover:text-white/70 transition-colors"
                   >
-                    {showConfirmPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                    {showConfirmPassword ? <Eye className="w-5 h-5" strokeWidth={1.5} /> : <EyeOff className="w-5 h-5" strokeWidth={1.5} />}
                   </button>
                 </div>
               </div>

@@ -81,7 +81,7 @@ export const ShiftCard: React.FC<ShiftCardProps> = ({
       {/* Alert for check-in */}
       {isUrgent && (
         <div className="bg-[#FFD60A]/10 border border-[#FFD60A]/30 rounded-lg p-3 mb-3 flex items-start gap-2">
-          <AlertCircle className="w-4 h-4 text-[#FFD60A] flex-shrink-0 mt-0.5" />
+          <AlertCircle className="w-4 h-4 text-[#FFD60A] flex-shrink-0 mt-0.5" strokeWidth={1.5} />
           <p className="text-xs text-[#FFD60A] font-montserrat font-600">
             Требуется check-in через {time.split(':')[0]}ч {time.split(':')[1]}м
           </p>
@@ -91,7 +91,7 @@ export const ShiftCard: React.FC<ShiftCardProps> = ({
       {/* Info Grid */}
       <div className="space-y-2 mb-3">
         <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-[#9B9B9B]" />
+          <MapPin className="w-4 h-4 text-[#9B9B9B]" strokeWidth={1.5} />
           <span className="text-sm text-white font-montserrat font-500 truncate">
             {location}
           </span>

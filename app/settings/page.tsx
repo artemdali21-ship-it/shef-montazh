@@ -177,7 +177,7 @@ export default function Settings() {
         <header className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-md border-b border-white/10 z-20">
           <div className="h-16 flex items-center justify-between px-4">
             <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
-              <ArrowLeft className="w-5 h-5 text-white" />
+              <ArrowLeft className="w-5 h-5 text-white" strokeWidth={1.5} />
             </button>
             <h1 className="font-montserrat font-700 text-xl text-white">Настройки</h1>
             <div className="w-10"></div>
@@ -203,7 +203,7 @@ export default function Settings() {
                   )}
                 </div>
                 <button className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#BFFF00] rounded-full flex items-center justify-center border-2 border-[#2A2A2A]">
-                  <Camera className="w-4 h-4 text-black" />
+                  <Camera className="w-4 h-4 text-black" strokeWidth={1.5} />
                 </button>
               </div>
 
@@ -267,7 +267,7 @@ export default function Settings() {
                     >
                       {/* Icon */}
                       <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Icon className="w-5 h-5 text-[#E85D2F]" />
+                        <Icon className="w-5 h-5 text-[#E85D2F]" strokeWidth={1.5} />
                       </div>
 
                       {/* Text */}
@@ -284,7 +284,7 @@ export default function Settings() {
                       </div>
 
                       {/* Arrow */}
-                      <ChevronRight className="w-5 h-5 text-[#6B6B6B] flex-shrink-0" />
+                      <ChevronRight className="w-5 h-5 text-[#6B6B6B] flex-shrink-0" strokeWidth={1.5} />
                     </button>
                   )
                 })}
@@ -297,7 +297,7 @@ export default function Settings() {
             onClick={handleLogout}
             className="w-full bg-white/5 border border-white/10 hover:border-red-500/50 hover:bg-red-500/10 rounded-xl p-4 flex items-center justify-center gap-2 transition-all"
           >
-            <LogOut className="w-5 h-5 text-red-500" />
+            <LogOut className="w-5 h-5 text-red-500" strokeWidth={1.5} />
             <span className="font-montserrat font-700 text-red-500">Выйти из аккаунта</span>
           </button>
 

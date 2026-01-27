@@ -86,7 +86,7 @@ export default function ProfileSetupScreen() {
       <div className="relative z-10">
         <header className="h-16 flex items-center justify-between px-4">
           <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
-            <ArrowLeft className="w-5 h-5 text-white" />
+            <ArrowLeft className="w-5 h-5 text-white" strokeWidth={1.5} />
           </button>
           <span className="text-xs text-[#9B9B9B] font-medium">Шаг 3 из 3</span>
           <div className="w-10"></div>
@@ -105,7 +105,7 @@ export default function ProfileSetupScreen() {
                   {avatar ? (
                     <img src={avatar || "/placeholder.svg"} alt="Avatar" className="w-full h-full rounded-full object-cover" />
                   ) : (
-                    <Camera className="w-8 h-8 text-[#9B9B9B]" />
+                    <Camera className="w-8 h-8 text-[#9B9B9B]" strokeWidth={1.5} />
                   )}
                 </div>
                 <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />

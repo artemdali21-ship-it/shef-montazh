@@ -92,7 +92,7 @@ export default function ChatDetailScreen({
               onClick={onBack}
               className="w-10 h-10 flex items-center justify-center flex-shrink-0 hover:bg-white/10 rounded-lg transition-colors"
             >
-              <ArrowLeft className="w-5 h-5 text-white" />
+              <ArrowLeft className="w-5 h-5 text-white" strokeWidth={1.5} />
             </button>
 
             <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -114,10 +114,10 @@ export default function ChatDetailScreen({
 
           <div className="flex items-center gap-2 flex-shrink-0">
             <button className="w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors">
-              <Phone className="w-5 h-5 text-white" />
+              <Phone className="w-5 h-5 text-white" strokeWidth={1.5} />
             </button>
             <button className="w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors">
-              <MoreVertical className="w-5 h-5 text-white" />
+              <MoreVertical className="w-5 h-5 text-white" strokeWidth={1.5} />
             </button>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function ChatDetailScreen({
         <div className="bg-[#FFD60A]/10 border-y border-[#FFD60A]/20 px-4 py-2">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-[#FFD60A]/20 rounded-lg flex items-center justify-center flex-shrink-0">
-              <MapPin className="w-4 h-4 text-[#FFD60A]" />
+              <MapPin className="w-4 h-4 text-[#FFD60A]" strokeWidth={1.5} />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs text-[#FFD60A] font-bold uppercase tracking-wide">Активная смена</p>
@@ -163,9 +163,9 @@ export default function ChatDetailScreen({
                 <span className="text-xs text-[#6B6B6B] font-medium">{msg.timestamp}</span>
                 {msg.sender === 'me' && (
                   <>
-                    {msg.status === 'sent' && <Check className="w-3 h-3 text-[#6B6B6B]" />}
-                    {msg.status === 'delivered' && <CheckCheck className="w-3 h-3 text-[#6B6B6B]" />}
-                    {msg.status === 'read' && <CheckCheck className="w-3 h-3 text-[#BFFF00]" />}
+                    {msg.status === 'sent' && <Check className="w-3 h-3 text-[#6B6B6B]" strokeWidth={1.5} />}
+                    {msg.status === 'delivered' && <CheckCheck className="w-3 h-3 text-[#6B6B6B]" strokeWidth={1.5} />}
+                    {msg.status === 'read' && <CheckCheck className="w-3 h-3 text-[#BFFF00]" strokeWidth={1.5} />}
                   </>
                 )}
               </div>
@@ -180,11 +180,11 @@ export default function ChatDetailScreen({
       <div className="bg-white/5 border-t border-white/10 px-4 py-2">
         <div className="flex items-center gap-3">
           <button className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
-            <MapPin className="w-4 h-4 text-[#FFD60A]" />
+            <MapPin className="w-4 h-4 text-[#FFD60A]" strokeWidth={1.5} />
             <span className="text-xs font-semibold text-white">Локация</span>
           </button>
           <button className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
-            <Camera className="w-4 h-4 text-[#9B9B9B]" />
+            <Camera className="w-4 h-4 text-[#9B9B9B]" strokeWidth={1.5} />
             <span className="text-xs font-semibold text-white">Фото</span>
           </button>
         </div>
@@ -194,7 +194,7 @@ export default function ChatDetailScreen({
       <div className="bg-[#2A2A2A]/90 backdrop-blur-md border-t border-white/10 px-4 py-3">
         <div className="flex items-center gap-2">
           <button className="w-9 h-9 flex items-center justify-center flex-shrink-0 hover:bg-white/10 rounded-lg transition-colors">
-            <Paperclip className="w-5 h-5 text-[#9B9B9B]" />
+            <Paperclip className="w-5 h-5 text-[#9B9B9B]" strokeWidth={1.5} />
           </button>
 
           <div className="flex-1 relative">
@@ -207,7 +207,7 @@ export default function ChatDetailScreen({
               className="w-full h-10 bg-white/5 border border-white/10 rounded-xl px-4 pr-10 text-white placeholder:text-[#6B6B6B] font-medium text-sm focus:outline-none focus:border-[#E85D2F]/50"
             />
             <button className="absolute right-2 top-1/2 -translate-y-1/2 hover:bg-white/10 rounded p-1 transition-colors">
-              <Smile className="w-5 h-5 text-[#9B9B9B]" />
+              <Smile className="w-5 h-5 text-[#9B9B9B]" strokeWidth={1.5} />
             </button>
           </div>
 
@@ -218,7 +218,7 @@ export default function ChatDetailScreen({
               message.trim() ? 'bg-[#E85D2F] hover:bg-[#D94D1F] active:scale-95' : 'bg-white/5 cursor-not-allowed'
             }`}
           >
-            <Send className={`w-5 h-5 ${message.trim() ? 'text-white' : 'text-[#6B6B6B]'}`} />
+            <Send className={`w-5 h-5 ${message.trim() ? 'text-white' : 'text-[#6B6B6B]'}`} strokeWidth={1.5} />
           </button>
         </div>
       </div>

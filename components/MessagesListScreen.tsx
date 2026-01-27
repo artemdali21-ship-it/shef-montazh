@@ -62,7 +62,7 @@ export default function MessagesListScreen({ onSelectChat }: { onSelectChat: (ch
         <div className="h-16 flex items-center justify-between px-4">
           <h1 className="text-white font-bold text-xl">Сообщения</h1>
           <div className="relative">
-            <MessageCircle className="w-5 h-5 text-white" />
+            <MessageCircle className="w-5 h-5 text-white" strokeWidth={1.5} />
             <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#E85D2F] rounded-full text-white text-[9px] font-bold flex items-center justify-center">
               3
             </span>
@@ -72,7 +72,7 @@ export default function MessagesListScreen({ onSelectChat }: { onSelectChat: (ch
         {/* Search */}
         <div className="px-4 pb-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9B9B9B]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9B9B9B]" strokeWidth={1.5} />
             <input
               type="text"
               placeholder="Поиск по сообщениям..."
@@ -169,7 +169,7 @@ export default function MessagesListScreen({ onSelectChat }: { onSelectChat: (ch
                 </p>
               </div>
 
-              <ChevronRight className="w-5 h-5 text-[#6B6B6B] flex-shrink-0" />
+                    <ChevronRight className="w-5 h-5 text-[#6B6B6B] flex-shrink-0" strokeWidth={1.5} />
             </div>
           </button>
         ))}

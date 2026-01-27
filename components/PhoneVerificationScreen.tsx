@@ -86,7 +86,7 @@ export default function PhoneVerificationScreen() {
       <div className="relative z-10">
         <header className="h-16 flex items-center px-4">
           <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
-            <ArrowLeft className="w-5 h-5 text-white" />
+            <ArrowLeft className="w-5 h-5 text-white" strokeWidth={1.5} />
           </button>
         </header>
 
