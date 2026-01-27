@@ -266,20 +266,32 @@ export default function ProfileScreen() {
           {/* PROFILE HERO SECTION */}
           <div
             style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              backgroundImage: 'url(/images/holographic-bg.jpg)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
               borderRadius: '0 0 24px 24px',
               padding: '32px 20px 28px 20px',
               marginBottom: '20px',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)',
+              boxShadow: '0 8px 24px rgba(232, 93, 47, 0.2)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               textAlign: 'center',
+              position: 'relative',
+              overflow: 'hidden',
             }}
           >
+            {/* Dark overlay for text readability */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'rgba(0, 0, 0, 0.55)',
+                zIndex: 1,
+              }}
+            />
             {/* Avatar */}
             <div
               style={{
@@ -288,12 +300,13 @@ export default function ProfileScreen() {
                 borderRadius: '50%',
                 background: 'linear-gradient(135deg, #E85D2F 0%, #FF8855 100%)',
                 border: '4px solid white',
-                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)',
+                boxShadow: '0 8px 20px rgba(232, 93, 47, 0.4)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: '16px',
                 position: 'relative',
+                zIndex: 2,
               }}
             >
               <User size={48} color="white" strokeWidth={2} />
@@ -326,6 +339,8 @@ export default function ProfileScreen() {
                 color: '#FFFFFF',
                 letterSpacing: '-0.3px',
                 marginBottom: '6px',
+                position: 'relative',
+                zIndex: 2,
               }}
             >
               {userProfile.name}
@@ -336,6 +351,8 @@ export default function ProfileScreen() {
                 fontWeight: 500,
                 fontSize: '13px',
                 color: '#FFFFFF',
+                position: 'relative',
+                zIndex: 2,
               }}
             >
               ID: {userProfile.id}
@@ -348,6 +365,8 @@ export default function ProfileScreen() {
                 gap: '24px',
                 justifyContent: 'center',
                 marginTop: '20px',
+                position: 'relative',
+                zIndex: 2,
               }}
             >
               {[
