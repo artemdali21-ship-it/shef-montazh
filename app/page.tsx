@@ -126,15 +126,33 @@ export default function OnboardingScreen() {
         <img
           src="/images/chain.png"
           alt=""
-          className="absolute md:hidden"
+          className="absolute"
           style={{
-            width: '110px',
+            width: '130px',
             height: 'auto',
-            bottom: '12%',
-            right: '5%',
-            transform: 'rotate(-30deg)',
-            opacity: 0.65,
-            animation: 'float 6s ease-in-out infinite 0.3s',
+            bottom: '5%',
+            right: '8%',
+            transform: 'rotate(25deg)',
+            opacity: 0.7,
+            zIndex: 0,
+            animation: 'float 7s ease-in-out infinite 0.5s',
+            filter: 'drop-shadow(0 6px 16px rgba(0, 0, 0, 0.3))',
+          }}
+        />
+        <img
+          src="/images/carabiner.png"
+          alt=""
+          className="absolute"
+          style={{
+            width: '140px',
+            height: 'auto',
+            bottom: '8%',
+            left: '6%',
+            transform: 'rotate(-35deg)',
+            opacity: 0.75,
+            zIndex: 1,
+            animation: 'float 8s ease-in-out infinite 1.2s',
+            filter: 'drop-shadow(0 8px 20px rgba(232, 93, 47, 0.35))',
           }}
         />
       </div>
