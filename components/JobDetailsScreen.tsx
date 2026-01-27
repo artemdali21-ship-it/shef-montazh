@@ -5,10 +5,15 @@ import { ArrowLeft, Share2, Send, Calendar, MapPin, HardHat, Wrench, Shield, Clo
 import { useRouter } from 'next/navigation'
 import { Header } from './Header'
 import { BottomNav } from './BottomNav'
+import { CompletionActions } from './shift/CompletionActions'
+import { RatingModal } from './modals/RatingModal'
 
 const JobDetailsScreen = () => {
   const router = useRouter()
   const [isApplying, setIsApplying] = useState(false)
+  const [shiftStatus, setShiftStatus] = useState<'checked_in' | 'awaiting_worker_confirm' | 'awaiting_rating' | 'completed'>('checked_in')
+  const [showRatingModal, setShowRatingModal] = useState(false)
+  const [userRole] = useState<'client' | 'worker'>('client')
 
   const jobDetails = {
     id: 1,
@@ -56,6 +61,22 @@ const JobDetailsScreen = () => {
     { icon: Clock, text: 'Готовность к ночной работе' },
     { icon: Star, text: 'Опыт монтажа от 1 года' },
   ]
+
+  const handleCompleteShift = () => {
+    setShiftStatus('awaiting_worker_confirm')
+    console.log('[v0] Client completed shift')
+  }
+
+  const handleWorkerConfirm = () => {
+    setShiftStatus('awaiting_rating')
+    console.log('[v0] Worker confirmed completion')
+  }
+
+  const handleRatingSubmit = (rating: number, comment: string) => {
+    setShiftStatus('completed')
+    console.log('[v0] Rating submitted:', { rating, comment })
+    setShowRatingModal(false)
+  }
 
   return (
     <div
@@ -336,6 +357,15 @@ const JobDetailsScreen = () => {
           </div>
         </section>
 
+        {/* COMPLETION ACTIONS SECTION */}
+        <CompletionActions
+          shiftStatus={shiftStatus}
+          userRole={userRole}
+          onCompleteShift={handleCompleteShift}
+          onConfirmCompletion={handleWorkerConfirm}
+          onRatingOpen={() => setShowRatingModal(true)}
+        />
+
         {/* DESCRIPTION SECTION */}
         <section style={{ marginBottom: '24px' }}>
           <h2
@@ -500,6 +530,14 @@ const JobDetailsScreen = () => {
 
       {/* BOTTOM NAVIGATION */}
       <BottomNav userType="worker" />
+
+      {/* RATING MODAL */}
+      <RatingModal
+        isOpen={showRatingModal}
+        userRole={userRole}
+        onClose={() => setShowRatingModal(false)}
+        onSubmit={handleRatingSubmit}
+      />
     </div>
   )
 }
