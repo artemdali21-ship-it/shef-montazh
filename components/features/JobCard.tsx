@@ -4,7 +4,7 @@
 
 # 📋 ТЗ ДЛЯ V0.DEV — ЭКРАН 4: "ПОДТВЕРЖДЕНИЕ ОТКЛИКА"
 
-```
+\`\`\`
 Create a mobile-first React component for an application confirmation screen of "ШЕФ-МОНТАЖ" platform.
 This is SCREEN 4 (user arrives here after clicking "Откликнуться" on SCREEN 3).
 
@@ -147,14 +147,14 @@ Job title:
 Info grid (display: grid, grid-template-columns: 1fr 1fr, gap: 16px):
 
 Create 4 info items:
-```jsx
+\`\`\`jsx
 const jobInfo = [
   { icon: 'Calendar', label: 'Дата', value: '28 января' },
   { icon: 'Clock', label: 'Время', value: '18:00 - 02:00' },
   { icon: 'MapPin', label: 'Локация', value: 'Крокус Экспо' },
   { icon: 'Wallet', label: 'Ставка', value: '2 500 ₽' }
 ];
-```
+\`\`\`
 
 Info item styling:
 - Display: flex, gap: 10px, align-items: flex-start
@@ -186,7 +186,7 @@ Timeline container:
 - Display: flex, flex-direction: column, gap: 0
 
 Create 3 timeline steps:
-```jsx
+\`\`\`jsx
 const timelineSteps = [
   {
     status: 'completed',
@@ -210,7 +210,7 @@ const timelineSteps = [
     time: null
   }
 ];
-```
+\`\`\`
 
 TIMELINE STEP STYLING:
 ----------------------
@@ -344,7 +344,7 @@ INTERACTIVE BEHAVIOR
 SAMPLE DATA
 ═══════════════════════════════════════
 
-```jsx
+\`\`\`jsx
 const applicationData = {
   jobId: 1,
   jobTitle: 'Монтаж выставочного стенда',
@@ -383,7 +383,7 @@ const timeline = [
     time: null
   }
 ];
-```
+\`\`\`
 
 ═══════════════════════════════════════
 TECHNICAL REQUIREMENTS
@@ -427,13 +427,13 @@ Screen 4 → [Мои отклики] → Screen 5 (My Applications)
 Screen 4 → [Close X] → Screen 2 (Feed)
 
 Router integration:
-```jsx
+\`\`\`jsx
 // Close / Back to feed
 onClick={() => navigate('/feed')}
 
 // My applications
 onClick={() => navigate('/my-applications')}
-```
+\`\`\`
 
 ═══════════════════════════════════════
 DESIGN NOTES
@@ -453,7 +453,7 @@ HIERARCHY:
 
 SPACE: All content fits in viewport - no scroll needed.
 User sees complete success state immediately.
-```
+\`\`\`
 
 ---
 

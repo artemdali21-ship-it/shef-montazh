@@ -6,7 +6,7 @@
 
 # 📋 ТЗ ДЛЯ V0.DEV — ЭКРАН 10: "МОНИТОРИНГ СМЕНЫ (ЗАКАЗЧИК)"
 
-```
+\`\`\`
 Create a mobile-first React component for real-time shift monitoring of "ШЕФ-МОНТАЖ" platform.
 This is SCREEN 10 - the B2B control interface for active shift oversight.
 
@@ -121,13 +121,13 @@ Right side:
     - Letter-spacing: 0.5px
 
 Pulse animation:
-```css
+\`\`\`css
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.5; transform: scale(1.15); }
 }
 animation: pulse 1.5s ease-in-out infinite;
-```
+\`\`\`
 
 [3] SHIFT INFO CARD
 -------------------
@@ -149,14 +149,14 @@ Job title:
 Info grid:
 - Display: grid, grid-template-columns: repeat(2, 1fr), gap: 16px
 
-```jsx
+\`\`\`jsx
 const shiftInfo = [
   { icon: 'MapPin', label: 'Локация', value: 'Крокус Экспо, п. 3' },
   { icon: 'Calendar', label: 'Дата', value: '28 января' },
   { icon: 'Clock', label: 'Время', value: '18:00 - 02:00' },
   { icon: 'Users', label: 'Бригада', value: '4 человека' }
 ];
-```
+\`\`\`
 
 Info item:
 - Display: flex, flex-direction: column, gap: 4px
@@ -262,7 +262,7 @@ Margin-bottom: 16px
 Workers container:
 - Display: flex, flex-direction: column, gap: 10px
 
-```jsx
+\`\`\`jsx
 const workers = [
   {
     id: 1,
@@ -305,7 +305,7 @@ const workers = [
     shiftCount: 19
   }
 ];
-```
+\`\`\`
 
 WORKER CARD STYLING:
 --------------------
@@ -614,7 +614,7 @@ INTERACTIVE BEHAVIOR
 STATE MANAGEMENT
 ═══════════════════════════════════════
 
-```jsx
+\`\`\`jsx
 const [shiftData, setShiftData] = useState({
   id: 1,
   title: 'Монтаж выставочного стенда',
@@ -652,7 +652,7 @@ const progress = Math.round(
 // Workers summary
 const workersOnSite = workers.filter(w => w.status === 'on_site').length;
 const workersPending = workers.filter(w => w.status === 'pending').length;
-```
+\`\`\`
 
 ═══════════════════════════════════════
 TECHNICAL REQUIREMENTS
@@ -717,7 +717,7 @@ INFORMATION HIERARCHY:
 3. Progress metrics (performance)
 4. Escrow info (financial security)
 5. Actions (problem resolution)
-```
+\`\`\`
 
 ---
 

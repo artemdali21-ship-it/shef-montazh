@@ -40,7 +40,7 @@ export default function OnboardingScreen() {
     {
       title: 'Найди проверенного монтажника',
       subtitle: 'Смотри рейтинг, отзывы и опыт',
-      image: '/images/helmets-3-hard-hats.png',
+      image: '/helmet333.png',
     },
     {
       title: 'Гарантия выполнения работ',
