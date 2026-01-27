@@ -133,7 +133,8 @@ Telegram: @shef_montazh_biz`;
       backgroundPosition: 'center',
       backgroundAttachment: 'fixed',
       position: 'relative',
-      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
     }}>
       <NoisePattern />
 
@@ -161,11 +162,11 @@ Telegram: @shef_montazh_biz`;
           </div>
         </header>
 
-        <div className="px-4 py-6 pb-24 max-w-4xl mx-auto">
+        <div className="flex-1 overflow-y-auto px-4 py-6 pb-24 max-w-4xl mx-auto w-full">
           <div className="space-y-4">
             <div className="bg-white/5 border border-white/10 rounded-xl p-6">
               <div className="text-white font-montserrat text-sm leading-relaxed space-y-4">
-                <p className="text-xs text-[#9B9B9B]">Дата обновления: 20 января 2026</p>
+                <p className="text-xs text-white font-500">Дата обновления: 20 января 2026</p>
                 
                 <h2 className="text-xl font-700 text-white mt-6">1. Комиссия Платформы</h2>
                 <p className="text-lg font-800 text-[#E85D2F]">12% от стоимости смены</p>

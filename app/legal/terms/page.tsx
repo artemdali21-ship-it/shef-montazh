@@ -137,7 +137,8 @@ Telegram: @shef_montazh_support`;
       backgroundPosition: 'center',
       backgroundAttachment: 'fixed',
       position: 'relative',
-      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
     }}>
       <NoisePattern />
 
@@ -165,10 +166,10 @@ Telegram: @shef_montazh_support`;
           </div>
         </header>
 
-        <div className="px-4 py-6 pb-24 max-w-4xl mx-auto">
+        <div className="flex-1 overflow-y-auto px-4 py-6 pb-24 max-w-4xl mx-auto w-full">
           <div className="bg-white/5 border border-white/10 rounded-xl p-6 prose prose-invert max-w-none">
             <div className="text-white font-montserrat text-sm leading-relaxed space-y-4">
-              <p className="text-xs text-[#9B9B9B]">Дата обновления: 15 января 2026</p>
+              <p className="text-xs text-white font-500">Дата обновления: 15 января 2026</p>
               
               <h2 className="text-xl font-700 text-white mt-6">1. Общие положения</h2>
               <p>Настоящее Пользовательское соглашение регулирует отношения между ООО "ШЕФ-МОНТАЖ" и пользователями Telegram Mini App «ШЕФ-МОНТАЖ».</p>
