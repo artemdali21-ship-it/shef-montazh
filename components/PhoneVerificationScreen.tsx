@@ -63,25 +63,8 @@ export default function PhoneVerificationScreen() {
     }}>
       <NoisePattern />
       
-      {/* 3D decorative elements */}
-      <div style={{
-        position: 'absolute',
-        top: '-10%',
-        right: '-5%',
-        opacity: 0.15,
-        pointerEvents: 'none',
-      }}>
-        <img src="/images/carabiner.png" alt="" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
-      </div>
-      <div style={{
-        position: 'absolute',
-        bottom: '-5%',
-        left: '-8%',
-        opacity: 0.15,
-        pointerEvents: 'none',
-      }}>
-        <img src="/images/chain.png" alt="" style={{ width: '180px', height: '180px', objectFit: 'contain' }} />
-      </div>
+      {/* 3D decorative elements - HIDDEN FOR TELEGRAM MINI APP */}
+      {/* Removed to prevent overflow issues in Telegram Mini App */}
 
       <div className="relative z-10">
         <header className="h-16 flex items-center px-4">

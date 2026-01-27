@@ -144,13 +144,14 @@ export default function ProfileScreen() {
           position: 'fixed',
           bottom: '10%',
           left: '3%',
-          width: '80px',
+          width: '60px',
           height: 'auto',
-          opacity: 0.1,
+          opacity: 0.08,
           transform: 'rotate(30deg)',
           zIndex: 0,
           pointerEvents: 'none',
           animation: 'float 6s ease-in-out infinite 0.5s',
+          maxWidth: '100%',
         }}
       />
       {/* FLOATING CONCRETE 7 - Profile */}
