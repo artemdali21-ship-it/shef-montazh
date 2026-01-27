@@ -249,15 +249,15 @@ export default function WorkerCategoriesPage() {
           <button
             onClick={handleContinue}
             disabled={selected.length === 0}
-            className={`w-full h-14 rounded-xl font-700 text-white transition-all flex items-center justify-center gap-2 ${
+            className={`w-full h-14 rounded-xl font-700 text-white transition-all flex items-center justify-center gap-3 ${
               selected.length === 0
                 ? 'bg-white/10 text-white/50 cursor-not-allowed'
                 : 'bg-gradient-to-r from-[#E85D2F] to-[#C44A20] hover:from-[#D94D1F] hover:to-[#B33A18] active:scale-95 shadow-lg'
             }`}
           >
-            Продолжить
+            <span>Продолжить</span>
             {selected.length > 0 && (
-              <span className="text-xs bg-white/20 px-2 py-1 rounded-lg ml-auto">
+              <span className="text-xs bg-white/20 px-2.5 py-1 rounded-lg">
                 {selected.length} выб.
               </span>
             )}
