@@ -7,13 +7,15 @@ import { Header } from './Header'
 import { BottomNav } from './BottomNav'
 import { CompletionActions } from './shift/CompletionActions'
 import { RatingModal } from './rating/RatingModal'
+import { PaymentSection } from './PaymentSection'
 
 const JobDetailsScreen = () => {
   const router = useRouter()
   const [isApplying, setIsApplying] = useState(false)
-  const [shiftStatus, setShiftStatus] = useState<'checked_in' | 'awaiting_worker_confirm' | 'awaiting_rating' | 'completed'>('checked_in')
+  const [shiftStatus, setShiftStatus] = useState<'checked_in' | 'awaiting_worker_confirm' | 'awaiting_rating' | 'completed'>('completed')
   const [showRatingModal, setShowRatingModal] = useState(false)
   const [userRole] = useState<'client' | 'worker'>('client')
+  const [isPaid, setIsPaid] = useState(false)
 
   const jobDetails = {
     id: 1,
@@ -32,7 +34,12 @@ const JobDetailsScreen = () => {
     verified: true,
     escrow: true,
     description: 'Требуется монтаж выставочного стенда площадью 36 кв.м. Работа включает сборку алюминиевых ферм, установку панелей, подключение освещения. Проект под ключ с последующим демонтажом через 3 дня.',
+    workerId: 'worker-123',
+    platformFeePercent: 2.5, // 2.5% commission
   }
+
+  const platformFee = Math.round(jobDetails.rate * (jobDetails.platformFeePercent / 100))
+  const totalAmount = jobDetails.rate + platformFee
 
   const infoCards = [
     {
@@ -365,6 +372,24 @@ const JobDetailsScreen = () => {
           onConfirmCompletion={handleWorkerConfirm}
           onRatingOpen={() => setShowRatingModal(true)}
         />
+
+        {/* PAYMENT SECTION - Show only for Client after completion and rating */}
+        {userRole === 'client' && shiftStatus === 'completed' && !isPaid && (
+          <PaymentSection
+            shiftId={`${jobDetails.id}`}
+            workerId={jobDetails.workerId}
+            workerAmount={jobDetails.rate}
+            platformFee={platformFee}
+            totalAmount={totalAmount}
+            onPaymentSuccess={() => {
+              setIsPaid(true)
+              console.log('[v0] Payment successful')
+            }}
+            onPaymentError={(error) => {
+              console.error('[v0] Payment error:', error)
+            }}
+          />
+        )}
 
         {/* DESCRIPTION SECTION */}
         <section style={{ marginBottom: '24px' }}>
