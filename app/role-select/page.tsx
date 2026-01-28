@@ -143,9 +143,9 @@ export default function RoleSelectScreen() {
       `}</style>
 
       {/* MAIN CONTENT */}
-      <div className="w-full max-w-sm px-6 relative z-20 flex flex-col" style={{ maxHeight: '100vh', paddingTop: '40px', paddingBottom: '40px' }}>
+      <div className="max-w-sm px-6 relative z-20 flex flex-col" style={{ width: 'auto', margin: 0 }}>
         {/* HEADER */}
-        <div className="mb-8 animate-slide-up">
+        <div className="mb-6 animate-slide-up">
           <h1 style={{ color: '#FFFFFF' }} className="text-4xl mb-3" style={{ fontWeight: 800, lineHeight: 1.2, fontFamily: 'Montserrat' }}>
             Кто вы?
           </h1>
@@ -155,7 +155,7 @@ export default function RoleSelectScreen() {
         </div>
 
         {/* ROLE CARDS */}
-        <div className="space-y-3 mb-8">
+        <div className="space-y-2 mb-6">
           {roles.map((role, index) => {
             const isSelected = selectedRole === role.id
 
@@ -164,7 +164,7 @@ export default function RoleSelectScreen() {
                 key={role.id}
                 onClick={() => handleSelectRole(role.id)}
                 disabled={selectedRole !== null && selectedRole !== role.id}
-                className="relative group w-full flex items-start gap-4 p-4 rounded-2xl transition-all duration-300 text-left overflow-hidden"
+                className="relative group w-full flex items-start gap-4 p-3 rounded-2xl transition-all duration-300 text-left overflow-hidden"
                 style={{
                   animation: `slideUp 0.6s ease-out forwards`,
                   animationDelay: `${0.1 + index * 0.1}s`,

@@ -152,9 +152,9 @@ export default function OnboardingScreen() {
       `}</style>
 
       {/* MAIN CONTENT */}
-      <div className="relative z-20 px-5 py-8 max-w-sm w-full flex flex-col">
+      <div className="relative z-20 px-6 py-6 max-w-sm flex flex-col" style={{ margin: 0, width: 'auto' }}>
         {/* HEADER */}
-        <div className="mb-8">
+        <div className="mb-6">
           <div className="flex items-center justify-center gap-1.5 mb-2">
             <div style={{ color: '#E85D2F' }} className="flex-shrink-0">
               <AsteriskIcon />
@@ -169,7 +169,7 @@ export default function OnboardingScreen() {
         </div>
 
         {/* SLIDE COUNTER */}
-        <div className="flex justify-center gap-1 mb-8">
+        <div className="flex justify-center gap-1 mb-6">
           {slides.map((_, idx) => (
             <div
               key={idx}
@@ -185,10 +185,10 @@ export default function OnboardingScreen() {
         </div>
 
         {/* SLIDE CONTENT */}
-        <div className="mb-8">
+        <div className="mb-6">
           {/* SLIDE IMAGE */}
-          <div className="relative rounded-2xl overflow-hidden mb-6 shadow-lg" style={{
-            height: '200px',
+          <div className="relative rounded-2xl overflow-hidden mb-5 shadow-lg" style={{
+            height: '180px',
             boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
             backgroundColor: '#333333',
           }}>
@@ -205,16 +205,16 @@ export default function OnboardingScreen() {
           </div>
 
           {/* SLIDE TEXT */}
-          <h2 style={{ color: '#FFFFFF' }} className="text-4xl font-sans font-800 mb-3 leading-tight">
+          <h2 style={{ color: '#FFFFFF' }} className="text-3xl font-sans font-800 mb-2 leading-tight">
             {slides[currentSlide].title}
           </h2>
-          <p style={{ color: '#FFFFFF' }} className="text-base font-normal leading-relaxed mb-6">
+          <p style={{ color: '#FFFFFF' }} className="text-sm font-normal leading-relaxed">
             {slides[currentSlide].subtitle}
           </p>
         </div>
 
         {/* BUTTONS */}
-        <div className="space-y-3 mb-8">
+        <div className="space-y-3 mb-4">
           <button
             onClick={handleNext}
             className="w-full text-white rounded-lg transition-all duration-300 font-sans flex items-center justify-center gap-2 font-semibold h-12 hover:scale-105 active:scale-95"
@@ -263,7 +263,7 @@ export default function OnboardingScreen() {
         </div>
 
         {/* FINE PRINT */}
-        <p style={{ color: '#FFFFFF' }} className="text-sm text-center leading-relaxed font-sans font-medium">
+        <p style={{ color: '#FFFFFF' }} className="text-xs text-center leading-relaxed font-sans font-medium">
           Вход и регистрация внутри приложения
         </p>
       </div>
