@@ -185,8 +185,6 @@ export default function Settings() {
         zIndex: 20,
         flexShrink: 0,
       }}>
-        </header>
-
         {/* Profile Card */}
         <div className="px-4 pt-6 pb-4">
           <div className="bg-white/5 border border-white/10 rounded-xl p-5">
@@ -309,7 +307,7 @@ export default function Settings() {
             <p className="text-xs text-[#6B6B6B] font-montserrat font-500">ШЕФ-МОНТАЖ • Версия 1.0.0 (MVP)</p>
           </div>
         </div>
-      </div>
+      </header>
     </div>
   )
 }
