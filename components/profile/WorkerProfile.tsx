@@ -1,101 +1,76 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  ArrowLeft,
   Settings,
   User,
   CheckCircle,
   Briefcase,
   Star,
   Shield,
-  AlertCircle,
-  ExternalLink,
   Circle,
   FileText,
   CreditCard,
   LogOut,
 } from 'lucide-react'
-import { Header } from '../Header'
-import { BottomNav } from '../BottomNav'
 import { GosuslugiButton } from '../verification/GosuslugiButton'
-
-const userProfile = {
-  id: 'NM-47821',
-  name: 'Никита Соколов',
-  avatar: null,
-  verified: false,
-  stats: {
-    shiftsCompleted: 47,
-    rating: 4.9,
-    reliability: 98,
-  },
-  skills: [
-    { name: 'Монтаж', verified: true },
-    { name: 'Декоратор', verified: true },
-    { name: 'Альпинист', verified: false },
-    { name: 'Электрик', verified: false },
-    { name: 'Сварщик', verified: true },
-  ],
-  employmentStatus: 'Самозанятый',
-  paymentMethod: {
-    type: 'card',
-    last4: '4729',
-    verified: true,
-  },
-}
-
-const workHistory = [
-  {
-    title: 'Монтаж выставочного стенда',
-    company: 'Decor Factory',
-    date: '24 января 2026',
-    payment: '2 500 ₽',
-    status: 'completed',
-    rating: 5,
-  },
-  {
-    title: 'Сборка декораций для концерта',
-    company: 'Event Pro',
-    date: '20 января 2026',
-    payment: '3 200 ₽',
-    status: 'completed',
-    rating: 5,
-  },
-  {
-    title: 'Демонтаж после выставки',
-    company: 'Expo Global',
-    date: '18 января 2026',
-    payment: '1 800 ₽',
-    status: 'completed',
-    rating: 4,
-  },
-]
-
-const documents = [
-  {
-    icon: FileText,
-    title: 'Статус занятости',
-    value: 'Самозанятый',
-    verified: true,
-    action: 'Изменить',
-  },
-  {
-    icon: CreditCard,
-    title: 'Способ выплаты',
-    value: '•••• 4729',
-    verified: true,
-    action: 'Изменить',
-  },
-]
+import { getWorkerProfile, getWorkerShiftHistory, getWorkerRatings } from '@/lib/api/profiles'
 
 export default function WorkerProfile() {
   const router = useRouter()
-  const [selectedSkills, setSelectedSkills] = useState<Set<string>>(
-    new Set(userProfile.skills.filter((s) => s.verified).map((s) => s.name))
-  )
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  
+  const [userProfile, setUserProfile] = useState<any>(null)
+  const [workHistory, setWorkHistory] = useState<any[]>([])
+  const [ratings, setRatings] = useState<any[]>([])
+  
+  const [selectedSkills, setSelectedSkills] = useState<Set<string>>(new Set())
   const [isGosuslugiVerified, setIsGosuslugiVerified] = useState(false)
+
+  useEffect(() => {
+    async function loadProfileData() {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        // TODO: Get actual user ID from auth
+        const userId = 'mock-user-id'
+        
+        // Load profile
+        const { data: profileData, error: profileError } = await getWorkerProfile(userId)
+        if (profileError) throw profileError
+        
+        // Load shift history
+        const { data: historyData, error: historyError } = await getWorkerShiftHistory(userId)
+        if (historyError) throw historyError
+        
+        // Load ratings
+        const { data: ratingsData, error: ratingsError } = await getWorkerRatings(userId)
+        if (ratingsError) throw ratingsError
+        
+        setUserProfile(profileData)
+        setWorkHistory(historyData || [])
+        setRatings(ratingsData || [])
+        
+        // Set selected skills from profile
+        if (profileData?.profile?.categories) {
+          setSelectedSkills(new Set(profileData.profile.categories))
+        }
+        
+        setIsGosuslugiVerified(profileData?.gosuslugi_verified || false)
+        
+      } catch (err) {
+        console.error('Error loading profile:', err)
+        setError('Не удалось загрузить профиль')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadProfileData()
+  }, [])
 
   const toggleSkill = (skillName: string) => {
     const newSelected = new Set(selectedSkills)
@@ -105,6 +80,50 @@ export default function WorkerProfile() {
       newSelected.add(skillName)
     }
     setSelectedSkills(newSelected)
+  }
+
+  // Calculate stats from ratings
+  const averageRating = ratings.length > 0 
+    ? (ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length).toFixed(1)
+    : '0.0'
+  
+  const completedShifts = workHistory.length
+  const reliability = completedShifts > 0 
+    ? Math.round((completedShifts / (completedShifts + 2)) * 100) // Mock calculation
+    : 0
+
+  const availableSkills = [
+    'Монтаж',
+    'Декоратор',
+    'Альпинист',
+    'Электрик',
+    'Сварщик',
+    'Бутафор',
+    'Разнорабочий'
+  ]
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center">
+        <div className="text-white text-lg">Загрузка профиля...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4">
+        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 max-w-md">
+          <p className="text-red-400 text-center mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full py-3 bg-red-500/20 hover:bg-red-500/30 rounded-xl text-red-400 transition"
+          >
+            Попробовать снова
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -121,10 +140,6 @@ export default function WorkerProfile() {
       }}
     >
       {/* DECORATIVE ELEMENTS */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
-        <img src="/images/tape-2.png" className="absolute top-10 left-1/4 w-16 h-16" alt="" />
-      </div>
-
       <div
         style={{
           position: 'fixed',
@@ -137,98 +152,37 @@ export default function WorkerProfile() {
           zIndex: 1,
         }}
       />
-      {/* FLOATING WRENCH KEY 2 - Profile (SMALL - far) */}
-      <img
-        src="/images/wrench-key-2.png"
-        alt=""
-        style={{
-          position: 'fixed',
-          bottom: '10%',
-          left: '3%',
-          width: '60px',
-          height: 'auto',
-          opacity: 0.08,
-          transform: 'rotate(30deg)',
-          zIndex: 0,
-          pointerEvents: 'none',
-          animation: 'float 6s ease-in-out infinite 0.5s',
-          maxWidth: '100%',
-        }}
-      />
-      {/* HELMET - Profile only */}
-      <img
-        src="/images/helmet.png"
-        alt=""
-        style={{
-          position: 'fixed',
-          bottom: '15%',
-          left: '5%',
-          width: '140px',
-          height: 'auto',
-          opacity: 0.65,
-          transform: 'rotate(-15deg)',
-          zIndex: 1,
-          pointerEvents: 'none',
-          animation: 'float 8s ease-in-out infinite 0.7s',
-        }}
-      />
+
       <div style={{ position: 'relative', zIndex: 2 }}>
         {/* HEADER */}
         <header
+          className="fixed top-0 left-0 right-0 z-50 border-b"
           style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '64px',
-            background: 'rgba(26, 26, 26, 0.95)',
+            background: 'transparent',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            borderColor: 'rgba(255, 255, 255, 0.1)',
+            height: '64px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '0 20px',
-            zIndex: 10,
+            paddingLeft: '20px',
+            paddingRight: '20px',
           }}
         >
-          <button
-            onClick={() => router.back()}
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-            }}
-          >
-            <ArrowLeft size={20} color="#FFFFFF" />
-          </button>
-
           <h1
             style={{
-              fontFamily: "'Montserrat', sans-serif",
               fontWeight: 700,
               fontSize: '16px',
               color: '#FFFFFF',
+              fontFamily: "'Montserrat', sans-serif",
             }}
           >
             Профиль
           </h1>
 
           <button
-            onClick={() => console.log('Open settings')}
+            onClick={() => router.push('/settings')}
             style={{
               width: '40px',
               height: '40px',
@@ -239,459 +193,277 @@ export default function WorkerProfile() {
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
             }}
           >
-            <Settings size={18} color="#FFFFFF" />
+            <Settings size={20} color="#FFFFFF" />
           </button>
         </header>
 
         {/* CONTENT */}
-        <div
-          style={{
-            paddingTop: '64px',
-            paddingBottom: '140px',
-            minHeight: 'calc(100vh - 64px)',
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            WebkitOverflowScrolling: 'touch',
-          }}
-        >
-          {/* PROFILE HERO SECTION */}
-          <div
-            style={{
-              backgroundImage: 'url(/images/holographic-bg.jpg)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-              borderRadius: '0 0 24px 24px',
-              padding: '32px 20px 28px 20px',
-              marginBottom: '20px',
-              boxShadow: '0 8px 24px rgba(232, 93, 47, 0.2)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center',
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-          >
-            {/* Dark overlay for text readability */}
+        <div style={{ paddingTop: '64px', paddingBottom: '100px', overflowY: 'auto' }}>
+          {/* USER INFO CARD */}
+          <div style={{ padding: '20px' }}>
             <div
               style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'rgba(0, 0, 0, 0.55)',
-                zIndex: 1,
-              }}
-            />
-            {/* Avatar */}
-            <div
-              style={{
-                width: '96px',
-                height: '96px',
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #E85D2F 0%, #FF8855 100%)',
-                border: '4px solid white',
-                boxShadow: '0 8px 20px rgba(232, 93, 47, 0.4)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: '16px',
-                position: 'relative',
-                zIndex: 2,
+                background: 'rgba(245, 245, 245, 0.5)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '16px',
+                padding: '24px',
+                textAlign: 'center',
               }}
             >
-              <User size={48} color="white" strokeWidth={2} />
-              {/* Verification Badge */}
+              {/* Avatar */}
               <div
                 style={{
-                  position: 'absolute',
-                  bottom: '-4px',
-                  right: '-4px',
-                  width: '32px',
-                  height: '32px',
+                  width: '80px',
+                  height: '80px',
                   borderRadius: '50%',
-                  background: '#BFFF00',
-                  border: '3px solid #F5F5F5',
+                  background: 'linear-gradient(135deg, #E85D2F 0%, #FF8855 100%)',
+                  border: isGosuslugiVerified ? '3px solid #BFFF00' : '3px solid rgba(255, 255, 255, 0.2)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  margin: '0 auto 16px',
                 }}
               >
-                <CheckCircle size={18} color="#1A1A1A" strokeWidth={2.5} />
+                <User size={40} color="white" />
+              </div>
+
+              {/* Name */}
+              <h2
+                style={{
+                  fontWeight: 700,
+                  fontSize: '20px',
+                  color: '#FFFFFF',
+                  marginBottom: '8px',
+                  fontFamily: "'Montserrat', sans-serif",
+                }}
+              >
+                {userProfile?.full_name || 'Загрузка...'}
+              </h2>
+
+              {/* ID */}
+              <p
+                style={{
+                  fontWeight: 500,
+                  fontSize: '14px',
+                  color: '#6B6B6B',
+                  marginBottom: '16px',
+                  fontFamily: "'Montserrat', sans-serif",
+                }}
+              >
+                ID: {userProfile?.id?.substring(0, 8).toUpperCase() || '---'}
+              </p>
+
+              {/* Verification Button */}
+              <GosuslugiButton
+                isVerified={isGosuslugiVerified}
+                onVerify={() => {
+                  console.log('Start Gosuslugi verification')
+                  setIsGosuslugiVerified(true)
+                }}
+              />
+            </div>
+          </div>
+
+          {/* STATS ROW */}
+          <div style={{ padding: '0 20px 20px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+            {/* Completed Shifts */}
+            <div
+              style={{
+                background: 'rgba(245, 245, 245, 0.5)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '12px',
+                padding: '16px',
+                textAlign: 'center',
+              }}
+            >
+              <Briefcase size={24} color="#E85D2F" style={{ margin: '0 auto 8px' }} />
+              <div
+                style={{
+                  fontWeight: 800,
+                  fontSize: '24px',
+                  color: '#FFFFFF',
+                  fontFamily: "'Montserrat', sans-serif",
+                }}
+              >
+                {completedShifts}
+              </div>
+              <div
+                style={{
+                  fontWeight: 500,
+                  fontSize: '11px',
+                  color: '#6B6B6B',
+                  fontFamily: "'Montserrat', sans-serif",
+                }}
+              >
+                Смен
               </div>
             </div>
 
-            {/* User Info */}
-            <h2
-              style={{
-                fontFamily: "'Montserrat', sans-serif",
-                fontWeight: 700,
-                fontSize: '22px',
-                color: '#FFFFFF',
-                letterSpacing: '-0.3px',
-                marginBottom: '6px',
-                position: 'relative',
-                zIndex: 2,
-              }}
-            >
-              {userProfile.name}
-            </h2>
-            <p
-              style={{
-                fontFamily: "'Montserrat', sans-serif",
-                fontWeight: 500,
-                fontSize: '13px',
-                color: '#FFFFFF',
-                position: 'relative',
-                zIndex: 2,
-              }}
-            >
-              ID: {userProfile.id}
-            </p>
-
-            {/* Stats Row */}
+            {/* Rating */}
             <div
               style={{
-                display: 'flex',
-                gap: '24px',
-                justifyContent: 'center',
-                marginTop: '20px',
-                position: 'relative',
-                zIndex: 2,
+                background: 'rgba(245, 245, 245, 0.5)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '12px',
+                padding: '16px',
+                textAlign: 'center',
               }}
             >
-              {[
-                { label: 'Смен', value: userProfile.stats.shiftsCompleted, icon: Briefcase },
-                { label: 'Рейтинг', value: userProfile.stats.rating, icon: Star },
-                { label: 'Надёжность', value: `${userProfile.stats.reliability}%`, icon: Shield },
-              ].map((stat, idx) => {
-                const IconComponent = stat.icon
-                return (
-                  <div
-                    key={idx}
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: '4px',
-                    }}
-                  >
-                    <IconComponent size={20} color="#E85D2F" />
-                    <span
-                      style={{
-                        fontFamily: "'Montserrat', sans-serif",
-                        fontWeight: 800,
-                        fontSize: '20px',
-                        color: '#FFFFFF',
-                        letterSpacing: '-0.5px',
-                      }}
-                    >
-                      {stat.value}
-                    </span>
-                    <span
-                      style={{
-                        fontFamily: "'Montserrat', sans-serif",
-                        fontWeight: 500,
-                        fontSize: '11px',
-                        color: '#FFFFFF',
-                      }}
-                    >
-                      {stat.label}
-                    </span>
-                  </div>
-                )
-              })}
+              <Star size={24} color="#BFFF00" style={{ margin: '0 auto 8px' }} />
+              <div
+                style={{
+                  fontWeight: 800,
+                  fontSize: '24px',
+                  color: '#BFFF00',
+                  fontFamily: "'Montserrat', sans-serif",
+                }}
+              >
+                {averageRating}
+              </div>
+              <div
+                style={{
+                  fontWeight: 500,
+                  fontSize: '11px',
+                  color: '#6B6B6B',
+                  fontFamily: "'Montserrat', sans-serif",
+                }}
+              >
+                Рейтинг
+              </div>
             </div>
-          </div>
 
-          {/* GOSUSLUGI VERIFICATION SECTION */}
-          <div style={{ padding: '0 20px', marginBottom: '20px' }}>
-            <GosuslugiButton
-              isVerified={isGosuslugiVerified}
-              onVerify={() => {
-                // Open Gosuslugi OAuth flow
-                console.log('[v0] Opening Gosuslugi verification flow')
-                // In production: window.location.href = 'https://gosuslugi.ru/oauth/...'
-                // For demo, we'll just show verification badge after 2 seconds
-                setTimeout(() => {
-                  setIsGosuslugiVerified(true)
-                }, 2000)
+            {/* Reliability */}
+            <div
+              style={{
+                background: 'rgba(245, 245, 245, 0.5)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '12px',
+                padding: '16px',
+                textAlign: 'center',
               }}
-            />
+            >
+              <Shield size={24} color="#4ADE80" style={{ margin: '0 auto 8px' }} />
+              <div
+                style={{
+                  fontWeight: 800,
+                  fontSize: '24px',
+                  color: '#4ADE80',
+                  fontFamily: "'Montserrat', sans-serif",
+                }}
+              >
+                {reliability}%
+              </div>
+              <div
+                style={{
+                  fontWeight: 500,
+                  fontSize: '11px',
+                  color: '#6B6B6B',
+                  fontFamily: "'Montserrat', sans-serif",
+                }}
+              >
+                Надежность
+              </div>
+            </div>
           </div>
 
           {/* SKILLS SECTION */}
-          <div
-            style={{
-              padding: '0 20px',
-              marginBottom: '20px',
-            }}
-          >
+          <div style={{ padding: '0 20px 20px' }}>
             <h3
               style={{
-                fontFamily: "'Montserrat', sans-serif",
                 fontWeight: 700,
                 fontSize: '16px',
                 color: '#FFFFFF',
                 marginBottom: '14px',
+                fontFamily: "'Montserrat', sans-serif",
               }}
             >
-              Компетенции
+              Навыки и специализации
             </h3>
 
             <div
               style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '10px',
+                background: 'rgba(245, 245, 245, 0.5)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '16px',
+                padding: '20px',
               }}
             >
-              {userProfile.skills.map((skill, idx) => {
-                const isSelected = selectedSkills.has(skill.name)
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => toggleSkill(skill.name)}
-                    style={{
-                      display: 'inline-flex',
-                      gap: '6px',
-                      alignItems: 'center',
-                      padding: '10px 16px',
-                      borderRadius: '10px',
-                      fontFamily: "'Montserrat', sans-serif",
-                      fontWeight: 600,
-                      fontSize: '13px',
-                      background: isSelected ? 'rgba(191, 255, 0, 0.25)' : 'rgba(255, 255, 255, 0.05)',
-                      border: isSelected
-                        ? '1px solid #BFFF00'
-                        : '1px solid rgba(255, 255, 255, 0.15)',
-                      color: isSelected ? '#BFFF00' : '#FFFFFF',
-                      transition: 'all 0.2s ease',
-                      cursor: 'pointer',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = isSelected
-                        ? 'rgba(191, 255, 0, 0.3)'
-                        : 'rgba(255, 255, 255, 0.1)'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = isSelected
-                        ? 'rgba(191, 255, 0, 0.25)'
-                        : 'rgba(255, 255, 255, 0.05)'
-                    }}
-                  >
-                    {isSelected ? (
-                      <CheckCircle size={14} strokeWidth={2.5} color="#BFFF00" />
-                    ) : (
-                      <Circle size={14} strokeWidth={2} color="#FFFFFF" />
-                    )}
-                    <span>{skill.name}</span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* WORK HISTORY SECTION */}
-          <div
-            style={{
-              padding: '0 20px',
-              marginBottom: '20px',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '14px',
-              }}
-            >
-              <h3
-                style={{
-                  fontFamily: "'Montserrat', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '16px',
-                  color: '#FFFFFF',
-                }}
-              >
-                Последние смены
-              </h3>
-              <button
-                onClick={() => console.log('View all shifts')}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontFamily: "'Montserrat', sans-serif",
-                  fontWeight: 600,
-                  fontSize: '13px',
-                  color: '#E85D2F',
-                  cursor: 'pointer',
-                  transition: 'color 0.2s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = '#FF8855'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = '#E85D2F'
-                }}
-              >
-                Все →
-              </button>
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
-              }}
-            >
-              {workHistory.map((item, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => router.push('/shift-details')}
-                  style={{
-                    background: 'rgba(245, 245, 245, 0.5)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(245, 245, 245, 0.7)'
-                    e.currentTarget.style.transform = 'translateX(2px)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(245, 245, 245, 0.5)'
-                    e.currentTarget.style.transform = 'translateX(0)'
-                  }}
-                >
-                  {/* Header */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    <span
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                {availableSkills.map((skill) => {
+                  const isSelected = selectedSkills.has(skill)
+                  return (
+                    <button
+                      key={skill}
+                      onClick={() => toggleSkill(skill)}
                       style={{
-                        fontFamily: "'Montserrat', sans-serif",
-                        fontWeight: 600,
+                        padding: '10px 16px',
+                        borderRadius: '20px',
+                        background: isSelected ? '#E85D2F' : 'rgba(255, 255, 255, 0.1)',
+                        border: isSelected ? 'none' : '1px solid rgba(255, 255, 255, 0.2)',
+                        color: isSelected ? '#FFFFFF' : '#FFFFFF',
+                        fontWeight: isSelected ? 700 : 500,
                         fontSize: '14px',
-                        color: '#FFFFFF',
-                        lineHeight: 1.3,
-                      }}
-                    >
-                      {item.title}
-                    </span>
-                    <span
-                      style={{
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
                         fontFamily: "'Montserrat', sans-serif",
-                        fontWeight: 700,
-                        fontSize: '15px',
-                        color: '#E85D2F',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {item.payment}
-                    </span>
-                  </div>
-
-                  {/* Company & Date */}
-                  <p
-                    style={{
-                      fontFamily: "'Montserrat', sans-serif",
-                      fontWeight: 400,
-                      fontSize: '12px',
-                      color: '#FFFFFF',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    {item.company} • {item.date}
-                  </p>
-
-                  {/* Bottom Row */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: "'Montserrat', sans-serif",
-                        fontWeight: 700,
-                        fontSize: '10px',
-                        textTransform: 'uppercase',
-                        background: 'rgba(191, 255, 0, 0.15)',
-                        border: '1px solid #BFFF00',
-                        padding: '4px 10px',
-                        borderRadius: '6px',
-                        color: '#BFFF00',
-                        letterSpacing: '0.5px',
-                      }}
-                    >
-                      ЗАВЕРШЕНО
-                    </span>
-                    <div
-                      style={{
                         display: 'flex',
-                        gap: '2px',
+                        alignItems: 'center',
+                        gap: '6px',
                       }}
                     >
-                      {[...Array(item.rating)].map((_, i) => (
-                        <Star key={i} size={14} fill="#FFD60A" color="#FFD60A" />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
+                      {isSelected ? (
+                        <CheckCircle size={16} />
+                      ) : (
+                        <Circle size={16} />
+                      )}
+                      {skill}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
           </div>
 
-          {/* DOCUMENTS SECTION */}
-          <div
-            style={{
-              padding: '0 20px',
-              marginBottom: '20px',
-            }}
-          >
+          {/* WORK HISTORY */}
+          <div style={{ padding: '0 20px 20px' }}>
             <h3
               style={{
-                fontFamily: "'Montserrat', sans-serif",
                 fontWeight: 700,
                 fontSize: '16px',
                 color: '#FFFFFF',
                 marginBottom: '14px',
+                fontFamily: "'Montserrat', sans-serif",
               }}
             >
-              Документы и статус
+              История работ
             </h3>
 
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
-              }}
-            >
-              {documents.map((doc, idx) => {
-                const IconComponent = doc.icon
-                return (
+            {workHistory.length === 0 ? (
+              <div
+                style={{
+                  background: 'rgba(245, 245, 245, 0.5)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '16px',
+                  padding: '40px 20px',
+                  textAlign: 'center',
+                }}
+              >
+                <p style={{ color: '#6B6B6B', fontSize: '14px' }}>
+                  История работ пока пуста
+                </p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {workHistory.slice(0, 3).map((work, idx) => (
                   <div
                     key={idx}
                     style={{
@@ -700,135 +472,174 @@ export default function WorkerProfile() {
                       border: '1px solid rgba(255, 255, 255, 0.15)',
                       borderRadius: '12px',
                       padding: '16px',
-                      display: 'flex',
-                      gap: '14px',
-                      alignItems: 'center',
                     }}
                   >
-                    {/* Icon */}
-                    <div
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        background: 'rgba(232, 93, 47, 0.1)',
-                        borderRadius: '10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <IconComponent size={20} color="#E85D2F" />
-                    </div>
-
-                    {/* Content */}
-                    <div style={{ flex: 1 }}>
-                      <p
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <h4
                         style={{
-                          fontFamily: "'Montserrat', sans-serif",
                           fontWeight: 600,
-                          fontSize: '13px',
+                          fontSize: '14px',
                           color: '#FFFFFF',
-                          marginBottom: '4px',
+                          fontFamily: "'Montserrat', sans-serif",
                         }}
                       >
-                        {doc.title}
-                      </p>
-                      <div
-                        style={{
-                          display: 'flex',
-                          gap: '8px',
-                          alignItems: 'center',
-                          fontFamily: "'Montserrat', sans-serif",
-                          fontWeight: 600,
-                          fontSize: '15px',
-                          color: '#FFFFFF',
-                          lineHeight: 1.3,
-                        }}
-                      >
-                        <span>{doc.value}</span>
-                        {doc.verified && <CheckCircle size={16} color="#BFFF00" />}
+                        {work.shift?.title || 'Смена'}
+                      </h4>
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            size={14}
+                            color={i < (work.rating || 5) ? '#BFFF00' : '#444'}
+                            fill={i < (work.rating || 5) ? '#BFFF00' : 'none'}
+                          />
+                        ))}
                       </div>
                     </div>
-
-                    {/* Action */}
-                    <button
-                      onClick={() => console.log('Edit document')}
+                    <p
                       style={{
-                        background: 'none',
-                        border: 'none',
+                        fontWeight: 400,
+                        fontSize: '12px',
+                        color: '#6B6B6B',
                         fontFamily: "'Montserrat', sans-serif",
-                        fontWeight: 600,
-                        fontSize: '13px',
-                        color: '#E85D2F',
-                        cursor: 'pointer',
-                        whiteSpace: 'nowrap',
-                        transition: 'color 0.2s ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.color = '#FF8855'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.color = '#E85D2F'
                       }}
                     >
-                      {doc.action}
-                    </button>
+                      {work.shift?.location_address || 'Локация не указана'}
+                    </p>
                   </div>
-                )
-              })}
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* DOCUMENTS */}
+          <div style={{ padding: '0 20px 20px' }}>
+            <h3
+              style={{
+                fontWeight: 700,
+                fontSize: '16px',
+                color: '#FFFFFF',
+                marginBottom: '14px',
+                fontFamily: "'Montserrat', sans-serif",
+              }}
+            >
+              Документы и выплаты
+            </h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {/* Employment Status */}
+              <div
+                style={{
+                  background: 'rgba(245, 245, 245, 0.5)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
+              >
+                <FileText size={20} color="#E85D2F" />
+                <div style={{ flex: 1 }}>
+                  <p
+                    style={{
+                      fontWeight: 500,
+                      fontSize: '12px',
+                      color: '#6B6B6B',
+                      marginBottom: '4px',
+                      fontFamily: "'Montserrat', sans-serif",
+                    }}
+                  >
+                    Статус занятости
+                  </p>
+                  <p
+                    style={{
+                      fontWeight: 600,
+                      fontSize: '14px',
+                      color: '#FFFFFF',
+                      fontFamily: "'Montserrat', sans-serif",
+                    }}
+                  >
+                    {userProfile?.profile?.status || 'Не указан'}
+                  </p>
+                </div>
+                <CheckCircle size={20} color="#4ADE80" />
+              </div>
+
+              {/* Payment Method */}
+              <div
+                style={{
+                  background: 'rgba(245, 245, 245, 0.5)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
+              >
+                <CreditCard size={20} color="#E85D2F" />
+                <div style={{ flex: 1 }}>
+                  <p
+                    style={{
+                      fontWeight: 500,
+                      fontSize: '12px',
+                      color: '#6B6B6B',
+                      marginBottom: '4px',
+                      fontFamily: "'Montserrat', sans-serif",
+                    }}
+                  >
+                    Способ выплаты
+                  </p>
+                  <p
+                    style={{
+                      fontWeight: 600,
+                      fontSize: '14px',
+                      color: '#FFFFFF',
+                      fontFamily: "'Montserrat', sans-serif",
+                    }}
+                  >
+                    •••• 4729
+                  </p>
+                </div>
+                <CheckCircle size={20} color="#4ADE80" />
+              </div>
             </div>
           </div>
 
           {/* LOGOUT BUTTON */}
-          <div
-            style={{
-              padding: '0 20px 32px 20px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-            }}
-          >
+          <div style={{ padding: '0 20px' }}>
             <button
-              onClick={() => console.log('Logout')}
+              onClick={() => {
+                console.log('Logout')
+                router.push('/login')
+              }}
               style={{
                 width: '100%',
-                height: '48px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
+                height: '52px',
+                background: 'rgba(255, 59, 48, 0.15)',
+                border: '1px solid rgba(255, 59, 48, 0.3)',
                 borderRadius: '12px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '10px',
-                fontFamily: "'Montserrat', sans-serif",
                 fontWeight: 600,
-                fontSize: '14px',
-                color: '#9B9B9B',
+                fontSize: '15px',
+                color: '#FF3B30',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)'
+                fontFamily: "'Montserrat', sans-serif",
               }}
             >
-              <LogOut size={18} />
-              <span>Выйти из аккаунта</span>
+              <LogOut size={20} />
+              Выйти из аккаунта
             </button>
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(var(--rotate, 0deg)); }
-          50% { transform: translateY(-20px) rotate(var(--rotate, 0deg)); }
-        }
-      `}</style>
     </div>
   )
 }
