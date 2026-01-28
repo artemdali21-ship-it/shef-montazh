@@ -220,6 +220,9 @@ export default function MyApplicationsScreen() {
         fontFamily: 'Montserrat, system-ui, -apple-system, sans-serif',
         display: 'flex',
         flexDirection: 'column',
+        width: '100%',
+        height: '100vh',
+        overflow: 'hidden',
       }}
     >
       <div

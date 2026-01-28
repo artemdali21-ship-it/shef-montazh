@@ -12,7 +12,7 @@ export default function SearchPage() {
 
   return (
     <div
-      className="w-full min-h-screen flex flex-col"
+      className="w-full h-screen flex flex-col"
       style={{
         backgroundImage: 'url(/images/gradient-bg.png)',
         backgroundSize: 'cover',
