@@ -223,12 +223,12 @@ export default function CreateShiftScreen({ onClose, onSuccess }: { onClose?: ()
 
       {/* Content */}
       <div style={{
-          paddingTop: '67px', 
-          paddingBottom: step === 1 ? '120px' : '80px',
-          maxHeight: 'calc(100vh - 67px)',
-          overflowY: 'auto',
-          overflowX: 'hidden',
-        }}>
+        paddingTop: '67px', 
+        paddingBottom: step === 1 ? '120px' : '80px',
+        maxHeight: 'calc(100vh - 67px)',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+      }}>
           {step === 1 ? (
             <div style={{ padding: '24px 20px' }}>
               {/* Job Details Section */}
