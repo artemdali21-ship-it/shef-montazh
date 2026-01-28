@@ -157,7 +157,7 @@ export default function OnboardingScreen() {
             <div style={{ color: '#E85D2F' }} className="flex-shrink-0">
               <AsteriskIcon />
             </div>
-            <h1 style={{ color: '#1A1A1A' }} className="text-xl uppercase tracking-wider font-sans" style={{ fontWeight: 800, letterSpacing: '-0.02em' }}>
+            <h1 style={{ color: '#1A1A1A', fontWeight: 800, letterSpacing: '-0.02em' }} className="text-xl uppercase tracking-wider font-sans">
               ШЕФ-МОНТАЖ
             </h1>
           </div>
