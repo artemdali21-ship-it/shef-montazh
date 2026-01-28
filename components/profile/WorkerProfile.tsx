@@ -710,16 +710,14 @@ export default function WorkerProfile() {
             </button>
           </div>
         </div>
+
+        <style>{`
+          @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(var(--rotate, 0deg)); }
+            50% { transform: translateY(-20px) rotate(var(--rotate, 0deg)); }
+          }
+        `}</style>
       </div>
-    </div>
-  )
-}
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(var(--rotate, 0deg)); }
-          50% { transform: translateY(-20px) rotate(var(--rotate, 0deg)); }
-        }
-      `}</style>
     </div>
   )
 }
