@@ -151,6 +151,7 @@ export default function WorkerCategoriesPage() {
         position: 'relative',
         zIndex: 10,
         WebkitOverflowScrolling: 'touch',
+        minHeight: 0,
       }}>
         <div className="px-4 py-6">
           <div className="max-w-2xl mx-auto pb-48">
