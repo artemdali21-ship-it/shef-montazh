@@ -144,15 +144,15 @@ export default function OnboardingScreen() {
           {/* HEADER */}
           <div className="mb-6">
             <div className="flex items-center justify-center gap-1.5 mb-2">
-            <div style={{ color: '#E85D2F' }} className="flex-shrink-0">
-              <AsteriskIcon />
+              <div style={{ color: '#E85D2F' }} className="flex-shrink-0">
+                <AsteriskIcon />
+              </div>
+              <h1 style={{ color: '#FFFFFF', fontWeight: 800, letterSpacing: '-0.02em' }} className="text-xl uppercase tracking-wider font-sans">ШЕФ-МОНТАЖ</h1>
             </div>
-            <h1 style={{ color: '#FFFFFF', fontWeight: 800, letterSpacing: '-0.02em' }} className="text-xl uppercase tracking-wider font-sans">ШЕФ-МОНТАЖ</h1>
+            <p style={{ color: '#FFFFFF' }} className="text-sm font-normal text-center tracking-tight leading-snug font-sans">
+              Финтех-платформа гарантированных смен
+            </p>
           </div>
-          <p style={{ color: '#FFFFFF' }} className="text-sm font-normal text-center tracking-tight leading-snug font-sans">
-            Финтех-платформа гарантированных смен
-          </p>
-        </div>
 
         {/* SLIDE COUNTER */}
         <div className="flex justify-center gap-1 mb-6 flex-shrink-0">
