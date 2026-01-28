@@ -39,7 +39,7 @@ export default function TelegramProvider({ children }: TelegramProvider) {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#1A1A1A] text-white" style={{
+    <div className="min-h-screen bg-[#1A1A1A] text-white max-w-screen-md mx-auto w-full" style={{
       paddingBottom: 'var(--twa-bottom-safe-area, 0px)',
     }}>
       {children}
