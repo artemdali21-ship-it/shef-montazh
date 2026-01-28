@@ -137,7 +137,7 @@ export default function ClientProfile({
             backgroundPosition: 'center',
           }}
         >
-          {/* Dark overlay for readability - LIGHTER for rainbow visibility */}
+          {/* Dark overlay for readability - NO BLUR */}
           <div
             style={{
               position: 'absolute',
@@ -146,8 +146,6 @@ export default function ClientProfile({
               right: 0,
               bottom: 0,
               background: 'rgba(0, 0, 0, 0.2)',
-              backdropFilter: 'blur(3px)',
-              WebkitBackdropFilter: 'blur(3px)',
               zIndex: 1,
             }}
           />
