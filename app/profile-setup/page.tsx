@@ -4,27 +4,6 @@ import React, { useState } from 'react'
 import { ChevronLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
-const NoisePattern = () => (
-  <svg
-    style={{
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      pointerEvents: 'none',
-      opacity: 0.03,
-    }}
-  >
-    <defs>
-      <filter id="noise">
-        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" seed="2" />
-      </filter>
-    </defs>
-    <rect width="100%" height="100%" filter="url(#noise)" />
-  </svg>
-)
-
 export default function ProfileSetupPage() {
   const router = useRouter()
   const [step, setStep] = useState(0)
@@ -492,21 +471,8 @@ export default function ProfileSetupPage() {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundImage: 'url(/images/bg-dashboard.jpg)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundAttachment: 'fixed',
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
-      <NoisePattern />
-      
-      {/* 3D decorative elements - HIDDEN FOR TELEGRAM MINI APP */}
-      {/* Removed to prevent overflow issues in Telegram Mini App */}
-
-      <header style={{
+    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col overflow-hidden">
+      {/* HEADER */}
         position: 'relative',
         background: 'rgba(42, 42, 42, 0.6)',
         backdropFilter: 'blur(20px)',
