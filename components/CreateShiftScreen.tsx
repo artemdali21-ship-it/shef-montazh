@@ -230,7 +230,7 @@ export default function CreateShiftScreen({ onClose, onSuccess }: { onClose?: ()
         overflowY: 'auto',
         overflowX: 'hidden',
       }}>
-          {step === 1 ? (
+        {step === 1 ? (
             <div style={{ padding: '24px 20px' }}>
               {/* Job Details Section */}
               <div style={{ marginBottom: '32px' }}>
