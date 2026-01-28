@@ -171,32 +171,32 @@ export default function CreateShiftScreen({ onClose, onSuccess }: { onClose?: ()
             <X size={20} color="#FFFFFF" />
           </button>
 
-          <h1
-            style={{
-              fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 700,
-              fontSize: '16px',
-              color: '#FFFFFF',
-              margin: 0,
-              flex: 1,
-              textAlign: 'center',
-            }}
-          >
-            Создать смену
-          </h1>
+        <h1
+          style={{
+            fontFamily: "'Montserrat', sans-serif",
+            fontWeight: 700,
+            fontSize: '16px',
+            color: '#FFFFFF',
+            margin: 0,
+            flex: 1,
+            textAlign: 'center',
+          }}
+        >
+          Создать смену
+        </h1>
 
-          <div
-            style={{
-              fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 600,
-              fontSize: '13px',
-              color: '#9B9B9B',
-              width: '40px',
-              textAlign: 'right',
-            }}
-          >
-            {step} / 2
-          </div>
+        <div
+          style={{
+            fontFamily: "'Montserrat', sans-serif",
+            fontWeight: 600,
+            fontSize: '13px',
+            color: '#9B9B9B',
+            width: '40px',
+            textAlign: 'right',
+          }}
+        >
+          {step} / 2
+        </div>
         </header>
 
         {/* Progress bar */}
