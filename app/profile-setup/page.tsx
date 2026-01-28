@@ -495,13 +495,12 @@ export default function ProfileSetupPage() {
         <div className="w-10"></div>
       </header>
 
-      <div style={{
-        flex: 1,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        position: 'relative',
-        zIndex: 10,
-      }} className="px-4 py-6">
+      <div 
+        className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-6 relative"
+        style={{
+          zIndex: 10,
+        }}
+      >
         <main className="max-w-md mx-auto w-full pb-32">
           {renderStep()}
         </main>
