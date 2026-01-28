@@ -74,41 +74,33 @@ export default function WorkerProfile() {
 
       {/* CONTENT AREA */}
       <div className="flex-1 overflow-y-auto pt-16 pb-4 relative z-5">
-        {/* PROFILE HEADER SECTION - GLASSMORPHIC */}
+        {/* PROFILE HEADER SECTION - GLASSMORPHIC WITH RAINBOW SPLASH */}
         <div
           style={{
             padding: '20px',
             textAlign: 'center',
-            background: 'rgba(0, 0, 0, 0.4)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            backgroundImage: 'url(/images/bg-main-splash.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
             position: 'relative',
             overflow: 'hidden',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
           }}
         >
-          {/* Glassmorphic blur lines background */}
-          <svg
+          {/* Dark overlay for readability */}
+          <div
             style={{
               position: 'absolute',
               top: 0,
               left: 0,
-              width: '100%',
-              height: '100%',
-              opacity: 0.15,
-              pointerEvents: 'none',
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.5)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              zIndex: 1,
             }}
-            preserveAspectRatio="none"
-            viewBox="0 0 100 100"
-          >
-            <line x1="10" y1="0" x2="20" y2="100" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.5" />
-            <line x1="30" y1="0" x2="40" y2="100" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.5" />
-            <line x1="50" y1="0" x2="60" y2="100" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.5" />
-            <line x1="70" y1="0" x2="80" y2="100" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.5" />
-            <line x1="90" y1="0" x2="100" y2="100" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.5" />
-            <circle cx="50" cy="30" r="25" fill="none" stroke="rgba(232, 93, 47, 0.2)" strokeWidth="0.3" />
-            <path d="M 0 50 Q 25 40, 50 50 T 100 50" fill="none" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="0.4" />
-          </svg>
+          />
           {/* Avatar */}
           <div
             style={{

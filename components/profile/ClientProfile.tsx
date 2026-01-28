@@ -120,7 +120,7 @@ export default function ClientProfile({
 
       {/* MAIN CONTENT */}
       <div className="flex-1 overflow-y-auto w-full">
-        {/* PROFILE INFO GLASSMORPHIC SECTION */}
+        {/* PROFILE INFO GLASSMORPHIC SECTION WITH RAINBOW SPLASH */}
         <div
           style={{
             background: 'rgba(0, 0, 0, 0.4)',
@@ -132,28 +132,25 @@ export default function ClientProfile({
             borderRadius: '12px',
             position: 'relative',
             overflow: 'hidden',
+            backgroundImage: 'url(/images/bg-main-splash.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
           }}
         >
-          {/* Glassmorphic blur lines */}
-          <svg
+          {/* Dark overlay for readability */}
+          <div
             style={{
               position: 'absolute',
               top: 0,
               left: 0,
-              width: '100%',
-              height: '100%',
-              opacity: 0.1,
-              pointerEvents: 'none',
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.5)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              zIndex: 1,
             }}
-            preserveAspectRatio="none"
-            viewBox="0 0 100 100"
-          >
-            <line x1="10" y1="0" x2="20" y2="100" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.5" />
-            <line x1="30" y1="0" x2="40" y2="100" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.5" />
-            <line x1="50" y1="0" x2="60" y2="100" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.5" />
-            <line x1="70" y1="0" x2="80" y2="100" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.5" />
-            <path d="M 0 30 Q 25 20, 50 30 T 100 30" fill="none" stroke="rgba(232, 93, 47, 0.2)" strokeWidth="0.4" />
-          </svg>
+          />
 
           {/* Company Info Content */}
           <div style={{ position: 'relative', zIndex: 2 }}>

@@ -78,15 +78,7 @@ export default function OnboardingScreen() {
   }
 
   return (
-    <div
-      className="w-screen h-screen flex flex-col items-center justify-center font-sans relative overflow-hidden"
-      style={{
-        backgroundImage: 'url(/images/bg-main-splash.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-      }}
-    >
+    <div className="w-screen h-screen flex flex-col items-center justify-center font-sans relative bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] overflow-hidden">
       {/* FLOATING 3D ELEMENTS - ГЛАВНАЯ СТРАНИЦА */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <img
