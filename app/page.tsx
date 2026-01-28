@@ -79,7 +79,7 @@ export default function OnboardingScreen() {
 
   return (
     <div
-      className="h-screen flex flex-col items-center justify-center font-sans relative"
+      className="h-screen flex flex-col items-center justify-center font-sans relative overflow-hidden"
       style={{
         backgroundImage: 'url(/images/bg-dashboard.jpg)',
         backgroundSize: 'cover',
@@ -87,7 +87,8 @@ export default function OnboardingScreen() {
         backgroundAttachment: 'fixed',
         padding: 0,
         margin: 0,
-        overflow: 'hidden',
+        width: '100vw',
+        maxWidth: '100vw',
       }}
     >
       <NoisePattern />
