@@ -144,8 +144,9 @@ export default function WorkerCategoriesPage() {
         overflowX: 'hidden',
         position: 'relative',
         zIndex: 10,
+        WebkitOverflowScrolling: 'touch',
       }} className="px-4 py-6">
-        <div className="max-w-2xl mx-auto pb-32">
+        <div className="max-w-2xl mx-auto pb-48">
           <div className="mb-6">
             <p className="text-white/60 text-sm font-medium">
               Можно выбрать несколько категорий
