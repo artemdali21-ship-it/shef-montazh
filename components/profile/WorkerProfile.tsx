@@ -107,169 +107,51 @@ export default function WorkerProfile() {
   }
 
   return (
-    <div className="w-full flex flex-col">
-      {/* HEADER */}
-      <header
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '64px',
-          background: 'rgba(26, 26, 26, 0.95)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 20px',
-          zIndex: 10,
-        }}
-      >
+    <div className="w-full h-full flex flex-col overflow-hidden bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
       {/* DECORATIVE ELEMENTS */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
         <img src="/images/tape-2.png" className="absolute top-10 left-1/4 w-16 h-16" alt="" />
       </div>
 
-      <div
+      {/* HEADER */}
+      <header
+        className="fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-5 z-10"
         style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.4)',
-          pointerEvents: 'none',
-          zIndex: 1,
+          background: 'rgba(26, 26, 26, 0.95)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
         }}
-      />
-      {/* FLOATING WRENCH KEY 2 - Profile (SMALL - far) */}
-      <img
-        src="/images/wrench-key-2.png"
-        alt=""
-        style={{
-          position: 'fixed',
-          bottom: '10%',
-          left: '3%',
-          width: '60px',
-          height: 'auto',
-          opacity: 0.08,
-          transform: 'rotate(30deg)',
-          zIndex: 0,
-          pointerEvents: 'none',
-          animation: 'float 6s ease-in-out infinite 0.5s',
-          maxWidth: '100%',
-        }}
-      />
-      {/* HELMET - Profile only */}
-      <img
-        src="/images/helmet.png"
-        alt=""
-        style={{
-          position: 'fixed',
-          bottom: '15%',
-          left: '5%',
-          width: '140px',
-          height: 'auto',
-          opacity: 0.65,
-          transform: 'rotate(-15deg)',
-          zIndex: 1,
-          pointerEvents: 'none',
-          animation: 'float 8s ease-in-out infinite 0.7s',
-        }}
-      />
-      <div style={{ position: 'relative', zIndex: 2 }}>
-        {/* HEADER */}
-        <header
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '64px',
-            background: 'rgba(26, 26, 26, 0.95)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '0 20px',
-            zIndex: 10,
-          }}
+      >
+        <button
+          onClick={() => router.back()}
+          className="p-2 hover:bg-white/10 rounded-lg transition-all"
         >
-          <button
-            onClick={() => router.back()}
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-            }}
-          >
-            <ArrowLeft size={20} color="#FFFFFF" />
-          </button>
+          <ArrowLeft size={20} color="#FFFFFF" />
+        </button>
 
-          <h1
-            style={{
-              fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 700,
-              fontSize: '16px',
-              color: '#FFFFFF',
-            }}
-          >
-            Профиль
-          </h1>
+        <h1 className="text-base font-bold text-white">Профиль</h1>
 
-          <button
-            onClick={() => console.log('Open settings')}
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-            }}
-          >
-            <Settings size={18} color="#FFFFFF" />
-          </button>
-        </header>
-
-        {/* CONTENT */}
-        <div
-          style={{
-            paddingTop: '64px',
-            paddingBottom: '140px',
-            minHeight: 'calc(100vh - 64px)',
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            WebkitOverflowScrolling: 'touch',
-          }}
+        <button
+          onClick={() => console.log('Open settings')}
+          className="p-2 hover:bg-white/10 rounded-lg transition-all"
         >
+          <Settings size={18} color="#FFFFFF" />
+        </button>
+      </header>
+
+      {/* CONTENT AREA */}
+      <div className="flex-1 overflow-y-auto pt-16 pb-24 relative z-20">
+        {/* HELMET DECORATION */}
+        <img
+          src="/images/helmet.png"
+          alt=""
+          className="fixed bottom-1/4 left-5 w-36 opacity-60 pointer-events-none"
+          style={{
+            transform: 'rotate(-15deg)',
+            animation: 'float 8s ease-in-out infinite 0.7s',
+          }}
+        />
           {/* PROFILE HERO SECTION */}
           <div
             style={{
@@ -829,7 +711,9 @@ export default function WorkerProfile() {
           </div>
         </div>
       </div>
-
+    </div>
+  )
+}
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(var(--rotate, 0deg)); }
