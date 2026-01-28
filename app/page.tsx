@@ -143,7 +143,7 @@ export default function OnboardingScreen() {
         <div className="w-full px-5 py-8 flex flex-col flex-1">
           {/* HEADER */}
           <div className="mb-6">
-          <div className="flex items-center justify-center gap-1.5 mb-2">
+            <div className="flex items-center justify-center gap-1.5 mb-2">
             <div style={{ color: '#E85D2F' }} className="flex-shrink-0">
               <AsteriskIcon />
             </div>
@@ -256,6 +256,8 @@ export default function OnboardingScreen() {
         <p style={{ color: '#FFFFFF' }} className="text-sm text-center leading-relaxed mt-8 flex-shrink-0 font-sans font-medium">
           Вход и регистрация внутри приложения
         </p>
+          </div>
+        </div>
       </div>
     </div>
   )
