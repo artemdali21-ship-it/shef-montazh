@@ -87,7 +87,7 @@ export default function WorkerProfile() {
             border: '1px solid rgba(255, 255, 255, 0.1)',
           }}
         >
-          {/* Dark overlay for readability */}
+          {/* Dark overlay for readability - LIGHTER for rainbow visibility */}
           <div
             style={{
               position: 'absolute',
@@ -95,9 +95,9 @@ export default function WorkerProfile() {
               left: 0,
               right: 0,
               bottom: 0,
-              background: 'rgba(0, 0, 0, 0.5)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
+              background: 'rgba(0, 0, 0, 0.2)',
+              backdropFilter: 'blur(3px)',
+              WebkitBackdropFilter: 'blur(3px)',
               zIndex: 1,
             }}
           />
