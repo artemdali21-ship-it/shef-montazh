@@ -597,7 +597,7 @@ export default function ShiftMonitoringScreen() {
           </div>
         </div>
 
-        {/* ESCROW STATUS CARD */}
+        {/* PAYMENT INFO CARD - NO ESCROW */}
         <div style={{ padding: '0 20px', marginBottom: '20px' }}>
           <div
             style={{
@@ -623,7 +623,7 @@ export default function ShiftMonitoringScreen() {
                   alignItems: 'center',
                 }}
               >
-                <Shield size={20} color="#BFFF00" />
+                <TrendingUp size={20} color="#E85D2F" />
                 <h3
                   style={{
                     fontFamily: "'Montserrat', sans-serif",
@@ -632,60 +632,59 @@ export default function ShiftMonitoringScreen() {
                     color: '#FFFFFF',
                   }}
                 >
-                  Эскроу-счёт
+                  Информация об оплате
                 </h3>
-              </div>
-              <div
-                style={{
-                  fontFamily: "'Montserrat', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '10px',
-                  color: '#BFFF00',
-                  padding: '4px 8px',
-                  background: 'rgba(191, 255, 0, 0.15)',
-                  borderRadius: '6px',
-                  letterSpacing: '0.5px',
-                }}
-              >
-                ЗАМОРОЖЕНО
               </div>
             </div>
 
-            <p
-              style={{
-                fontFamily: "'Montserrat', sans-serif",
-                fontWeight: 800,
-                fontSize: '24px',
-                color: '#FFFFFF',
-                letterSpacing: '-0.5px',
-                marginBottom: '6px',
-              }}
-            >
-              11 200 ₽
-            </p>
-            <p
-              style={{
-                fontFamily: "'Montserrat', sans-serif",
-                fontWeight: 400,
-                fontSize: '12px',
-                color: '#FFFFFF',
-              }}
-            >
-              4 чел. × 2 500 ₽ + комиссия 1 200 ₽ (12%)
-            </p>
+            {/* Cost breakdown */}
+            <div style={{ marginBottom: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 400, fontSize: '13px', color: '#FFFFFF' }}>
+                  Стоимость работ:
+                </span>
+                <span style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 600, fontSize: '13px', color: '#FFFFFF' }}>
+                  10 000 ₽
+                </span>
+              </div>
+              <div style={{ fontSize: '11px', color: '#FFFFFF', opacity: 0.7, paddingLeft: '0' }}>
+                (4 чел. × 2 500 ₽)
+              </div>
+              
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 400, fontSize: '13px', color: '#FFFFFF' }}>
+                  Комиссия платформы:
+                </span>
+                <span style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 600, fontSize: '13px', color: '#FFFFFF' }}>
+                  + 1 200 ₽
+                </span>
+              </div>
 
+              <div style={{ height: '1px', background: 'rgba(255, 255, 255, 0.1)', margin: '8px 0' }} />
+
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: '14px', color: '#BFFF00' }}>
+                  Итого к оплате:
+                </span>
+                <span style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: '16px', color: '#BFFF00' }}>
+                  11 200 ₽
+                </span>
+              </div>
+            </div>
+
+            {/* Info box - NO ESCROW */}
             <div
               style={{
                 marginTop: '14px',
-                background: 'rgba(191, 255, 0, 0.08)',
-                border: '1px solid rgba(191, 255, 0, 0.2)',
+                background: 'rgba(232, 93, 47, 0.08)',
+                border: '1px solid rgba(232, 93, 47, 0.2)',
                 borderRadius: '10px',
                 padding: '12px',
                 display: 'flex',
                 gap: '10px',
               }}
             >
-              <Info size={16} color="#BFFF00" style={{ flexShrink: 0 }} />
+              <Info size={16} color="#E85D2F" style={{ flexShrink: 0 }} />
               <p
                 style={{
                   fontFamily: "'Montserrat', sans-serif",
@@ -695,8 +694,7 @@ export default function ShiftMonitoringScreen() {
                   lineHeight: '1.5',
                 }}
               >
-                Средства будут разморожены после подтверждения выполнения работ
-                шеф-монтажником
+                Оплата будет доступна после завершения смены, подтверждения исполнителями и взаимной оценки.
               </p>
             </div>
           </div>
