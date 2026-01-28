@@ -20,14 +20,14 @@ export default function WorkerLayout({ children }: WorkerLayoutProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
+    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col overflow-hidden">
       {/* CONTENT */}
-      <div className="pb-24 overflow-y-auto min-h-screen">
+      <div className="flex-1 overflow-y-auto pb-20">
         {children}
       </div>
 
       {/* TABBAR */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-black/40 backdrop-blur-2xl border-t border-white/10 h-20 z-50">
+      <nav className="flex-shrink-0 bg-black/40 backdrop-blur-2xl border-t border-white/10 h-20 z-50">
         <div className="flex items-center justify-around h-full px-4 max-w-screen-md mx-auto">
           {tabs.map(({ icon: Icon, label, path }) => {
             const isActive = pathname === path;

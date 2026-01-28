@@ -37,11 +37,9 @@ export default function WorkerCategoriesPage() {
     <div style={{
       minHeight: '100vh',
       backgroundColor: '#0F172A',
-      position: 'fixed',
-      inset: 0,
-      overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
+      overflow: 'hidden',
     }}>
       {/* Background Image */}
       <div style={{

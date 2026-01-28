@@ -78,10 +78,10 @@
 ### 6. **Роль-базированная маршрутизация**
 
 Система использует localStorage для сохранения роли пользователя:
-```typescript
+\`\`\`typescript
 localStorage.setItem('userRole', role)
 const role = localStorage.getItem('userRole') // 'worker' | 'client' | 'shef'
-```
+\`\`\`
 
 Это позволяет:
 - Корректно отображать нужный набор вкладок
@@ -123,7 +123,7 @@ const role = localStorage.getItem('userRole') // 'worker' | 'client' | 'shef'
 
 ## Структура файлов
 
-```
+\`\`\`
 /app
   /worker-categories/page.tsx          ← Новая страница выбора категорий
   /profile-setup/page.tsx              ← Обновлена маршрутизация
@@ -140,7 +140,7 @@ const role = localStorage.getItem('userRole') // 'worker' | 'client' | 'shef'
 
 /lib
   /auth.ts                             ← Хелпер для получения роли
-```
+\`\`\`
 
 ## Следующие шаги
 

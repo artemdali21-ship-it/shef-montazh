@@ -86,16 +86,11 @@ const JobDetailsScreen = () => {
   return (
     <div
       style={{
-        height: '100vh',
+        minHeight: '100vh',
         backgroundImage: 'url(/images/bg-dashboard.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
         display: 'flex',
         flexDirection: 'column',
       }}
