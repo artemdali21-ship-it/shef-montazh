@@ -28,8 +28,7 @@ const clientData = {
     accountType: 'Премиум аккаунт',
   },
   balance: {
-    escrow: 47500,
-    frozen: 47500,
+    available: 47500,
     activeShifts: 3,
   },
   stats: {
@@ -297,34 +296,6 @@ export default function ClientDashboardScreen() {
 
             {/* Content */}
             <div style={{ position: 'relative', zIndex: 2 }}>
-              {/* Escrow Badge */}
-              <div
-                style={{
-                  display: 'inline-flex',
-                  gap: '6px',
-                  alignItems: 'center',
-                  background: 'rgba(191, 255, 0, 0.15)',
-                  border: '1px solid #BFFF00',
-                  padding: '6px 12px',
-                  borderRadius: '8px',
-                  marginBottom: '14px',
-                }}
-              >
-                <Shield size={14} color="#BFFF00" />
-                <span
-                  style={{
-                    fontFamily: "'Montserrat', sans-serif",
-                    fontWeight: 700,
-                    fontSize: '11px',
-                    color: '#BFFF00',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
-                  }}
-                >
-                  Эскроу защита
-                </span>
-              </div>
-
               {/* Balance */}
               <div style={{ marginBottom: '20px' }}>
                 <div
@@ -349,7 +320,7 @@ export default function ClientDashboardScreen() {
                     marginBottom: '6px',
                   }}
                 >
-                  {clientData.balance.escrow.toLocaleString('ru-RU')} ₽
+                  {clientData.balance.available.toLocaleString('ru-RU')} ₽
                 </div>
                 <div
                   style={{
@@ -359,7 +330,7 @@ export default function ClientDashboardScreen() {
                     color: '#FFFFFF',
                   }}
                 >
-                  Заморожено для {clientData.balance.activeShifts} активных смен
+                  Доступно для новых смен
                 </div>
               </div>
 
@@ -679,29 +650,6 @@ export default function ClientDashboardScreen() {
                       </span>
                     </div>
                   )}
-
-                  <div
-                    style={{
-                      display: 'inline-flex',
-                      gap: '4px',
-                      alignItems: 'center',
-                      padding: '6px 10px',
-                      background: 'rgba(107, 107, 107, 0.2)',
-                      borderRadius: '6px',
-                    }}
-                  >
-                    <Shield size={12} color="#6B6B6B" />
-                    <span
-                      style={{
-                        fontFamily: "'Montserrat', sans-serif",
-                        fontWeight: 600,
-                        fontSize: '10px',
-                        color: '#FFFFFF',
-                      }}
-                    >
-                      ЭСКРОУ
-                    </span>
-                  </div>
                 </div>
 
                 {/* Metadata */}
