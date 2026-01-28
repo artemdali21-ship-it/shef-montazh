@@ -144,11 +144,11 @@ export default function CreateShiftScreen({ onClose, onSuccess }: { onClose?: ()
           zIndex: 50,
         }}
       >
-          <button
-            onClick={() => {
-              if (onClose) onClose()
-              console.log('[v0] Close shift creation form')
-            }}
+        <button
+          onClick={() => {
+            if (onClose) onClose()
+            console.log('[v0] Close shift creation form')
+          }}
             style={{
               width: '40px',
               height: '40px',
