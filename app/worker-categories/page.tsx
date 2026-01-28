@@ -35,10 +35,11 @@ export default function WorkerCategoriesPage() {
 
   return (
     <div style={{
-      minHeight: '100vh',
+      height: '100dvh',
       backgroundColor: '#0F172A',
       display: 'flex',
       flexDirection: 'column',
+      position: 'relative',
     }}>
       {/* Background Image */}
       <div style={{
@@ -153,8 +154,8 @@ export default function WorkerCategoriesPage() {
         WebkitOverflowScrolling: 'touch',
         minHeight: 0,
       }}>
-        <div className="px-4 py-6">
-          <div className="max-w-2xl mx-auto mb-32">
+        <div className="px-4 py-6 pb-24">
+          <div className="max-w-2xl mx-auto">
             <div className="mb-6">
               <p className="text-white/60 text-sm font-medium">
                 Можно выбрать несколько категорий
