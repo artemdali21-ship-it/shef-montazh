@@ -77,7 +77,6 @@ export default function CreateShiftScreen({ onClose, onSuccess }: { onClose?: ()
   const escrowAmount = totalAmount + commission;
 
   const isStep1Valid =
-  const isStep1Valid =
     formData.title.length > 0 &&
     formData.category &&
     formData.location.length > 0 &&
