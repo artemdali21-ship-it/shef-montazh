@@ -5,20 +5,15 @@ import { Header } from '@/components/Header'
 import { ShiftSearch } from '@/components/search/ShiftSearch'
 import { WorkerSearch } from '@/components/search/WorkerSearch'
 import { getUserRole } from '@/lib/auth'
+import ClientLayout from '@/components/layouts/ClientLayout'
+import WorkerLayout from '@/components/layouts/WorkerLayout'
+import ShefLayout from '@/components/layouts/ShefLayout'
 
 export default function SearchPage() {
   const userRole = getUserRole()
 
-  return (
-    <div
-      className="w-full h-screen flex flex-col"
-      style={{
-        backgroundImage: 'url(/images/gradient-bg.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-      }}
-    >
+  const SearchContent = () => (
+    <div className="w-full flex flex-col">
       {/* HEADER */}
       <Header 
         title={
@@ -33,7 +28,7 @@ export default function SearchPage() {
       />
 
       {/* CONTENT - Scrollable */}
-      <div className="flex-1 overflow-y-auto pt-20 pb-24 px-4 font-sans">
+      <div className="flex-1 overflow-y-auto pt-20 pb-4 px-4 font-sans">
         {/* WORKER & SHEF: SHIFT SEARCH */}
         {(userRole === 'worker' || userRole === 'shef') && <ShiftSearch />}
         
@@ -41,5 +36,13 @@ export default function SearchPage() {
         {userRole === 'client' && <WorkerSearch />}
       </div>
     </div>
+  )
+
+  const Layout = userRole === 'worker' ? WorkerLayout : userRole === 'shef' ? ShefLayout : ClientLayout
+
+  return (
+    <Layout>
+      <SearchContent />
+    </Layout>
   )
 }
