@@ -143,9 +143,9 @@ export default function RoleSelectScreen() {
       `}</style>
 
       {/* MAIN CONTENT */}
-      <div className="max-w-sm px-6 relative z-20 flex flex-col" style={{ width: 'auto', margin: 0 }}>
+      <div className="max-w-2xl px-6 relative z-20 flex flex-col" style={{ width: 'auto', margin: 0 }}>
         {/* HEADER */}
-        <div className="mb-6 animate-slide-up">
+        <div className="mb-8 animate-slide-up">
           <h1 style={{ color: '#FFFFFF' }} className="text-4xl mb-3" style={{ fontWeight: 800, lineHeight: 1.2, fontFamily: 'Montserrat' }}>
             Кто вы?
           </h1>
@@ -155,7 +155,7 @@ export default function RoleSelectScreen() {
         </div>
 
         {/* ROLE CARDS */}
-        <div className="space-y-2 mb-6">
+        <div className="space-y-4 mb-8">
           {roles.map((role, index) => {
             const isSelected = selectedRole === role.id
 
@@ -164,7 +164,7 @@ export default function RoleSelectScreen() {
                 key={role.id}
                 onClick={() => handleSelectRole(role.id)}
                 disabled={selectedRole !== null && selectedRole !== role.id}
-                className="relative group w-full flex items-start gap-4 p-3 rounded-2xl transition-all duration-300 text-left overflow-hidden"
+                className="relative group w-full flex items-start gap-4 p-4 rounded-2xl transition-all duration-300 text-left overflow-hidden"
                 style={{
                   animation: `slideUp 0.6s ease-out forwards`,
                   animationDelay: `${0.1 + index * 0.1}s`,
@@ -217,8 +217,8 @@ export default function RoleSelectScreen() {
                 <div
                   className="flex items-center justify-center flex-shrink-0 rounded-xl transition-all duration-300"
                   style={{
-                    width: '56px',
-                    height: '56px',
+                    width: '64px',
+                    height: '64px',
                     background: isSelected
                       ? `${role.colorLight}`
                       : 'rgba(255, 255, 255, 0.08)',
@@ -232,8 +232,8 @@ export default function RoleSelectScreen() {
                     src={role.icon || "/placeholder.svg"}
                     alt={role.title}
                     style={{
-                      width: '32px',
-                      height: '32px',
+                      width: '40px',
+                      height: '40px',
                       objectFit: 'contain',
                       filter: isSelected ? `drop-shadow(0 4px 12px ${role.colorLight})` : 'opacity(0.7)',
                       transition: 'all 0.3s ease-out',
@@ -242,11 +242,11 @@ export default function RoleSelectScreen() {
                 </div>
 
                 {/* TEXT CONTENT */}
-                <div className="flex-1 py-0">
-                  <h3 style={{ color: '#FFFFFF' }} className="text-base mb-0.5" style={{ fontWeight: 700, fontFamily: 'Montserrat' }}>
+                <div className="flex-1 py-1">
+                  <h3 style={{ color: '#FFFFFF' }} className="text-lg mb-1" style={{ fontWeight: 700, fontFamily: 'Montserrat' }}>
                     {role.title}
                   </h3>
-                  <p style={{ color: 'rgba(255, 255, 255, 0.6)' }} className="text-xs font-normal" style={{ fontFamily: 'Montserrat' }}>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.6)' }} className="text-sm font-normal" style={{ fontFamily: 'Montserrat' }}>
                     {role.subtitle}
                   </p>
                 </div>
@@ -256,15 +256,15 @@ export default function RoleSelectScreen() {
                   <div
                     className="flex items-center justify-center flex-shrink-0 rounded-full transition-all duration-300"
                     style={{
-                      width: '32px',
-                      height: '32px',
+                      width: '36px',
+                      height: '36px',
                       background: role.color,
                       boxShadow: `0 6px 16px ${role.colorLight}`,
                       animation: `slideUp 0.4s ease-out 0.2s forwards`,
                       opacity: 0,
                     }}
                   >
-                    <Check size={18} className="text-white" strokeWidth={3} style={{ color: '#1A1A1A' }} />
+                    <Check size={20} className="text-white" strokeWidth={3} style={{ color: '#1A1A1A' }} />
                   </div>
                 )}
               </button>
