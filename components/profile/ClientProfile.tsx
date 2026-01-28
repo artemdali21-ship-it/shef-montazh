@@ -93,6 +93,11 @@ const mockCompletedShifts: CompletedShift[] = [
 ];
 
 export const ClientProfile: React.FC<ClientProfileProps> = ({
+  userId = 'CLIENT-001',
+  companyName = 'ШЕФ-МОНТАЖ',
+  companyId = 'SHEF-12345',
+  isPremium = true,
+}) => {
   userId = 'CL-47821',
   companyName = 'ООО Экспо Сервис',
   isPremium = true,
@@ -334,5 +339,7 @@ export const ClientProfile: React.FC<ClientProfileProps> = ({
     </div>
   );
 };
+
+export default ClientProfile;
 
 export default ClientProfile;

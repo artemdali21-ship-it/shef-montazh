@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import ProfileScreen from '@/components/ProfileScreen';
+import WorkerProfile from '@/components/profile/WorkerProfile';
+import ClientProfile from '@/components/profile/ClientProfile';
 import WorkerLayout from '@/components/layouts/WorkerLayout';
 import ClientLayout from '@/components/layouts/ClientLayout';
 import ShefLayout from '@/components/layouts/ShefLayout';
@@ -22,7 +23,9 @@ export default function ProfilePage() {
 
   return (
     <Layout>
-      <ProfileScreen />
+      {role === 'worker' && <WorkerProfile />}
+      {role === 'client' && <ClientProfile />}
+      {role === 'shef' && <WorkerProfile />}
     </Layout>
   );
 }
