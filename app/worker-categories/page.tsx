@@ -154,7 +154,7 @@ export default function WorkerCategoriesPage() {
         minHeight: 0,
       }}>
         <div className="px-4 py-6">
-          <div className="max-w-2xl mx-auto pb-48">
+          <div className="max-w-2xl mx-auto mb-32">
             <div className="mb-6">
               <p className="text-white/60 text-sm font-medium">
                 Можно выбрать несколько категорий
