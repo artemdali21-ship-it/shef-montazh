@@ -44,7 +44,7 @@ export default function WorkerProfile() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
+    <div className="w-full flex flex-col overflow-hidden">
       {/* HEADER */}
       <header
         className="fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-5 z-10"
@@ -73,7 +73,7 @@ export default function WorkerProfile() {
       </header>
 
       {/* CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto pt-16 pb-24 relative z-20">
+      <div className="flex-1 overflow-y-auto pt-16 pb-4 relative z-5">
         {/* PROFILE HEADER SECTION */}
         <div
           style={{
