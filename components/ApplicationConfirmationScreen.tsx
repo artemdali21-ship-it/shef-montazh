@@ -153,181 +153,314 @@ export default function ApplicationConfirmationScreen() {
         </header>
 
         {/* CONTENT */}
-        <div className="flex-1 overflow-y-auto pt-12 pb-56 px-5 font-sans">
-          {/* HELMET IMAGE */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginBottom: '0px',
-              paddingTop: '0px',
-            }}
-          >
-            <img
-              src="/helmet-single.png"
-              alt="Шеф-монтаж каска"
-              style={{
-                width: '320px',
-                height: '320px',
-                objectFit: 'contain',
-                opacity: 0.95,
-              }}
-            />
-          </div>
-
-          {/* SUCCESS HERO SECTION */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center',
-              padding: '8px 20px 12px 20px',
-              marginLeft: '-20px',
-              marginRight: '-20px',
-            }}
-          >
-            {/* Success Icon */}
+        <div className="flex-1 flex flex-col min-h-0 relative z-10">
+          <div className="flex-1 overflow-y-auto pt-20 pb-40 px-5 font-sans">
+            {/* HELMET IMAGE */}
             <div
-              className="flex items-center justify-center mb-2"
               style={{
-                width: '96px',
-                height: '96px',
-                borderRadius: '50%',
-                background: 'rgba(191, 255, 0, 0.15)',
-                border: '3px solid #BFFF00',
-                boxShadow: '0 8px 32px rgba(191, 255, 0, 0.3)',
-                animation: 'pulse 2s ease-in-out infinite',
+                display: 'flex',
+                justifyContent: 'center',
+                marginBottom: '0px',
+                paddingTop: '0px',
               }}
             >
-              <CheckCircle size={56} color="#BFFF00" strokeWidth={2.5} />
+              <img
+                src="/helmet-single.png"
+                alt="Шеф-монтаж каска"
+                style={{
+                  width: '320px',
+                  height: '320px',
+                  objectFit: 'contain',
+                  opacity: 0.95,
+                }}
+              />
             </div>
 
-            {/* Success Headline */}
-            <h1
-              style={{
-                fontFamily: 'Montserrat, sans-serif',
-                fontWeight: 800,
-                fontSize: '28px',
-                color: '#FFFFFF',
-                letterSpacing: '-0.5px',
-                lineHeight: '1.2',
-                marginBottom: '6px',
-              }}
-            >
-              Отклик отправлен!
-            </h1>
-
-            {/* Success Subtext */}
-            <p
-              style={{
-                fontFamily: 'Montserrat, sans-serif',
-                fontWeight: 400,
-                fontSize: '15px',
-                color: '#FFFFFF',
-                lineHeight: '1.6',
-                maxWidth: '300px',
-              }}
-            >
-              Заказчик получил вашу заявку. Ожидайте подтверждения.
-            </p>
-          </div>
-
-          {/* JOB SUMMARY CARD */}
-          <div style={{ padding: '0 0 16px 0', marginBottom: '16px' }}>
+            {/* SUCCESS HERO SECTION */}
             <div
               style={{
-                background: 'rgba(245, 245, 245, 0.5)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                borderRadius: '16px',
-                padding: '20px',
-                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                textAlign: 'center',
+                padding: '8px 20px 12px 20px',
+                marginLeft: '-20px',
+                marginRight: '-20px',
               }}
             >
-              {/* Header Row */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                <span
-                  style={{
-                    fontFamily: 'Montserrat, sans-serif',
-                    fontWeight: 700,
-                    fontSize: '11px',
-                    color: '#E85D2F',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                  }}
-                >
-                  ЗАЯВКА НА СМЕНУ
-                </span>
-                <span
-                  style={{
-                    background: 'rgba(191, 255, 0, 0.15)',
-                    border: '1px solid #BFFF00',
-                    padding: '4px 10px',
-                    borderRadius: '6px',
-                    fontFamily: 'Montserrat, sans-serif',
-                    fontWeight: 700,
-                    fontSize: '10px',
-                    color: '#BFFF00',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
-                  }}
-                >
-                  АКТИВНА
-                </span>
+              {/* Success Icon */}
+              <div
+                className="flex items-center justify-center mb-2"
+                style={{
+                  width: '96px',
+                  height: '96px',
+                  borderRadius: '50%',
+                  background: 'rgba(191, 255, 0, 0.15)',
+                  border: '3px solid #BFFF00',
+                  boxShadow: '0 8px 32px rgba(191, 255, 0, 0.3)',
+                  animation: 'pulse 2s ease-in-out infinite',
+                }}
+              >
+                <CheckCircle size={56} color="#BFFF00" strokeWidth={2.5} />
               </div>
 
-              {/* Job Title */}
-              <h2
+              {/* Success Headline */}
+              <h1
+                style={{
+                  fontFamily: 'Montserrat, sans-serif',
+                  fontWeight: 800,
+                  fontSize: '28px',
+                  color: '#FFFFFF',
+                  letterSpacing: '-0.5px',
+                  lineHeight: '1.2',
+                  marginBottom: '6px',
+                }}
+              >
+                Отклик отправлен!
+              </h1>
+
+              {/* Success Subtext */}
+              <p
+                style={{
+                  fontFamily: 'Montserrat, sans-serif',
+                  fontWeight: 400,
+                  fontSize: '15px',
+                  color: '#FFFFFF',
+                  lineHeight: '1.6',
+                  maxWidth: '300px',
+                }}
+              >
+                Заказчик получил вашу заявку. Ожидайте подтверждения.
+              </p>
+            </div>
+
+            {/* JOB SUMMARY CARD */}
+            <div style={{ padding: '0 0 16px 0', marginBottom: '16px' }}>
+              <div
+                style={{
+                  background: 'rgba(245, 245, 245, 0.5)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                {/* Header Row */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                  <span
+                    style={{
+                      fontFamily: 'Montserrat, sans-serif',
+                      fontWeight: 700,
+                      fontSize: '11px',
+                      color: '#E85D2F',
+                      textTransform: 'uppercase',
+                      letterSpacing: '1px',
+                    }}
+                  >
+                    ЗАЯВКА НА СМЕНУ
+                  </span>
+                  <span
+                    style={{
+                      background: 'rgba(191, 255, 0, 0.15)',
+                      border: '1px solid #BFFF00',
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      fontFamily: 'Montserrat, sans-serif',
+                      fontWeight: 700,
+                      fontSize: '10px',
+                      color: '#BFFF00',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    АКТИВНА
+                  </span>
+                </div>
+
+                {/* Job Title */}
+                <h2
+                  style={{
+                    fontFamily: 'Montserrat, sans-serif',
+                    fontWeight: 700,
+                    fontSize: '18px',
+                    color: '#FFFFFF',
+                    lineHeight: '1.3',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Монтаж выставочного стенда
+                </h2>
+
+                {/* Info Grid */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '16px',
+                  }}
+                >
+                  {jobInfo.map((item, idx) => {
+                    const IconComponent = item.icon
+                    return (
+                      <div key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                        <IconComponent size={18} color="#E85D2F" style={{ marginTop: '2px', flexShrink: 0 }} />
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span
+                            style={{
+                              fontFamily: 'Montserrat, sans-serif',
+                              fontWeight: 500,
+                              fontSize: '11px',
+                              color: '#6B6B6B',
+                              marginBottom: '2px',
+                            }}
+                          >
+                            {item.label}
+                          </span>
+                          <span
+                            style={{
+                              fontFamily: 'Montserrat, sans-serif',
+                              fontWeight: 600,
+                              fontSize: '14px',
+                              color: '#FFFFFF',
+                              lineHeight: '1.3',
+                            }}
+                          >
+                            {item.value}
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* TIMELINE SECTION */}
+            <div style={{ padding: '0 0 16px 0' }}>
+              <h3
                 style={{
                   fontFamily: 'Montserrat, sans-serif',
                   fontWeight: 700,
-                  fontSize: '18px',
+                  fontSize: '16px',
                   color: '#FFFFFF',
-                  lineHeight: '1.3',
-                  marginBottom: '16px',
+                  marginBottom: '12px',
                 }}
               >
-                Монтаж выставочного стенда
-              </h2>
+                Что дальше?
+              </h3>
 
-              {/* Info Grid */}
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '16px',
-                }}
-              >
-                {jobInfo.map((item, idx) => {
-                  const IconComponent = item.icon
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+                {timelineSteps.map((step, idx) => {
+                  const IconComponent = step.icon
+                  const isLast = idx === timelineSteps.length - 1
+
+                  const getIconStyles = () => {
+                    if (step.status === 'completed') {
+                      return {
+                        background: 'rgba(191, 255, 0, 0.15)',
+                        border: '2px solid #BFFF00',
+                      }
+                    } else if (step.status === 'active') {
+                      return {
+                        background: 'rgba(232, 93, 47, 0.15)',
+                        border: '2px solid #E85D2F',
+                        animation: 'pulse 2s ease-in-out infinite',
+                      }
+                    } else {
+                      return {
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '2px solid rgba(255, 255, 255, 0.15)',
+                      }
+                    }
+                  }
+
+                  const getIconColor = () => {
+                    if (step.status === 'completed') return '#BFFF00'
+                    if (step.status === 'active') return '#E85D2F'
+                    return '#FFFFFF'
+                  }
+
+                  const getTitleColor = () => {
+                    return '#FFFFFF'
+                  }
+
                   return (
-                    <div key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                      <IconComponent size={18} color="#E85D2F" style={{ marginTop: '2px', flexShrink: 0 }} />
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span
+                    <div key={step.id} style={{ display: 'flex', gap: '14px', marginBottom: isLast ? '0' : '14px', position: 'relative' }}>
+                      {/* Connector Line */}
+                      {!isLast && (
+                        <div
                           style={{
-                            fontFamily: 'Montserrat, sans-serif',
-                            fontWeight: 500,
-                            fontSize: '11px',
-                            color: '#6B6B6B',
-                            marginBottom: '2px',
+                            position: 'absolute',
+                            left: '19px',
+                            top: '38px',
+                            width: '2px',
+                            height: '28px',
+                            background: 'rgba(255, 255, 255, 0.15)',
                           }}
-                        >
-                          {item.label}
-                        </span>
-                        <span
+                        />
+                      )}
+
+                      {/* Icon */}
+                      <div
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          ...getIconStyles(),
+                        }}
+                      >
+                        <IconComponent size={20} color={getIconColor()} strokeWidth={2.5} />
+                      </div>
+
+                      {/* Content */}
+                      <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+                          <h4
+                            style={{
+                              fontFamily: 'Montserrat, sans-serif',
+                              fontWeight: 600,
+                              fontSize: '15px',
+                              color: getTitleColor(),
+                            }}
+                          >
+                            {step.title}
+                          </h4>
+                          {step.time && (
+                            <span
+                              style={{
+                                fontFamily: 'Montserrat, sans-serif',
+                                fontWeight: 600,
+                                fontSize: '12px',
+                                color: '#FFFFFF',
+                                padding: '6px 12px',
+                                background: step.time === 'Только что' ? 'rgba(191, 255, 0, 0.2)' : 'rgba(232, 93, 47, 0.2)',
+                                border: step.time === 'Только что' ? '1px solid rgba(191, 255, 0, 0.4)' : '1px solid rgba(232, 93, 47, 0.4)',
+                                borderRadius: '6px',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px',
+                              }}
+                            >
+                              {step.time}
+                            </span>
+                          )}
+                        </div>
+                        <p
                           style={{
                             fontFamily: 'Montserrat, sans-serif',
-                            fontWeight: 600,
-                            fontSize: '14px',
+                            fontWeight: 400,
+                            fontSize: '13px',
                             color: '#FFFFFF',
-                            lineHeight: '1.3',
+                            lineHeight: '1.5',
                           }}
                         >
-                          {item.value}
-                        </span>
+                          {step.description}
+                        </p>
                       </div>
                     </div>
                   )
@@ -336,144 +469,9 @@ export default function ApplicationConfirmationScreen() {
             </div>
           </div>
 
-          {/* TIMELINE SECTION */}
-          <div style={{ padding: '0 0 16px 0' }}>
-            <h3
-              style={{
-                fontFamily: 'Montserrat, sans-serif',
-                fontWeight: 700,
-                fontSize: '16px',
-                color: '#FFFFFF',
-                marginBottom: '12px',
-              }}
-            >
-              Что дальше?
-            </h3>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-              {timelineSteps.map((step, idx) => {
-                const IconComponent = step.icon
-                const isLast = idx === timelineSteps.length - 1
-
-                const getIconStyles = () => {
-                  if (step.status === 'completed') {
-                    return {
-                      background: 'rgba(191, 255, 0, 0.15)',
-                      border: '2px solid #BFFF00',
-                    }
-                  } else if (step.status === 'active') {
-                    return {
-                      background: 'rgba(232, 93, 47, 0.15)',
-                      border: '2px solid #E85D2F',
-                      animation: 'pulse 2s ease-in-out infinite',
-                    }
-                  } else {
-                    return {
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      border: '2px solid rgba(255, 255, 255, 0.15)',
-                    }
-                  }
-                }
-
-                const getIconColor = () => {
-                  if (step.status === 'completed') return '#BFFF00'
-                  if (step.status === 'active') return '#E85D2F'
-                  return '#FFFFFF'
-                }
-
-                const getTitleColor = () => {
-                  return '#FFFFFF'
-                }
-
-                return (
-                  <div key={step.id} style={{ display: 'flex', gap: '14px', marginBottom: isLast ? '0' : '14px', position: 'relative' }}>
-                    {/* Connector Line */}
-                    {!isLast && (
-                      <div
-                        style={{
-                          position: 'absolute',
-                          left: '19px',
-                          top: '38px',
-                          width: '2px',
-                          height: '28px',
-                          background: 'rgba(255, 255, 255, 0.15)',
-                        }}
-                      />
-                    )}
-
-                    {/* Icon */}
-                    <div
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                        ...getIconStyles(),
-                      }}
-                    >
-                      <IconComponent size={20} color={getIconColor()} strokeWidth={2.5} />
-                    </div>
-
-                    {/* Content */}
-                    <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
-                        <h4
-                          style={{
-                            fontFamily: 'Montserrat, sans-serif',
-                            fontWeight: 600,
-                            fontSize: '15px',
-                            color: getTitleColor(),
-                          }}
-                        >
-                          {step.title}
-                        </h4>
-                        {step.time && (
-                          <span
-                            style={{
-                              fontFamily: 'Montserrat, sans-serif',
-                              fontWeight: 600,
-                              fontSize: '12px',
-                              color: '#FFFFFF',
-                              padding: '6px 12px',
-                              background: step.time === 'Только что' ? 'rgba(191, 255, 0, 0.2)' : 'rgba(232, 93, 47, 0.2)',
-                              border: step.time === 'Только что' ? '1px solid rgba(191, 255, 0, 0.4)' : '1px solid rgba(232, 93, 47, 0.4)',
-                              borderRadius: '6px',
-                              textTransform: 'uppercase',
-                              letterSpacing: '0.5px',
-                            }}
-                          >
-                            {step.time}
-                          </span>
-                        )}
-                      </div>
-                      <p
-                        style={{
-                          fontFamily: 'Montserrat, sans-serif',
-                          fontWeight: 400,
-                          fontSize: '13px',
-                          color: '#FFFFFF',
-                          lineHeight: '1.5',
-                        }}
-                      >
-                        {step.description}
-                      </p>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
           {/* CTA BUTTONS */}
           <div
             style={{
-              position: 'fixed',
-              bottom: 0,
-              left: 0,
-              right: 0,
               padding: '20px',
               display: 'flex',
               flexDirection: 'column',
@@ -482,6 +480,7 @@ export default function ApplicationConfirmationScreen() {
               backdropFilter: 'blur(20px)',
               WebkitBackdropFilter: 'blur(20px)',
               borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+              flexShrink: 0,
             }}
           >
             {/* Primary Button */}
