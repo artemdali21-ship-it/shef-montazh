@@ -25,7 +25,6 @@ import {
   Moon,
 } from 'lucide-react';
 import { Header } from './Header';
-import { BottomNav } from './BottomNav';
 
 const categories = [
   { value: 'montage', label: 'Монтажник', icon: Wrench },

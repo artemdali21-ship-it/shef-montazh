@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { Header } from '@/components/Header'
-import { BottomNav } from '@/components/BottomNav'
 import { ShiftSearch } from '@/components/search/ShiftSearch'
 import { WorkerSearch } from '@/components/search/WorkerSearch'
 import { getUserRole } from '@/lib/auth'
@@ -41,9 +40,6 @@ export default function SearchPage() {
         {/* CLIENT: WORKER SEARCH */}
         {userRole === 'client' && <WorkerSearch />}
       </div>
-
-      {/* BOTTOM NAVIGATION */}
-      <BottomNav userType={userRole === 'worker' ? 'worker' : userRole === 'shef' ? 'shef' : 'client'} />
     </div>
   )
 }

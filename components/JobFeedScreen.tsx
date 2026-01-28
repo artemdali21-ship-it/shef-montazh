@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { MapPin, Calendar, Shield, CheckCircle, ArrowRight, Inbox } from 'lucide-react'
 import { Header } from './Header'
-import { BottomNav } from './BottomNav'
 
 const jobs = [
   {
@@ -225,8 +224,6 @@ export default function JobFeedScreen() {
           )}
         </div>
 
-        {/* BOTTOM NAVIGATION */}
-        <BottomNav userType="worker" />
       </div>
     </div>
   )

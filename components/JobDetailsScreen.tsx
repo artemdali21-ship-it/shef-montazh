@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { ArrowLeft, Share2, Send, Calendar, MapPin, HardHat, Wrench, Shield, Clock, Star, Lock, CheckCircle, Wallet, AlertCircle, Eye, Phone, Flag } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Header } from './Header'
-import { BottomNav } from './BottomNav'
 import { CompletionActions } from './shift/CompletionActions'
 import { RatingModal } from './rating/RatingModal'
 import { PaymentSection } from './PaymentSection'
@@ -681,6 +680,11 @@ const JobDetailsScreen = () => {
         WebkitBackdropFilter: 'blur(20px)',
         zIndex: 20,
         borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+        maxWidth: 'var(--mobile-max-width, 100%)',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        left: 0,
+        right: 0,
       }}>
         <button
           onClick={() => {
@@ -712,9 +716,6 @@ const JobDetailsScreen = () => {
           {isApplying ? 'Отправка...' : 'Откликнуться'}
         </button>
       </div>
-
-      {/* BOTTOM NAVIGATION */}
-      <BottomNav userType="worker" />
 
       {/* RATING MODAL */}
       <RatingModal

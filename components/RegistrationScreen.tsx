@@ -148,42 +148,42 @@ export default function RegistrationScreen() {
       >
         <div className="max-w-md mx-auto pb-32">
           {step === 2 && (
-            <div className="space-y-8">
-              <div className="mb-8">
-                <h1 className="text-4xl font-bold text-white mb-4">Регистрация</h1>
-                <p className="text-gray-300 font-normal text-base">Введите ваши контактные данные</p>
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-3xl font-bold text-white mb-2">Регистрация</h1>
+                <p className="text-[#9B9B9B] font-medium">Введите ваши контактные данные</p>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className="relative">
                   <input
                     type="text"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 rounded-lg bg-white/5 border border-white/10 focus:border-white/30 focus:outline-none text-white placeholder:text-gray-400 font-normal text-base transition-all duration-300"
+                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
                     placeholder="Номер телефона"
                   />
-                  <Phone size={20} strokeWidth={2} className="absolute top-1/2 left-4 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  <Phone className="absolute top-1/2 left-4 transform -translate-y-1/2 w-5 h-5 text-white/50 pointer-events-none" />
                 </div>
                 <div className="relative">
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 rounded-lg bg-white/5 border border-white/10 focus:border-white/30 focus:outline-none text-white placeholder:text-gray-400 font-normal text-base transition-all duration-300"
+                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
                     placeholder="Email"
                   />
-                  <Mail size={20} strokeWidth={2} className="absolute top-1/2 left-4 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  <Mail className="absolute top-1/2 left-4 transform -translate-y-1/2 w-5 h-5 text-white/50 pointer-events-none" />
                 </div>
                 <div className="relative">
                   <input
                     type="text"
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 rounded-lg bg-white/5 border border-white/10 focus:border-white/30 focus:outline-none text-white placeholder:text-gray-400 font-normal text-base transition-all duration-300"
+                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
                     placeholder="Полное имя"
                   />
-                  <User size={20} strokeWidth={2} className="absolute top-1/2 left-4 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  <User className="absolute top-1/2 left-4 transform -translate-y-1/2 w-5 h-5 text-white/50 pointer-events-none" />
                 </div>
                 <div className="relative">
                   <input
@@ -192,15 +192,15 @@ export default function RegistrationScreen() {
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     onFocus={() => scrollToField(passwordInputRef)}
-                    className="w-full pl-4 pr-12 py-3 rounded-lg bg-white/5 border border-white/10 focus:border-white/30 focus:outline-none text-white placeholder:text-gray-400 font-normal text-base transition-all duration-300"
+                    className="w-full pl-4 pr-12 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
                     placeholder="Пароль"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-300"
+                    className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white/50 hover:text-white/70 transition-colors"
                   >
-                    {showPassword ? <Eye size={20} strokeWidth={2} /> : <EyeOff size={20} strokeWidth={2} />}
+                    {showPassword ? <Eye className="w-5 h-5" strokeWidth={1.5} /> : <EyeOff className="w-5 h-5" strokeWidth={1.5} />}
                   </button>
                 </div>
                 <div className="relative">
@@ -210,23 +210,23 @@ export default function RegistrationScreen() {
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                     onFocus={() => scrollToField(confirmPasswordInputRef)}
-                    className="w-full pl-4 pr-12 py-3 rounded-lg bg-white/5 border border-white/10 focus:border-white/30 focus:outline-none text-white placeholder:text-gray-400 font-normal text-base transition-all duration-300"
+                    className="w-full pl-4 pr-12 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
                     placeholder="Подтвердите пароль"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-300"
+                    className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white/50 hover:text-white/70 transition-colors"
                   >
-                    {showConfirmPassword ? <Eye size={20} strokeWidth={2} /> : <EyeOff size={20} strokeWidth={2} />}
+                    {showConfirmPassword ? <Eye className="w-5 h-5" strokeWidth={1.5} /> : <EyeOff className="w-5 h-5" strokeWidth={1.5} />}
                   </button>
                 </div>
               </div>
 
-              <div>
+              <div className="space-y-2">
                 <button
                   onClick={handleSubmit}
-                  className="w-full py-3 rounded-lg bg-[#E85D2F] text-white font-semibold hover:bg-[#D04D1F] active:scale-95 transition-all duration-300 text-base"
+                  className="w-full p-4 rounded-xl bg-[#E85D2F] text-white font-bold hover:bg-[#E85D2F]/80"
                 >
                   Продолжить
                 </button>

@@ -29,7 +29,6 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import { Header } from './Header';
-import { BottomNav } from './BottomNav';
 
 export default function PaymentDetailScreen() {
   const [activeStatus] = useState('current');

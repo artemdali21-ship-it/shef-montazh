@@ -19,7 +19,6 @@ import {
   BarChart3,
 } from 'lucide-react'
 import { Header } from './Header'
-import { BottomNav } from './BottomNav'
 import CreateShiftScreen from './CreateShiftScreen'
 
 const clientData = {

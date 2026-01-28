@@ -79,14 +79,12 @@ export default function OnboardingScreen() {
 
   return (
     <div
-      className="h-screen flex flex-col items-center justify-center font-sans relative overflow-hidden"
+      className="w-screen h-screen flex flex-col items-center justify-center font-sans relative"
       style={{
         backgroundImage: 'url(/images/bg-dashboard.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
-        padding: 0,
-        margin: 0,
       }}
     >
       <NoisePattern />
@@ -151,24 +149,25 @@ export default function OnboardingScreen() {
       `}</style>
 
       {/* MAIN CONTENT */}
-      <div className="relative z-20 px-5 py-8 max-w-sm flex flex-col">
+      <div className="w-screen h-screen flex flex-col relative z-20 overflow-y-auto" style={{ padding: 0, margin: 0 }}>
+        <div className="w-full px-5 py-8 flex flex-col flex-1">
         {/* HEADER */}
         <div className="mb-6">
           <div className="flex items-center justify-center gap-1.5 mb-2">
             <div style={{ color: '#E85D2F' }} className="flex-shrink-0">
               <AsteriskIcon />
             </div>
-            <h1 style={{ color: '#FFFFFF' }} className="text-xl uppercase tracking-wider font-sans font-800">
+            <h1 style={{ color: '#1A1A1A' }} className="text-xl uppercase tracking-wider font-sans" style={{ fontWeight: 800, letterSpacing: '-0.02em' }}>
               ШЕФ-МОНТАЖ
             </h1>
           </div>
-          <p style={{ color: '#FFFFFF' }} className="text-sm font-normal text-center tracking-tight leading-snug">
+          <p style={{ color: '#FFFFFF' }} className="text-sm font-normal text-center tracking-tight leading-snug font-sans">
             Финтех-платформа гарантированных смен
           </p>
         </div>
 
         {/* SLIDE COUNTER */}
-        <div className="flex justify-center gap-1 mb-6">
+        <div className="flex justify-center gap-1 mb-6 flex-shrink-0">
           {slides.map((_, idx) => (
             <div
               key={idx}
@@ -184,10 +183,10 @@ export default function OnboardingScreen() {
         </div>
 
         {/* SLIDE CONTENT */}
-        <div className="mb-6">
+        <div className="mb-8 flex-1 flex flex-col justify-center">
           {/* SLIDE IMAGE */}
-          <div className="relative rounded-2xl overflow-hidden mb-5 shadow-lg" style={{
-            height: '180px',
+          <div className="relative rounded-2xl overflow-hidden mb-6 shadow-lg flex-shrink-0" style={{
+            height: '200px',
             boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
             backgroundColor: '#333333',
           }}>
@@ -198,22 +197,26 @@ export default function OnboardingScreen() {
               style={{ filter: 'brightness(1.05) contrast(1.05)' }}
               crossOrigin="anonymous"
               onError={(e) => {
+                console.log('[v0] Image failed to load:', slides[currentSlide].image)
                 e.currentTarget.src = '/placeholder.svg'
+              }}
+              onLoad={() => {
+                console.log('[v0] Image loaded successfully:', slides[currentSlide].image)
               }}
             />
           </div>
 
           {/* SLIDE TEXT */}
-          <h2 style={{ color: '#FFFFFF' }} className="text-3xl font-sans font-800 mb-2 leading-tight">
+          <h2 style={{ color: '#FFFFFF', textAlign: 'right' }} className="text-4xl font-sans mb-4 leading-tight" style={{ fontWeight: 800, letterSpacing: '-0.02em' }}>
             {slides[currentSlide].title}
           </h2>
-          <p style={{ color: '#FFFFFF' }} className="text-sm font-normal leading-relaxed">
+          <p style={{ color: '#FFFFFF' }} className="text-base font-normal leading-relaxed font-sans mb-6">
             {slides[currentSlide].subtitle}
           </p>
         </div>
 
         {/* BUTTONS */}
-        <div className="space-y-3 mb-4">
+        <div className="space-y-4 flex-shrink-0">
           <button
             onClick={handleNext}
             className="w-full text-white rounded-lg transition-all duration-300 font-sans flex items-center justify-center gap-2 font-semibold h-12 hover:scale-105 active:scale-95"
@@ -262,9 +265,10 @@ export default function OnboardingScreen() {
         </div>
 
         {/* FINE PRINT */}
-        <p style={{ color: '#FFFFFF' }} className="text-xs text-center leading-relaxed font-sans font-medium">
+        <p style={{ color: '#FFFFFF' }} className="text-sm text-center leading-relaxed mt-8 flex-shrink-0 font-sans font-medium">
           Вход и регистрация внутри приложения
         </p>
+        </div>
       </div>
     </div>
   )

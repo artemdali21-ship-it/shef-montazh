@@ -24,7 +24,6 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Header } from './Header';
-import { BottomNav } from './BottomNav';
 import { WorkerStatusList } from './monitoring/WorkerStatusList';
 
 export default function ShiftMonitoringScreen() {

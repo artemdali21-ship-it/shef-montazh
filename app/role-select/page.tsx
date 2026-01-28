@@ -67,7 +67,7 @@ export default function RoleSelectScreen() {
 
   return (
     <div
-      className="h-screen flex flex-col items-center justify-center font-sans relative overflow-hidden"
+      className="w-screen h-screen flex flex-col items-center justify-center font-sans relative overflow-hidden"
       style={{
         background: 'linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 50%, #1F1F1F 100%)',
       }}
@@ -143,19 +143,22 @@ export default function RoleSelectScreen() {
       `}</style>
 
       {/* MAIN CONTENT */}
-      <div className="max-w-sm px-6 relative z-20 flex flex-col">
+      <div className="w-full max-w-sm px-6 py-12 relative z-20 overflow-y-auto flex flex-col" style={{ maxHeight: '100vh' }}>
         {/* HEADER */}
-        <div className="mb-8 animate-slide-up">
-          <h1 style={{ color: '#FFFFFF' }} className="text-4xl mb-3" style={{ fontWeight: 800, lineHeight: 1.2, fontFamily: 'Montserrat' }}>
-            Кто вы?
-          </h1>
+        <div className="mb-12 animate-slide-up">
+          <div className="flex items-center gap-2 mb-3">
+            <div style={{ width: '4px', height: '28px', background: '#E85D2F', borderRadius: '2px' }} />
+            <h1 style={{ color: '#FFFFFF' }} className="text-4xl" style={{ fontWeight: 800, lineHeight: 1.2, fontFamily: 'Montserrat' }}>
+              Кто вы?
+            </h1>
+          </div>
           <p style={{ color: 'rgba(255, 255, 255, 0.7)' }} className="text-base font-normal leading-relaxed" style={{ fontFamily: 'Montserrat' }}>
             Выберите подходящий статус
           </p>
         </div>
 
         {/* ROLE CARDS */}
-        <div className="space-y-4 mb-8">
+        <div className="space-y-4 flex-1 flex flex-col justify-center mb-8">
           {roles.map((role, index) => {
             const isSelected = selectedRole === role.id
 
@@ -164,7 +167,7 @@ export default function RoleSelectScreen() {
                 key={role.id}
                 onClick={() => handleSelectRole(role.id)}
                 disabled={selectedRole !== null && selectedRole !== role.id}
-                className="relative group w-full flex items-start gap-4 p-4 rounded-2xl transition-all duration-300 text-left overflow-hidden"
+                className="relative group w-full flex items-start gap-4 p-6 rounded-2xl transition-all duration-300 text-left overflow-hidden"
                 style={{
                   animation: `slideUp 0.6s ease-out forwards`,
                   animationDelay: `${0.1 + index * 0.1}s`,
@@ -181,7 +184,6 @@ export default function RoleSelectScreen() {
                   cursor: selectedRole === null || isSelected ? 'pointer' : 'default',
                   opacity: selectedRole !== null && !isSelected ? 0.4 : 1,
                   transform: isSelected ? 'scale(1.02)' : 'scale(1)',
-                  minHeight: '72px',
                 }}
                 onMouseEnter={(e) => {
                   if (selectedRole === null || isSelected) {
@@ -273,7 +275,7 @@ export default function RoleSelectScreen() {
         </div>
 
         {/* FOOTER TEXT */}
-        <p style={{ color: 'rgba(255, 255, 255, 0.5)' }} className="text-xs text-center tracking-tight leading-snug" style={{ fontFamily: 'Montserrat' }}>
+        <p style={{ color: 'rgba(255, 255, 255, 0.5)' }} className="text-xs text-center tracking-tight leading-snug flex-shrink-0" style={{ fontFamily: 'Montserrat' }}>
           Можно изменить роль в настройках позже
         </p>
       </div>

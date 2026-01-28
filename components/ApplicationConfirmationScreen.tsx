@@ -4,7 +4,6 @@ import { X, CheckCircle, Clock, Calendar, MapPin, Wallet, Bell, Search, FileText
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Header } from './Header'
-import { BottomNav } from './BottomNav'
 
 export default function ApplicationConfirmationScreen() {
   const router = useRouter()
@@ -542,9 +541,6 @@ export default function ApplicationConfirmationScreen() {
             </button>
           </div>
         </div>
-
-        {/* BOTTOM NAVIGATION */}
-        <BottomNav userType="worker" />
 
         {/* PULSE ANIMATION */}
         <style>{`
