@@ -206,7 +206,7 @@ export default function OnboardingScreen() {
           </div>
 
           {/* SLIDE TEXT */}
-          <h2 className="text-2xl font-sans mb-3" style={{ color: '#1A1A1A', textAlign: 'right', fontWeight: 800, lineHeight: 1.2 }}>
+          <h2 style={{ color: '#FFFFFF', textAlign: 'right' }} className="text-2xl font-sans mb-3" style={{ fontWeight: 800, lineHeight: 1.2 }}>
             {slides[currentSlide].title}
           </h2>
           <p style={{ color: '#FFFFFF' }} className="text-base font-normal leading-relaxed font-sans">
