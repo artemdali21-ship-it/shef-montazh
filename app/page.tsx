@@ -152,9 +152,9 @@ export default function OnboardingScreen() {
       `}</style>
 
       {/* MAIN CONTENT */}
-      <div className="relative z-20 px-5 py-8 w-80 flex flex-col" style={{ maxHeight: '90vh', margin: '0 auto' }}>
+      <div className="relative z-20 px-5 py-8 max-w-sm w-full flex flex-col">
         {/* HEADER */}
-        <div className="mb-6">
+        <div className="mb-8">
           <div className="flex items-center justify-center gap-1.5 mb-2">
             <div style={{ color: '#E85D2F' }} className="flex-shrink-0">
               <AsteriskIcon />
@@ -169,7 +169,7 @@ export default function OnboardingScreen() {
         </div>
 
         {/* SLIDE COUNTER */}
-        <div className="flex justify-center gap-1 mb-6">
+        <div className="flex justify-center gap-1 mb-8">
           {slides.map((_, idx) => (
             <div
               key={idx}
@@ -185,7 +185,7 @@ export default function OnboardingScreen() {
         </div>
 
         {/* SLIDE CONTENT */}
-        <div className="flex-1 flex flex-col justify-between">
+        <div className="mb-8">
           {/* SLIDE IMAGE */}
           <div className="relative rounded-2xl overflow-hidden mb-6 shadow-lg" style={{
             height: '200px',
@@ -205,69 +205,67 @@ export default function OnboardingScreen() {
           </div>
 
           {/* SLIDE TEXT */}
-          <div className="mb-6">
-            <h2 style={{ color: '#FFFFFF' }} className="text-4xl font-sans font-800 mb-4 leading-tight">
-              {slides[currentSlide].title}
-            </h2>
-            <p style={{ color: '#FFFFFF' }} className="text-base font-normal leading-relaxed">
-              {slides[currentSlide].subtitle}
-            </p>
-          </div>
-
-          {/* BUTTONS */}
-          <div className="space-y-4">
-            <button
-              onClick={handleNext}
-              className="w-full text-white rounded-lg transition-all duration-300 font-sans flex items-center justify-center gap-2 font-semibold h-12 hover:scale-105 active:scale-95"
-              style={{
-                background: '#E85D2F',
-                boxShadow: '0 6px 20px rgba(232, 93, 47, 0.3)',
-                cursor: 'pointer',
-                border: 'none',
-                fontSize: '16px',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#D04D1F'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#E85D2F'
-              }}
-            >
-              {currentSlide === slides.length - 1 ? 'Начать' : 'Далее'}
-              {currentSlide < slides.length - 1 && <ChevronRight size={20} strokeWidth={2} />}
-            </button>
-
-            {currentSlide > 0 && (
-              <button
-                onClick={handleSkip}
-                className="w-full rounded-lg transition-all duration-300 font-sans font-semibold h-12"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  cursor: 'pointer',
-                  fontSize: '16px',
-                  color: '#FFFFFF',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
-                }}
-              >
-                Пропустить
-              </button>
-            )}
-          </div>
-
-          {/* FINE PRINT */}
-          <p style={{ color: '#FFFFFF' }} className="text-sm text-center leading-relaxed mt-6 font-sans font-medium">
-            Вход и регистрация внутри приложения
+          <h2 style={{ color: '#FFFFFF' }} className="text-4xl font-sans font-800 mb-3 leading-tight">
+            {slides[currentSlide].title}
+          </h2>
+          <p style={{ color: '#FFFFFF' }} className="text-base font-normal leading-relaxed mb-6">
+            {slides[currentSlide].subtitle}
           </p>
         </div>
+
+        {/* BUTTONS */}
+        <div className="space-y-3 mb-8">
+          <button
+            onClick={handleNext}
+            className="w-full text-white rounded-lg transition-all duration-300 font-sans flex items-center justify-center gap-2 font-semibold h-12 hover:scale-105 active:scale-95"
+            style={{
+              background: '#E85D2F',
+              boxShadow: '0 6px 20px rgba(232, 93, 47, 0.3)',
+              cursor: 'pointer',
+              border: 'none',
+              fontSize: '16px',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#D04D1F'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#E85D2F'
+            }}
+          >
+            {currentSlide === slides.length - 1 ? 'Начать' : 'Далее'}
+            {currentSlide < slides.length - 1 && <ChevronRight size={20} strokeWidth={2} />}
+          </button>
+
+          {currentSlide > 0 && (
+            <button
+              onClick={handleSkip}
+              className="w-full rounded-lg transition-all duration-300 font-sans font-semibold h-12"
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                cursor: 'pointer',
+                fontSize: '16px',
+                color: '#FFFFFF',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
+              }}
+            >
+              Пропустить
+            </button>
+          )}
+        </div>
+
+        {/* FINE PRINT */}
+        <p style={{ color: '#FFFFFF' }} className="text-sm text-center leading-relaxed font-sans font-medium">
+          Вход и регистрация внутри приложения
+        </p>
       </div>
     </div>
   )
