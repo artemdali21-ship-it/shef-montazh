@@ -116,23 +116,7 @@ const JobDetailsScreen = () => {
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundImage: 'url(/images/bg-dashboard.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      {/* DECORATIVE ELEMENTS - БЕЗ BLUR */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-30 z-0">
-        <img src="/images/helmet-silver.png" className="absolute top-10 right-10 w-20 h-20" alt="" />
-        <img src="/images/carabiner.png" className="absolute bottom-20 left-10 w-16 h-16 opacity-60" alt="" />
-      </div>
-
+    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col overflow-hidden">
       {/* HEADER */}
       <Header 
         title="Детали смены" 
@@ -142,14 +126,7 @@ const JobDetailsScreen = () => {
       />
 
       {/* SCROLLABLE CONTENT */}
-      <div style={{
-        flex: 1,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        position: 'relative',
-        zIndex: 10,
-        paddingBottom: '120px',
-      }} className="px-4 pt-6">
+      <div className="flex-1 overflow-y-auto px-4 pt-6 pb-24 w-full">
         {/* HERO SECTION - ТОЛЬКО ЗДЕСЬ ОРАНЖЕВЫЙ ГРАДИЕНТ */}
         <section
           style={{
@@ -674,18 +651,13 @@ const JobDetailsScreen = () => {
         bottom: '80px',
         left: 0,
         right: 0,
-        padding: '16px 20px',
-        background: 'rgba(26, 26, 26, 0.95)',
+        padding: '12px 20px',
+        background: 'rgba(26, 26, 26, 0.98)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        zIndex: 20,
+        zIndex: 30,
         borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-        maxWidth: 'var(--mobile-max-width, 100%)',
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        left: 0,
-        right: 0,
-      }}>
+      }} className="w-full flex justify-center">
         <button
           onClick={() => {
             router.push(`/application?jobId=${jobDetails.id}`)
@@ -694,7 +666,8 @@ const JobDetailsScreen = () => {
           disabled={isApplying}
           style={{
             width: '100%',
-            height: '56px',
+            maxWidth: '500px',
+            height: '52px',
             background: '#E85D2F',
             color: 'white',
             fontSize: '16px',
