@@ -197,7 +197,7 @@ export default function CreateShiftScreen({ onClose, onSuccess }: { onClose?: ()
         >
           {step} / 2
         </div>
-      </div>
+      </header>
 
       {/* Progress bar */}
       <div
