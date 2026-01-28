@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, Share2, Send, Calendar, MapPin, HardHat, Wrench, Shield, Clock, Star, Lock, CheckCircle, Wallet, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Share2, Send, Calendar, MapPin, HardHat, Wrench, Shield, Clock, Star, Lock, CheckCircle, Wallet, AlertCircle, Eye, Phone, Flag } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Header } from './Header'
 import { BottomNav } from './BottomNav'
 import { CompletionActions } from './shift/CompletionActions'
 import { RatingModal } from './rating/RatingModal'
 import { PaymentSection } from './PaymentSection'
+import { WorkerStatusList } from './monitoring/WorkerStatusList'
 
 const JobDetailsScreen = () => {
   const router = useRouter()
@@ -67,6 +68,32 @@ const JobDetailsScreen = () => {
     { icon: Shield, text: 'Спецодежда и средства защиты' },
     { icon: Clock, text: 'Готовность к ночной работе' },
     { icon: Star, text: 'Опыт монтажа от 1 года' },
+  ]
+
+  // Mock workers data for monitoring
+  const assignedWorkers = [
+    {
+      id: 'w1',
+      name: 'Иван Петров',
+      avatar: '/placeholder-user.jpg',
+      status: 'checked_in' as const,
+      checkInTime: '17:58',
+      checkInPhoto: '/placeholder.jpg',
+      lateMinutes: 0,
+    },
+    {
+      id: 'w2',
+      name: 'Сергей Иванов',
+      avatar: '/placeholder-user.jpg',
+      status: 'on_way' as const,
+      lateMinutes: 5,
+    },
+    {
+      id: 'w3',
+      name: 'Дмитрий Сидоров',
+      avatar: '/placeholder-user.jpg',
+      status: 'assigned' as const,
+    },
   ]
 
   const handleCompleteShift = () => {
@@ -363,6 +390,140 @@ const JobDetailsScreen = () => {
             })}
           </div>
         </section>
+
+        {/* LIVE MONITORING SECTION - Show when shift is in_progress and user is client */}
+        {userRole === 'client' && (shiftStatus === 'checked_in' || shiftStatus === 'awaiting_worker_confirm') && (
+          <section style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+              <Eye size={18} color="#E85D2F" />
+              <h2
+                style={{
+                  fontSize: '18px',
+                  fontWeight: 700,
+                  color: '#FFFFFF',
+                  fontFamily: 'Montserrat, system-ui, sans-serif',
+                }}
+              >
+                Мониторинг смены
+              </h2>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  marginLeft: 'auto',
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  border: '1px solid #10B981',
+                  padding: '4px 10px',
+                  borderRadius: '6px',
+                }}
+              >
+                <div
+                  style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    background: '#10B981',
+                    animation: 'pulse 2s ease-in-out infinite',
+                  }}
+                />
+                <span style={{ fontSize: '11px', fontWeight: 600, color: '#10B981' }}>В РЕЖИМЕ</span>
+              </div>
+            </div>
+
+            {/* Worker Status List */}
+            <div style={{ marginBottom: '16px' }}>
+              <WorkerStatusList
+                workers={assignedWorkers}
+                shiftStartTime="18:00"
+              />
+            </div>
+
+            {/* Cost Info Card - NO ESCROW */}
+            <div
+              style={{
+                background: 'rgba(169, 169, 169, 0.2)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '14px',
+                padding: '16px',
+                marginBottom: '16px',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <span style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 400, fontSize: '13px', color: '#FFFFFF' }}>
+                  К оплате после завершения:
+                </span>
+                <span style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: '14px', color: '#BFFF00' }}>
+                  {jobDetails.rate * assignedWorkers.length} ₽
+                </span>
+              </div>
+              <div style={{ fontSize: '11px', color: '#FFFFFF', opacity: 0.6 }}>
+                {assignedWorkers.length} чел. × {jobDetails.rate} ₽
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <button
+                onClick={() => console.log('[v0] Call workers')}
+                style={{
+                  height: '44px',
+                  background: 'rgba(232, 93, 47, 0.15)',
+                  border: '1px solid rgba(232, 93, 47, 0.3)',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  color: '#E85D2F',
+                  fontWeight: 600,
+                  fontSize: '13px',
+                  fontFamily: 'Montserrat, system-ui, sans-serif',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(232, 93, 47, 0.25)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(232, 93, 47, 0.15)'
+                }}
+              >
+                <Phone size={16} />
+                Позвонить
+              </button>
+              <button
+                onClick={() => console.log('[v0] Report issue')}
+                style={{
+                  height: '44px',
+                  background: 'rgba(220, 38, 38, 0.15)',
+                  border: '1px solid rgba(220, 38, 38, 0.3)',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  color: '#DC2626',
+                  fontWeight: 600,
+                  fontSize: '13px',
+                  fontFamily: 'Montserrat, system-ui, sans-serif',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(220, 38, 38, 0.25)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(220, 38, 38, 0.15)'
+                }}
+              >
+                <Flag size={16} />
+                Пожаловаться
+              </button>
+            </div>
+          </section>
+        )}
 
         {/* COMPLETION ACTIONS SECTION */}
         <CompletionActions
