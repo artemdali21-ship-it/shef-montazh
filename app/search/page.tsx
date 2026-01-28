@@ -33,8 +33,8 @@ export default function SearchPage() {
         showNotifications={true} 
       />
 
-      {/* CONTENT */}
-      <div className="flex-1 overflow-y-auto pt-24 pb-32 px-4 font-sans">
+      {/* CONTENT - Scrollable */}
+      <div className="flex-1 overflow-y-auto pt-20 pb-24 px-4 font-sans">
         {/* WORKER & SHEF: SHIFT SEARCH */}
         {(userRole === 'worker' || userRole === 'shef') && <ShiftSearch />}
         
