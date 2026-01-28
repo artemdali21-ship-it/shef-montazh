@@ -143,7 +143,7 @@ export default function RoleSelectScreen() {
       `}</style>
 
       {/* MAIN CONTENT */}
-      <div className="max-w-2xl px-6 relative z-20 flex flex-col w-full" style={{ boxSizing: 'border-box' }}>
+      <div className="max-w-2xl px-6 relative z-20 flex flex-col">
         {/* HEADER */}
         <div className="mb-8 animate-slide-up">
           <h1 style={{ color: '#FFFFFF' }} className="text-4xl mb-3" style={{ fontWeight: 800, lineHeight: 1.2, fontFamily: 'Montserrat' }}>

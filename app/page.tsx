@@ -152,7 +152,7 @@ export default function OnboardingScreen() {
       `}</style>
 
       {/* MAIN CONTENT */}
-      <div className="relative z-20 px-5 py-8 max-w-sm flex flex-col w-full" style={{ boxSizing: 'border-box' }}>
+      <div className="relative z-20 px-5 py-8 max-w-sm flex flex-col">
         {/* HEADER */}
         <div className="mb-6">
           <div className="flex items-center justify-center gap-1.5 mb-2">
