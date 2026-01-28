@@ -61,9 +61,14 @@ export default function NavigationTestPage() {
   const successRate = Math.round((workingCount / tests.length) * 100);
 
   return (
-    <div className="w-full min-h-screen overflow-y-auto bg-gradient-to-br from-[#A0A0A0] via-[#8B8B8B] to-[#7A7A7A] p-6 pb-32">
+    <div className="w-full min-h-screen overflow-y-auto bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] p-6 pb-32">
+      {/* NAVIGATION TEST 3D ELEMENTS - CONCRETE AND TAPE */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
+        <img src="/images/concrete-main.png" className="absolute top-1/4 left-5 w-32 h-32" alt="" />
+        <img src="/images/tape-3.png" className="absolute bottom-1/3 right-8 w-24 h-24" style={{animation: 'float 9s ease-in-out infinite'}} alt="" />
+      </div>
       {/* Header */}
-      <div className="max-w-4xl mx-auto mb-8">
+      <div className="max-w-4xl mx-auto mb-8 relative z-10">
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8">
           <h1 className="text-4xl font-bold text-white mb-2">Тест навигации</h1>
           <p className="text-white/70">Проверка всех переходов между экранами</p>

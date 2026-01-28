@@ -143,15 +143,18 @@ export default function ShiftMonitoringScreen() {
       style={{
         width: '100%',
         minHeight: '100vh',
-        backgroundImage: 'url(/images/bg-gradient.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
+        background: 'linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 50%, #1A1A1A 100%)',
         fontFamily: "'Montserrat', system-ui, -apple-system, sans-serif",
         position: 'relative',
         overflowY: 'auto',
         overflowX: 'hidden',
       }}
+    >
+      {/* MONITORING 3D ELEMENTS - BUILDING AND CABLE */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
+        <img src="/images/building.png" className="absolute top-1/3 right-10 w-40 h-40" alt="" />
+        <img src="/images/cable-coil.png" className="absolute bottom-20 left-5 w-28 h-28" style={{animation: 'float 7s ease-in-out infinite 0.5s'}} alt="" />
+      </div>
     >
       <div
         style={{

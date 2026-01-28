@@ -165,16 +165,18 @@ export default function PaymentDetailScreen() {
       style={{
         width: '100%',
         minHeight: '100vh',
-        backgroundImage: 'url(/images/bg-dashboard.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
+        background: 'linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 50%, #1A1A1A 100%)',
         fontFamily: "'Montserrat', system-ui, -apple-system, sans-serif",
         position: 'relative',
         overflowY: 'auto',
         overflowX: 'hidden',
       }}
     >
+      {/* PAYMENT 3D ELEMENTS - BOLTS AND HELMET */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
+        <img src="/images/bolts.png" className="absolute top-20 right-10 w-20 h-20" alt="" />
+        <img src="/images/helmet-silver.png" className="absolute bottom-1/4 left-8 w-36 h-36" style={{animation: 'float 8s ease-in-out infinite 1.2s', transform: 'rotate(-15deg)'}} alt="" />
+      </div>
       <div
         style={{
           position: 'fixed',

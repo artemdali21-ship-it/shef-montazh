@@ -153,8 +153,12 @@ export default function DebugPage() {
   };
 
   return (
-    <div className="w-full h-screen overflow-y-auto bg-gradient-to-br from-[#A0A0A0] via-[#8B8B8B] to-[#7A7A7A] p-6">
-      <div className="max-w-4xl mx-auto pb-32">
+    <div className="w-full h-screen overflow-y-auto bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] p-6">
+      {/* DEBUG 3D ELEMENTS - WRENCH AND BOLT */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
+        <img src="/images/wrench-key-1.png" className="absolute top-20 left-10 w-24 h-24" alt="" />
+        <img src="/images/wrench-key-2.png" className="absolute bottom-20 right-10 w-32 h-32" style={{animation: 'float 8s ease-in-out infinite 1.2s'}} alt="" />
+      </div>
         
         {/* Header */}
         <div className="mb-8">
