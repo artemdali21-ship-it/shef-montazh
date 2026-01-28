@@ -148,8 +148,6 @@ export default function OnboardingScreen() {
               <AsteriskIcon />
             </div>
             <h1 style={{ color: '#FFFFFF', fontWeight: 800, letterSpacing: '-0.02em' }} className="text-xl uppercase tracking-wider font-sans">ШЕФ-МОНТАЖ</h1>
-              ШЕФ-МОНТАЖ
-            </h1>
           </div>
           <p style={{ color: '#FFFFFF' }} className="text-sm font-normal text-center tracking-tight leading-snug font-sans">
             Финтех-платформа гарантированных смен
@@ -197,7 +195,7 @@ export default function OnboardingScreen() {
           </div>
 
           {/* SLIDE TEXT */}
-          <h2 style={{ color: '#FFFFFF', textAlign: 'right' }} className="text-4xl font-sans mb-4 leading-tight" style={{ fontWeight: 800, letterSpacing: '-0.02em' }}>
+          <h2 style={{ color: '#FFFFFF', textAlign: 'right', fontWeight: 800, letterSpacing: '-0.02em' }} className="text-4xl font-sans mb-4 leading-tight">
             {slides[currentSlide].title}
           </h2>
           <p style={{ color: '#FFFFFF' }} className="text-base font-normal leading-relaxed font-sans mb-6">
