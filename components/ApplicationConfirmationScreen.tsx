@@ -44,136 +44,36 @@ export default function ApplicationConfirmationScreen() {
   ]
 
   return (
-    <div
-      className="w-full min-h-screen flex flex-col"
-      style={{
-        backgroundImage: 'url(/images/bg-dashboard.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-        position: 'relative',
-      }}
-    >
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.4)',
-          pointerEvents: 'none',
-          zIndex: 1,
-        }}
-      />
+    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col overflow-hidden">
       {/* HEADER */}
       <Header 
         title="Подтверждение отклика" 
         showBack={true} 
         onBack={() => router.back()}
       />
-      {/* FLOATING TAPE 3 - Job Details (vertical) */}
-      <img
-        src="/images/tape-3.png"
-        alt=""
-        style={{
-          position: 'fixed',
-          left: '2%',
-          top: '50%',
-          width: '112px',
-          height: 'auto',
-          opacity: 0.12,
-          transform: 'translateY(-50%) rotate(90deg)',
-          zIndex: 0,
-          pointerEvents: 'none',
-          animation: 'float 6s ease-in-out infinite',
-        }}
-      />
-      {/* FLOATING CONCRETE MAIN - Job Details */}
-      <img
-        src="/images/concrete-main.png"
-        alt=""
-        style={{
-          position: 'fixed',
-          bottom: '10%',
-          right: '5%',
-          width: '88px',
-          height: 'auto',
-          opacity: 0.09,
-          transform: 'rotate(14deg)',
-          zIndex: 1,
-          pointerEvents: 'none',
-          animation: 'float 6s ease-in-out infinite',
-        }}
-      />
-      <div style={{ position: 'relative', zIndex: 2 }}>
-        {/* HEADER */}
-        <header
-          className="fixed top-0 left-0 right-0 z-50 border-b"
+
+      {/* SCROLLABLE CONTENT */}
+      <div className="flex-1 overflow-y-auto px-4 pt-6 pb-24">
+        {/* HELMET IMAGE */}
+        <div
           style={{
-            background: 'transparent',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            borderColor: 'rgba(255, 255, 255, 0.1)',
-            height: '64px',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingLeft: '20px',
-            paddingRight: '20px',
+            justifyContent: 'center',
+            marginBottom: '0px',
+            paddingTop: '0px',
           }}
         >
-          <div className="flex items-center gap-2">
-            <span style={{ color: '#E85D2F' }} className="text-xl font-bold">
-              *
-            </span>
-            <h1 className="text-lg font-bold text-white font-sans">ШЕФ-МОНТАЖ</h1>
-          </div>
-          <button
-            onClick={() => router.push('/feed')}
-            className="flex items-center justify-center transition-all duration-200"
+          <img
+            src="/helmet-single.png"
+            alt="Шеф-монтаж каска"
             style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              cursor: 'pointer',
+              width: '320px',
+              height: '320px',
+              objectFit: 'contain',
+              opacity: 0.95,
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-            }}
-          >
-            <X size={20} color="#FFFFFF" />
-          </button>
-        </header>
-
-        {/* CONTENT */}
-        <div className="flex-1 flex flex-col min-h-0 relative z-10">
-          <div className="flex-1 overflow-y-auto pt-20 pb-40 px-5 font-sans">
-            {/* HELMET IMAGE */}
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                marginBottom: '0px',
-                paddingTop: '0px',
-              }}
-            >
-              <img
-                src="/helmet-single.png"
-                alt="Шеф-монтаж каска"
-                style={{
-                  width: '320px',
-                  height: '320px',
-                  objectFit: 'contain',
-                  opacity: 0.95,
-                }}
-              />
-            </div>
+          />
+        </div>
 
             {/* SUCCESS HERO SECTION */}
             <div

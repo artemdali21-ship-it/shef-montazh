@@ -126,7 +126,7 @@ const JobDetailsScreen = () => {
       />
 
       {/* SCROLLABLE CONTENT */}
-      <div className="flex-1 overflow-y-auto px-4 pt-6 pb-24 w-full">
+      <div className="flex-1 overflow-y-auto px-4 pt-4 pb-20 w-full">
         {/* HERO SECTION - ТОЛЬКО ЗДЕСЬ ОРАНЖЕВЫЙ ГРАДИЕНТ */}
         <section
           style={{
@@ -645,19 +645,22 @@ const JobDetailsScreen = () => {
         </section>
       </div>
 
-      {/* FIXED CTA BUTTON */}
+      {/* FIXED CTA BUTTON AT BOTTOM */}
       <div style={{
         position: 'fixed',
         bottom: '80px',
-        left: 0,
-        right: 0,
-        padding: '12px 20px',
+        left: '20px',
+        right: '20px',
         background: 'rgba(26, 26, 26, 0.98)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        zIndex: 30,
         borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-      }} className="w-full flex justify-center">
+        padding: '16px 0',
+        zIndex: 30,
+        maxWidth: 'calc(100% - 40px)',
+        display: 'flex',
+        justifyContent: 'center',
+      }}>
         <button
           onClick={() => {
             router.push(`/application?jobId=${jobDetails.id}`)
