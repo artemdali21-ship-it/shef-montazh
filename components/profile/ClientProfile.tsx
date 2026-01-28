@@ -168,8 +168,8 @@ export default function ClientProfile({
         </div>
         </div>
 
-      {/* RATING SECTION */}
-      <div className="px-4 py-6">
+          {/* RATING SECTION */}
+        <div className="px-4 py-6">
         <div
           className="rounded-2xl p-6 text-center"
           style={{
@@ -185,10 +185,10 @@ export default function ClientProfile({
             <StarRating rating={4.7} size="lg" showNumber={false} />
           </div>
         </div>
-      </div>
+        </div>
 
-      {/* ACTIVE SHIFTS SECTION */}
-      <div className="px-4 py-6">
+        {/* ACTIVE SHIFTS SECTION */}
+        <div className="px-4 py-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold text-white">Активные смены</h2>
           <button className="text-[#E85D2F] text-sm font-semibold flex items-center gap-1 hover:text-[#FF8855]">
@@ -253,10 +253,10 @@ export default function ClientProfile({
             ))}
           </div>
         )}
-      </div>
+        </div>
 
-      {/* QUICK ACTIONS */}
-      <div className="px-4 py-6 space-y-3">
+        {/* QUICK ACTIONS */}
+        <div className="px-4 py-6 space-y-3">
         <button
           onClick={() => router.push('/create-shift')}
           className="w-full py-3 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all hover:shadow-lg"
@@ -279,10 +279,10 @@ export default function ClientProfile({
           <Star size={20} />
           Избранные исполнители
         </button>
-      </div>
+        </div>
 
-      {/* RECENT ACTIVITY */}
-      <div className="px-4 py-6">
+        {/* RECENT ACTIVITY */}
+        <div className="px-4 py-6">
         <h2 className="text-lg font-bold text-white mb-4">Последние завершённые</h2>
 
         {mockCompletedShifts.length === 0 ? (
@@ -321,6 +321,7 @@ export default function ClientProfile({
             ))}
           </div>
         )}
+        </div>
       </div>
     </div>
   );
