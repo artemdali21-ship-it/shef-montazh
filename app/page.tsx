@@ -152,7 +152,7 @@ export default function OnboardingScreen() {
       `}</style>
 
       {/* MAIN CONTENT */}
-      <div className="w-full px-4 sm:px-6 py-6 relative z-20 flex flex-col max-w-sm mx-auto">
+      <div className="relative z-20 px-5 py-8 max-w-sm flex flex-col">
         {/* HEADER */}
         <div className="mb-6">
           <div className="flex items-center justify-center gap-1.5 mb-2">
