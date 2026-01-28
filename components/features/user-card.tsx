@@ -1,15 +1,17 @@
 'use client';
 import React from 'react';
-import { MapPin, Award, CheckCircle, MessageSquare, Star } from 'lucide-react';
+import { MapPin, Award, CheckCircle, MessageSquare } from 'lucide-react';
 import { CustomAvatar } from '../custom/custom-avatar';
 import { CustomBadge } from '../custom/custom-badge';
 import { CustomButton } from '../custom/custom-button';
+import { StarRating } from '../rating/StarRating';
 
 interface UserCardProps {
   id: string;
   name: string;
   avatar?: string;
   rating: number;
+  reviewCount?: number;
   completedShifts: number;
   reliability: number;
   location: string;
@@ -27,6 +29,7 @@ export const UserCard: React.FC<UserCardProps> = ({
   name,
   avatar,
   rating,
+  reviewCount,
   completedShifts,
   reliability,
   location,
@@ -61,10 +64,12 @@ export const UserCard: React.FC<UserCardProps> = ({
           </div>
           
           <div className="flex items-center gap-2 mb-3">
-            <Star className="w-4 h-4 text-[#FFD60A] fill-[#FFD60A]" strokeWidth={1.5} />
-            <span className="text-sm font-montserrat font-700 text-white">
-              {rating.toFixed(1)}
-            </span>
+            <StarRating 
+              rating={rating}
+              reviewCount={reviewCount}
+              size="md"
+              showNumber={true}
+            />
             <span className="text-sm text-[#9B9B9B] font-montserrat font-500">
               • {completedShifts} смен
             </span>

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { Header } from './Header'
 import { BottomNav } from './BottomNav'
+import { GosuslugiButton } from './verification/GosuslugiButton'
 
 const userProfile = {
   id: 'NM-47821',
@@ -90,10 +91,11 @@ const documents = [
 ]
 
 export default function ProfileScreen() {
-  const router = useRouter(); // Declare the router variable
+  const router = useRouter()
   const [selectedSkills, setSelectedSkills] = useState<Set<string>>(
     new Set(userProfile.skills.filter((s) => s.verified).map((s) => s.name))
   )
+  const [isGosuslugiVerified, setIsGosuslugiVerified] = useState(false)
 
   const toggleSkill = (skillName: string) => {
     const newSelected = new Set(selectedSkills)
@@ -121,7 +123,6 @@ export default function ProfileScreen() {
       {/* DECORATIVE ELEMENTS */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
         <img src="/images/tape-2.png" className="absolute top-10 left-1/4 w-16 h-16" alt="" />
-        <img src="/images/cable-coil.png" className="absolute bottom-20 right-10 w-20 h-20 opacity-50" alt="" />
       </div>
 
       <div
@@ -144,30 +145,31 @@ export default function ProfileScreen() {
           position: 'fixed',
           bottom: '10%',
           left: '3%',
-          width: '80px',
+          width: '60px',
           height: 'auto',
-          opacity: 0.1,
+          opacity: 0.08,
           transform: 'rotate(30deg)',
           zIndex: 0,
           pointerEvents: 'none',
           animation: 'float 6s ease-in-out infinite 0.5s',
+          maxWidth: '100%',
         }}
       />
-      {/* FLOATING CONCRETE 7 - Profile */}
+      {/* HELMET - Profile only */}
       <img
-        src="/images/concrete-7.png"
+        src="/images/helmet.png"
         alt=""
         style={{
           position: 'fixed',
-          top: '5%',
-          right: '5%',
-          width: '112px',
+          bottom: '15%',
+          left: '5%',
+          width: '140px',
           height: 'auto',
-          opacity: 0.08,
-          transform: 'rotate(18deg)',
-          zIndex: 0,
+          opacity: 0.65,
+          transform: 'rotate(-15deg)',
+          zIndex: 1,
           pointerEvents: 'none',
-          animation: 'float 6s ease-in-out infinite',
+          animation: 'float 8s ease-in-out infinite 0.7s',
         }}
       />
       <div style={{ position: 'relative', zIndex: 2 }}>
@@ -264,20 +266,32 @@ export default function ProfileScreen() {
           {/* PROFILE HERO SECTION */}
           <div
             style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              backgroundImage: 'url(/images/holographic-bg.jpg)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
               borderRadius: '0 0 24px 24px',
               padding: '32px 20px 28px 20px',
               marginBottom: '20px',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)',
+              boxShadow: '0 8px 24px rgba(232, 93, 47, 0.2)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               textAlign: 'center',
+              position: 'relative',
+              overflow: 'hidden',
             }}
           >
+            {/* Dark overlay for text readability */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'rgba(0, 0, 0, 0.55)',
+                zIndex: 1,
+              }}
+            />
             {/* Avatar */}
             <div
               style={{
@@ -286,12 +300,13 @@ export default function ProfileScreen() {
                 borderRadius: '50%',
                 background: 'linear-gradient(135deg, #E85D2F 0%, #FF8855 100%)',
                 border: '4px solid white',
-                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)',
+                boxShadow: '0 8px 20px rgba(232, 93, 47, 0.4)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: '16px',
                 position: 'relative',
+                zIndex: 2,
               }}
             >
               <User size={48} color="white" strokeWidth={2} />
@@ -324,6 +339,8 @@ export default function ProfileScreen() {
                 color: '#FFFFFF',
                 letterSpacing: '-0.3px',
                 marginBottom: '6px',
+                position: 'relative',
+                zIndex: 2,
               }}
             >
               {userProfile.name}
@@ -334,6 +351,8 @@ export default function ProfileScreen() {
                 fontWeight: 500,
                 fontSize: '13px',
                 color: '#FFFFFF',
+                position: 'relative',
+                zIndex: 2,
               }}
             >
               ID: {userProfile.id}
@@ -346,6 +365,8 @@ export default function ProfileScreen() {
                 gap: '24px',
                 justifyContent: 'center',
                 marginTop: '20px',
+                position: 'relative',
+                zIndex: 2,
               }}
             >
               {[
@@ -392,162 +413,20 @@ export default function ProfileScreen() {
             </div>
           </div>
 
-          {/* VERIFICATION CARD */}
-          <div
-            style={{
-              padding: '0 20px',
-              marginBottom: '20px',
-            }}
-          >
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #E85D2F 0%, #FF8855 100%)',
-                borderRadius: '16px',
-                padding: '24px',
-                boxShadow: '0 8px 24px rgba(232, 93, 47, 0.3)',
-                position: 'relative',
-                overflow: 'hidden',
+          {/* GOSUSLUGI VERIFICATION SECTION */}
+          <div style={{ padding: '0 20px', marginBottom: '20px' }}>
+            <GosuslugiButton
+              isVerified={isGosuslugiVerified}
+              onVerify={() => {
+                // Open Gosuslugi OAuth flow
+                console.log('[v0] Opening Gosuslugi verification flow')
+                // In production: window.location.href = 'https://gosuslugi.ru/oauth/...'
+                // For demo, we'll just show verification badge after 2 seconds
+                setTimeout(() => {
+                  setIsGosuslugiVerified(true)
+                }, 2000)
               }}
-            >
-              {/* Background Pattern */}
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  opacity: 0.1,
-                }}
-              >
-                <Shield size={120} color="white" />
-              </div>
-
-              {/* Content */}
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                {/* Status Badge */}
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    gap: '6px',
-                    alignItems: 'center',
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    border: '1px solid rgba(255, 255, 255, 0.3)',
-                    padding: '6px 12px',
-                    borderRadius: '8px',
-                    marginBottom: '14px',
-                  }}
-                >
-                  <AlertCircle size={14} color="white" />
-                  <span
-                    style={{
-                      fontFamily: "'Montserrat', sans-serif",
-                      fontWeight: 700,
-                      fontSize: '11px',
-                      textTransform: 'uppercase',
-                      color: 'white',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    НЕ ПОДТВЕРЖДЕНО
-                  </span>
-                </div>
-
-                {/* Title */}
-                <h3
-                  style={{
-                    fontFamily: "'Montserrat', sans-serif",
-                    fontWeight: 700,
-                    fontSize: '19px',
-                    color: 'white',
-                    lineHeight: 1.3,
-                    marginBottom: '10px',
-                  }}
-                >
-                  Подтвердите личность через Госуслуги
-                </h3>
-
-                {/* Description */}
-                <p
-                  style={{
-                    fontFamily: "'Montserrat', sans-serif",
-                    fontWeight: 400,
-                    fontSize: '14px',
-                    color: 'rgba(255, 255, 255, 0.95)',
-                    lineHeight: 1.6,
-                    marginBottom: '20px',
-                  }}
-                >
-                  Верификация повысит ваш рейтинг и даст доступ к премиум-сменам с повышенной
-                  ставкой.
-                </p>
-
-                {/* Benefits */}
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '10px',
-                    marginBottom: '20px',
-                  }}
-                >
-                  {[
-                    '✓ Доступ к VIP-объектам (+30% к ставке)',
-                    '✓ Приоритет в поиске для заказчиков',
-                    '✓ Защита от мошенников и подделок',
-                  ].map((benefit, idx) => (
-                    <div
-                      key={idx}
-                      style={{
-                        display: 'flex',
-                        gap: '8px',
-                        alignItems: 'flex-start',
-                        fontFamily: "'Montserrat', sans-serif",
-                        fontWeight: 500,
-                        fontSize: '13px',
-                        color: 'rgba(255, 255, 255, 0.95)',
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      <span>{benefit}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* CTA Button */}
-                <button
-                  onClick={() => console.log('Open Госуслуги verification')}
-                  style={{
-                    width: '100%',
-                    height: '48px',
-                    background: 'white',
-                    border: 'none',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '10px',
-                    fontFamily: "'Montserrat', sans-serif",
-                    fontWeight: 700,
-                    fontSize: '15px',
-                    color: '#E85D2F',
-                    letterSpacing: '0.3px',
-                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)'
-                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.25)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)'
-                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)'
-                  }}
-                >
-                  <span>Подтвердить через Госуслуги</span>
-                  <ExternalLink size={18} strokeWidth={2.5} />
-                </button>
-              </div>
-            </div>
+            />
           </div>
 
           {/* SKILLS SECTION */}
@@ -943,6 +822,13 @@ export default function ProfileScreen() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(var(--rotate, 0deg)); }
+          50% { transform: translateY(-20px) rotate(var(--rotate, 0deg)); }
+        }
+      `}</style>
     </div>
   )
 }

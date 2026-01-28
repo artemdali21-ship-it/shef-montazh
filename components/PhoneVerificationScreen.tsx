@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ArrowLeft } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const NoisePattern = () => (
   <svg
@@ -27,8 +27,27 @@ const NoisePattern = () => (
 
 export default function PhoneVerificationScreen() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const role = searchParams?.get('role') as 'worker' | 'client' | 'shef' | null
   const [code, setCode] = useState(['', '', '', '', '', ''])
   const [loading, setLoading] = useState(false)
+  const [countdown, setCountdown] = useState(59)
+
+  useEffect(() => {
+    if (role) {
+      localStorage.setItem('userRole', role)
+    }
+  }, [role])
+
+  useEffect(() => {
+    if (countdown <= 0) return
+    
+    const timer = setTimeout(() => {
+      setCountdown(countdown - 1)
+    }, 1000)
+    
+    return () => clearTimeout(timer)
+  }, [countdown])
 
   const handleCodeChange = (index: number, value: string) => {
     if (value.length > 1) return
@@ -49,7 +68,16 @@ export default function PhoneVerificationScreen() {
 
     setLoading(true)
     setTimeout(() => {
-      router.push('/profile-setup')
+      // Route based on role
+      if (role === 'worker') {
+        router.push('/worker-categories')
+      } else if (role === 'client') {
+        router.push('/dashboard')
+      } else if (role === 'shef') {
+        router.push('/shef-dashboard')
+      } else {
+        router.push('/profile-setup')
+      }
       setLoading(false)
     }, 1500)
   }
@@ -63,25 +91,8 @@ export default function PhoneVerificationScreen() {
     }}>
       <NoisePattern />
       
-      {/* 3D decorative elements */}
-      <div style={{
-        position: 'absolute',
-        top: '-10%',
-        right: '-5%',
-        opacity: 0.15,
-        pointerEvents: 'none',
-      }}>
-        <img src="/images/carabiner.png" alt="" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
-      </div>
-      <div style={{
-        position: 'absolute',
-        bottom: '-5%',
-        left: '-8%',
-        opacity: 0.15,
-        pointerEvents: 'none',
-      }}>
-        <img src="/images/chain.png" alt="" style={{ width: '180px', height: '180px', objectFit: 'contain' }} />
-      </div>
+      {/* 3D decorative elements - HIDDEN FOR TELEGRAM MINI APP */}
+      {/* Removed to prevent overflow issues in Telegram Mini App */}
 
       <div className="relative z-10">
         <header className="h-16 flex items-center px-4">
@@ -122,7 +133,12 @@ export default function PhoneVerificationScreen() {
 
             <div className="text-center mt-4">
               <p className="text-sm text-[#9B9B9B] font-medium mb-2">Не получили код?</p>
-              <button className="text-sm text-[#E85D2F] font-bold underline hover:text-[#FF8B4A]">Отправить заново (59 сек)</button>
+              <button 
+                disabled={countdown > 0}
+                className="text-sm text-[#E85D2F] font-bold underline hover:text-[#FF8B4A] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Отправить заново ({countdown} сек)
+              </button>
             </div>
           </div>
         </div>

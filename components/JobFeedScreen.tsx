@@ -114,7 +114,10 @@ export default function JobFeedScreen() {
             filteredJobs.map((job) => (
               <div
                 key={job.id}
-                onClick={() => console.log(`Navigating to job ${job.id}`)}
+                onClick={() => {
+                  router.push(`/job/${job.id}`)
+                  console.log(`[v0] Navigating to job ${job.id}`)
+                }}
                 className="rounded-3xl p-5 cursor-pointer transition-all duration-200 hover:shadow-2xl"
                 style={{
                   background: '#F5F5F5',
@@ -195,7 +198,8 @@ export default function JobFeedScreen() {
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
-                    console.log(`Apply to job ${job.id}`)
+                    router.push(`/application?jobId=${job.id}`)
+                    console.log(`[v0] Apply to job ${job.id}`)
                   }}
                   className="w-full h-12 rounded-2xl font-bold text-white flex items-center justify-center gap-2 transition-all duration-200"
                   style={{

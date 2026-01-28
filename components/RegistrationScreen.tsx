@@ -90,14 +90,9 @@ export default function RegistrationScreen() {
   const handleSubmit = async () => {
     if (!validateForm()) return
     
-    // Redirect based on user type after registration
-    if (userType === 'worker') {
-      router.push('/feed')
-    } else if (userType === 'client') {
-      router.push('/dashboard')
-    } else if (userType === 'shef') {
-      router.push('/feed')
-    }
+    // Save role and redirect to phone verification with role parameter
+    localStorage.setItem('userRole', userType || 'worker')
+    router.push(`/verify-phone?role=${userType || 'worker'}`)
   }
 
   return (
@@ -113,25 +108,8 @@ export default function RegistrationScreen() {
       flexDirection: 'column',
     }}>
       <NoisePattern />
-      {/* 3D decorative elements */}
-      <div style={{
-        position: 'absolute',
-        top: '-10%',
-        right: '-5%',
-        opacity: 0.15,
-        pointerEvents: 'none',
-      }}>
-        <img src="/images/carabiner.png" alt="" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
-      </div>
-      <div style={{
-        position: 'absolute',
-        bottom: '-5%',
-        left: '-8%',
-        opacity: 0.15,
-        pointerEvents: 'none',
-      }}>
-        <img src="/images/chain.png" alt="" style={{ width: '180px', height: '180px', objectFit: 'contain' }} />
-      </div>
+      {/* 3D decorative elements - HIDDEN FOR TELEGRAM MINI APP */}
+      {/* Removed to prevent overflow issues in Telegram Mini App */}
       
       <header style={{
         position: 'relative',

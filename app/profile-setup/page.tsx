@@ -103,7 +103,7 @@ export default function ProfileSetupPage() {
     console.log('[v0] Profile setup complete:', { userType, formData })
     // Redirect to appropriate dashboard
     if (userType === 'worker') {
-      router.push('/feed')
+      router.push('/worker-categories')
     } else if (userType === 'client') {
       router.push('/dashboard')
     } else if (userType === 'shef') {
@@ -222,20 +222,34 @@ export default function ProfileSetupPage() {
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-600 text-white mb-2">Специальность *</label>
-                <select
-                  name="specialization"
-                  value={formData.specialization}
-                  onChange={handleInputChange}
-                  className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-white focus:outline-none focus:border-brand-orange"
-                >
-                  <option value="">Выберите специальность</option>
-                  <option value="elektrik">Электрик</option>
-                  <option value="santehnik">Сантехник</option>
-                  <option value="molyar">Маляр</option>
-                  <option value="kroveltschik">Кровельщик</option>
-                  <option value="montazhnik">Монтажник</option>
-                </select>
+                <label className="block text-sm font-600 text-white mb-4">Выберите специальность *</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { id: 'elektrik', name: 'Электрик' },
+                    { id: 'santehnik', name: 'Сантехник' },
+                    { id: 'molyar', name: 'Маляр' },
+                    { id: 'kroveltschik', name: 'Кровельщик' },
+                    { id: 'montazhnik', name: 'Монтажник' },
+                    { id: 'svarchik', name: 'Сварщик' },
+                  ].map(spec => (
+                    <button
+                      key={spec.id}
+                      onClick={() =>
+                        setFormData(prev => ({
+                          ...prev,
+                          specialization: prev.specialization === spec.id ? '' : spec.id,
+                        }))
+                      }
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        formData.specialization === spec.id
+                          ? 'border-[#E85D2F] bg-[#E85D2F]/10'
+                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                      }`}
+                    >
+                      <span className="text-white font-600">{spec.name}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
               
               <div>
@@ -494,15 +508,8 @@ export default function ProfileSetupPage() {
     }}>
       <NoisePattern />
       
-      <div style={{
-        position: 'absolute',
-        top: '-10%',
-        right: '-5%',
-        opacity: 0.15,
-        pointerEvents: 'none',
-      }}>
-        <img src="/images/helmet.png" alt="" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
-      </div>
+      {/* 3D decorative elements - HIDDEN FOR TELEGRAM MINI APP */}
+      {/* Removed to prevent overflow issues in Telegram Mini App */}
 
       <header style={{
         position: 'relative',

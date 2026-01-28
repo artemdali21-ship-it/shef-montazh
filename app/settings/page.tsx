@@ -171,23 +171,20 @@ export default function Settings() {
       {/* DECORATIVE ELEMENTS */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
         <img src="/images/bolts.png" className="absolute top-10 right-10 w-20 h-20" alt="" />
-        <img src="/images/carabiner.png" className="absolute bottom-20 left-10 w-16 h-16 opacity-50" alt="" />
       </div>
 
       <NoisePattern />
 
-      <div className="relative z-10 pb-24 flex flex-col h-full overflow-y-auto">
-        {/* Header */}
-        <header className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-md border-b border-white/10 z-20">
-          <div className="h-16 flex items-center justify-between px-4">
-            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
-              <ArrowLeft className="w-5 h-5 text-white" strokeWidth={1.5} />
-            </button>
-            <h1 className="font-montserrat font-700 text-xl text-white">Настройки</h1>
-            <div className="w-10"></div>
-          </div>
-        </header>
-
+      {/* Header with Profile Info */}
+      <header style={{
+        position: 'relative',
+        background: 'rgba(26, 26, 26, 0.7)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        zIndex: 20,
+        flexShrink: 0,
+      }}>
         {/* Profile Card */}
         <div className="px-4 pt-6 pb-4">
           <div className="bg-white/5 border border-white/10 rounded-xl p-5">
@@ -310,7 +307,7 @@ export default function Settings() {
             <p className="text-xs text-[#6B6B6B] font-montserrat font-500">ШЕФ-МОНТАЖ • Версия 1.0.0 (MVP)</p>
           </div>
         </div>
-      </div>
+      </header>
     </div>
   )
 }

@@ -5,10 +5,15 @@ import { ArrowLeft, Share2, Send, Calendar, MapPin, HardHat, Wrench, Shield, Clo
 import { useRouter } from 'next/navigation'
 import { Header } from './Header'
 import { BottomNav } from './BottomNav'
+import { CompletionActions } from './shift/CompletionActions'
+import { RatingModal } from './rating/RatingModal'
 
 const JobDetailsScreen = () => {
   const router = useRouter()
   const [isApplying, setIsApplying] = useState(false)
+  const [shiftStatus, setShiftStatus] = useState<'checked_in' | 'awaiting_worker_confirm' | 'awaiting_rating' | 'completed'>('checked_in')
+  const [showRatingModal, setShowRatingModal] = useState(false)
+  const [userRole] = useState<'client' | 'worker'>('client')
 
   const jobDetails = {
     id: 1,
@@ -56,6 +61,27 @@ const JobDetailsScreen = () => {
     { icon: Clock, text: 'Готовность к ночной работе' },
     { icon: Star, text: 'Опыт монтажа от 1 года' },
   ]
+
+  const handleCompleteShift = () => {
+    setShiftStatus('awaiting_worker_confirm')
+    console.log('[v0] Client completed shift')
+  }
+
+  const handleWorkerConfirm = () => {
+    setShiftStatus('awaiting_rating')
+    console.log('[v0] Worker confirmed completion')
+  }
+
+  const handleRatingSubmit = async (rating: number, comment: string) => {
+    try {
+      setShiftStatus('completed')
+      console.log('[v0] Rating submitted:', { rating, comment })
+      // TODO: Save rating to database
+      setShowRatingModal(false)
+    } catch (error) {
+      console.error('[v0] Error submitting rating:', error)
+    }
+  }
 
   return (
     <div
@@ -336,6 +362,15 @@ const JobDetailsScreen = () => {
           </div>
         </section>
 
+        {/* COMPLETION ACTIONS SECTION */}
+        <CompletionActions
+          shiftStatus={shiftStatus}
+          userRole={userRole}
+          onCompleteShift={handleCompleteShift}
+          onConfirmCompletion={handleWorkerConfirm}
+          onRatingOpen={() => setShowRatingModal(true)}
+        />
+
         {/* DESCRIPTION SECTION */}
         <section style={{ marginBottom: '24px' }}>
           <h2
@@ -454,8 +489,63 @@ const JobDetailsScreen = () => {
         </section>
       </div>
 
+      {/* FIXED CTA BUTTON */}
+      <div style={{
+        position: 'fixed',
+        bottom: '80px',
+        left: 0,
+        right: 0,
+        padding: '16px 20px',
+        background: 'rgba(26, 26, 26, 0.95)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        zIndex: 20,
+        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+      }}>
+        <button
+          onClick={() => {
+            router.push(`/application?jobId=${jobDetails.id}`)
+            console.log(`[v0] Applying to job ${jobDetails.id}`)
+          }}
+          disabled={isApplying}
+          style={{
+            width: '100%',
+            height: '56px',
+            background: '#E85D2F',
+            color: 'white',
+            fontSize: '16px',
+            fontWeight: 700,
+            borderRadius: '16px',
+            border: 'none',
+            cursor: isApplying ? 'not-allowed' : 'pointer',
+            opacity: isApplying ? 0.7 : 1,
+            transition: 'all 0.3s',
+            fontFamily: 'Montserrat, system-ui, sans-serif',
+          }}
+          onMouseEnter={(e) => {
+            if (!isApplying) (e.target as HTMLButtonElement).style.background = '#D94D1F'
+          }}
+          onMouseLeave={(e) => {
+            if (!isApplying) (e.target as HTMLButtonElement).style.background = '#E85D2F'
+          }}
+        >
+          {isApplying ? 'Отправка...' : 'Откликнуться'}
+        </button>
+      </div>
+
       {/* BOTTOM NAVIGATION */}
       <BottomNav userType="worker" />
+
+      {/* RATING MODAL */}
+      <RatingModal
+        isOpen={showRatingModal}
+        shiftId={`${jobDetails.id}`}
+        ratedUserId="worker-123"
+        ratedUserName="Иван Петров"
+        ratedUserRole="worker"
+        onClose={() => setShowRatingModal(false)}
+        onSubmit={handleRatingSubmit}
+      />
     </div>
   )
 }
