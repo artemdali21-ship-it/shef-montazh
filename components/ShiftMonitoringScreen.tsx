@@ -155,7 +155,7 @@ export default function ShiftMonitoringScreen() {
         <img src="/images/building.png" className="absolute top-1/3 right-10 w-40 h-40" alt="" />
         <img src="/images/cable-coil.png" className="absolute bottom-20 left-5 w-28 h-28" style={{animation: 'float 7s ease-in-out infinite 0.5s'}} alt="" />
       </div>
-    >
+
       <div
         style={{
           position: 'fixed',

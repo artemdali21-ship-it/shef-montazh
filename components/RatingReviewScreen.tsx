@@ -243,10 +243,7 @@ export default function RatingReviewScreen() {
         <img src="/images/helmet333.png" className="absolute top-1/4 left-5 w-32 h-32" alt="" />
         <img src="/images/carabiner.png" className="absolute bottom-20 right-10 w-28 h-28" style={{animation: 'float 6s ease-in-out infinite 0.7s', transform: 'rotate(15deg)'}} alt="" />
       </div>
-          pointerEvents: 'none',
-          animation: 'float 6s ease-in-out infinite 1.5s',
-        }}
-      />
+
       <div style={{ position: 'relative', zIndex: 2 }}>
         {/* HEADER */}
         <div
