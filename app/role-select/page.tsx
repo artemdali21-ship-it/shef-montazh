@@ -67,7 +67,7 @@ export default function RoleSelectScreen() {
 
   return (
     <div
-      className="w-screen h-screen flex flex-col items-center justify-center font-sans relative overflow-hidden"
+      className="h-screen flex flex-col items-center justify-center font-sans relative overflow-hidden"
       style={{
         background: 'linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 50%, #1F1F1F 100%)',
       }}

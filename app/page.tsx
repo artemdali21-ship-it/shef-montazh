@@ -79,7 +79,7 @@ export default function OnboardingScreen() {
 
   return (
     <div
-      className="w-screen h-screen flex flex-col items-center justify-center font-sans relative"
+      className="h-screen flex flex-col items-center justify-center font-sans relative"
       style={{
         backgroundImage: 'url(/images/bg-dashboard.jpg)',
         backgroundSize: 'cover',
