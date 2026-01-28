@@ -436,10 +436,6 @@ export default function WorkerProfile() {
               >
                 Все смены →
               </button>
-                }}
-              >
-                Все →
-              </button>
             </div>
 
             <div
