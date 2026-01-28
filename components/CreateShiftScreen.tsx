@@ -197,32 +197,32 @@ export default function CreateShiftScreen({ onClose, onSuccess }: { onClose?: ()
         >
           {step} / 2
         </div>
-        </header>
+      </div>
 
-        {/* Progress bar */}
+      {/* Progress bar */}
+      <div
+        style={{
+          position: 'fixed',
+          top: '64px',
+          left: 0,
+          right: 0,
+          height: '3px',
+          background: 'rgba(255, 255, 255, 0.08)',
+          zIndex: 49,
+        }}
+      >
         <div
           style={{
-            position: 'fixed',
-            top: '64px',
-            left: 0,
-            right: 0,
             height: '3px',
-            background: 'rgba(255, 255, 255, 0.08)',
-            zIndex: 49,
+            background: '#E85D2F',
+            width: `${step === 1 ? 50 : 100}%`,
+            transition: 'width 0.3s ease',
           }}
-        >
-          <div
-            style={{
-              height: '3px',
-              background: '#E85D2F',
-              width: `${step === 1 ? 50 : 100}%`,
-              transition: 'width 0.3s ease',
-            }}
-          />
-        </div>
+        />
+      </div>
 
-        {/* Content */}
-        <div style={{ 
+      {/* Content */}
+      <div style={{
           paddingTop: '67px', 
           paddingBottom: step === 1 ? '120px' : '80px',
           maxHeight: 'calc(100vh - 67px)',
