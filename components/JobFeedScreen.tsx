@@ -88,26 +88,12 @@ export default function JobFeedScreen() {
   })
 
   return (
-    <div
-      className="w-full h-screen flex flex-col"
-      style={{
-        backgroundImage: 'url(/images/gradient-bg.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-      }}
-    >
-      {/* DECORATIVE ELEMENTS */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
-        <img src="/images/wrench.png" className="absolute bottom-20 left-10 w-24 h-24" alt="" />
-        <img src="/images/chain.png" className="absolute top-1/3 right-10 w-20 h-20 opacity-50" alt="" />
-      </div>
-
+    <div className="w-full flex flex-col">
       {/* HEADER */}
       <Header title="Лента смен" showBack={false} showNotifications={true} />
 
       {/* JOB CARDS FEED */}
-      <div className="flex-1 overflow-y-auto pt-24 pb-32 px-5 font-sans">
+      <div className="flex-1 overflow-y-auto pt-20 pb-4 px-5 font-sans">
         <div className="flex flex-col gap-6">
           {filteredJobs.length > 0 ? (
             filteredJobs.map((job) => (

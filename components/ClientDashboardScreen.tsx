@@ -789,8 +789,8 @@ export default function ClientDashboardScreen() {
             console.log('[v0] Open create shift page')
           }}
           style={{
-            position: 'fixed',
-            bottom: '24px',
+            position: 'absolute',
+            bottom: '0px',
             right: '20px',
             width: '64px',
             height: '64px',

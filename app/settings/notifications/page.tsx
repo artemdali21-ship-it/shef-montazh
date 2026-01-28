@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { ArrowLeft, Bell, DollarSign, MessageCircle, Settings, MessageSquare, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { NoisePattern } from '@/components/noise-pattern'
 import { getUserRole } from '@/lib/auth'
 
 interface NotificationSettings {
@@ -241,19 +240,7 @@ export default function NotificationsSettings() {
   )
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundImage: 'url(/images/bg-dashboard.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <NoisePattern />
-
+    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col overflow-hidden">
       <div className="relative z-10 flex flex-col h-full">
         {/* HEADER */}
         <header className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-md border-b border-white/10 z-20">
