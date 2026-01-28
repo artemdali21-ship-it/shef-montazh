@@ -101,16 +101,15 @@ export default function ClientProfile({
   const router = useRouter();
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden">
+    <div className="w-full h-full flex flex-col overflow-hidden bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
       {/* HEADER SECTION */}
       <header
-        className="pt-6 px-4 pb-8 text-center"
+        className="pt-6 px-4 pb-8 text-center flex-shrink-0"
         style={{
           background: 'rgba(26, 26, 26, 0.5)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-          flexShrink: 0,
         }}
       >
         {/* Settings Icon */}
@@ -120,8 +119,8 @@ export default function ClientProfile({
       </header>
 
       {/* MAIN CONTENT */}
-      <div className="flex-1 overflow-y-auto">
-        {/* Content scrolls here */}
+      <div className="flex-1 overflow-y-auto w-full">
+        {/* STATS ROW */}
         {/* STATS ROW */}
         <div className="px-4 py-6 grid grid-cols-3 gap-3">
           {/* Briefcase - Total Posted */}
