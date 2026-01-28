@@ -141,8 +141,8 @@ export default function OnboardingScreen() {
       {/* MAIN CONTENT */}
       <div className="w-screen h-screen flex flex-col relative z-20 overflow-y-auto" style={{ padding: 0, margin: 0 }}>
         <div className="w-full px-5 py-8 flex flex-col flex-1">
-        {/* HEADER */}
-        <div className="mb-6">
+          {/* HEADER */}
+          <div className="mb-6">
           <div className="flex items-center justify-center gap-1.5 mb-2">
             <div style={{ color: '#E85D2F' }} className="flex-shrink-0">
               <AsteriskIcon />
