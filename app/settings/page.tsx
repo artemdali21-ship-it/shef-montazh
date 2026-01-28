@@ -20,8 +20,10 @@ import {
   Smartphone,
   CreditCard,
   AlertCircle,
+  FileText,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 const NoisePattern = () => (
   <svg
@@ -147,6 +149,32 @@ export default function Settings() {
         },
       ],
     },
+    {
+      title: 'Юридические документы',
+      items: [
+        {
+          icon: FileText,
+          label: 'Пользовательское соглашение',
+          sublabel: 'Условия использования',
+          route: '/legal/terms',
+          badge: null,
+        },
+        {
+          icon: FileText,
+          label: 'Политика конфиденциальности',
+          sublabel: 'Защита данных',
+          route: '/legal/privacy',
+          badge: null,
+        },
+        {
+          icon: FileText,
+          label: 'Договор оферты',
+          sublabel: 'Условия для заказчиков',
+          route: '/legal/offer',
+          badge: null,
+        },
+      ],
+    },
   ]
 
   const handleLogout = () => {
@@ -154,15 +182,7 @@ export default function Settings() {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundImage: 'url(/images/bg-dashboard.jpg)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundAttachment: 'fixed',
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
+    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col overflow-hidden">
       {/* DECORATIVE ELEMENTS */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
         <img src="/images/bolts.png" className="absolute top-10 right-10 w-20 h-20" alt="" />
@@ -179,6 +199,7 @@ export default function Settings() {
         borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
         zIndex: 20,
         flexShrink: 0,
+        overflowY: 'auto',
       }}>
         {/* Profile Card */}
         <div className="px-4 pt-6 pb-4">
@@ -253,13 +274,19 @@ export default function Settings() {
               <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
                 {section.items.map((item, itemIndex) => {
                   const Icon = item.icon
+                  const isExternalLink = item.route.startsWith('/legal')
+                  const ButtonComponent = isExternalLink ? Link : 'button'
+                  const buttonProps = isExternalLink 
+                    ? { href: item.route }
+                    : { onClick: () => router.push(item.route) }
+                  
                   return (
-                    <button
+                    <ButtonComponent
                       key={itemIndex}
-                      onClick={() => router.push(item.route)}
+                      {...buttonProps}
                       className={`w-full flex items-center gap-3 p-4 hover:bg-white/5 transition-colors ${
                         itemIndex !== section.items.length - 1 ? 'border-b border-white/5' : ''
-                      }`}
+                      } ${isExternalLink ? 'text-left' : ''}`}
                     >
                       {/* Icon */}
                       <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -281,7 +308,7 @@ export default function Settings() {
 
                       {/* Arrow */}
                       <ChevronRight className="w-5 h-5 text-[#6B6B6B] flex-shrink-0" strokeWidth={1.5} />
-                    </button>
+                    </ButtonComponent>
                   )
                 })}
               </div>

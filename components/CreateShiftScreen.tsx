@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { X, Briefcase, MapPin, Clock, Users, DollarSign } from 'lucide-react';
 
 interface CreateShiftScreenProps {
@@ -218,6 +219,20 @@ export default function CreateShiftScreen({ onClose, onSuccess }: CreateShiftScr
                   ₽{(formData.rate * formData.workers).toLocaleString('ru-RU')}
                 </span>
               </div>
+            </div>
+
+            {/* Legal agreement notice */}
+            <div className="bg-white/5 border border-white/10 rounded-lg p-4 text-sm text-gray-300">
+              <p>
+                Создавая смену, вы подтверждаете что ознакомлены с{' '}
+                <Link href="/legal/offer" className="text-[#E85D2F] underline hover:no-underline">
+                  договором оферты
+                </Link>
+                {' '}и{' '}
+                <Link href="/legal/terms" className="text-[#E85D2F] underline hover:no-underline">
+                  условиями использования
+                </Link>
+              </p>
             </div>
           </div>
         )}
