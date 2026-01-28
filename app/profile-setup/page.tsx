@@ -473,15 +473,16 @@ export default function ProfileSetupPage() {
   return (
     <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col overflow-hidden">
       {/* HEADER */}
-        position: 'relative',
-        background: 'rgba(42, 42, 42, 0.6)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-        zIndex: 20,
-        flexShrink: 0,
-        height: '4rem',
-      }} className="flex items-center justify-between px-4">
+      <header 
+        className="flex items-center justify-between px-4 fixed top-0 left-0 right-0 h-16"
+        style={{
+          background: 'rgba(42, 42, 42, 0.6)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          zIndex: 20,
+        }}
+      >
         <button onClick={handleBack} className="w-10 h-10 flex items-center justify-center">
           <ChevronLeft className="w-5 h-5 text-white" />
         </button>
