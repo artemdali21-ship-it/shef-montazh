@@ -114,8 +114,6 @@ export default function RegistrationScreen() {
       flexDirection: 'column',
     }}>
       <NoisePattern />
-      {/* 3D decorative elements - HIDDEN FOR TELEGRAM MINI APP */}
-      {/* Removed to prevent overflow issues in Telegram Mini App */}
       
       <header style={{
         position: 'relative',
@@ -149,7 +147,6 @@ export default function RegistrationScreen() {
         className="px-4 py-6"
       >
         <div className="max-w-md mx-auto pb-32">
-          {/* SKIP ROLE SELECTION IF PROVIDED VIA QUERY PARAMS - ONLY SHOW FORM */}
           {step === 2 && (
             <div className="space-y-6">
               <div>
@@ -213,38 +210,6 @@ export default function RegistrationScreen() {
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                     onFocus={() => scrollToField(confirmPasswordInputRef)}
-                    className="w-full pl-4 pr-12 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
-                    placeholder="Подтвердите пароль"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white/50 hover:text-white/70 transition-colors"
-                  >
-                    {showConfirmPassword ? <Eye className="w-5 h-5" strokeWidth={1.5} /> : <EyeOff className="w-5 h-5" strokeWidth={1.5} />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <button
-                  onClick={handleSubmit}
-                  className="w-full p-4 rounded-xl bg-[#E85D2F] text-white font-bold hover:bg-[#E85D2F]/80"
-                >
-                  Продолжить
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
-                  <input
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    value={formData.confirmPassword}
-                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                     className="w-full pl-4 pr-12 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
                     placeholder="Подтвердите пароль"
                   />
