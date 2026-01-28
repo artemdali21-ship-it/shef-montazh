@@ -120,7 +120,57 @@ export default function ClientProfile({
 
       {/* MAIN CONTENT */}
       <div className="flex-1 overflow-y-auto w-full">
-        {/* STATS ROW */}
+        {/* PROFILE INFO GLASSMORPHIC SECTION */}
+        <div
+          style={{
+            background: 'rgba(0, 0, 0, 0.4)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            margin: '16px',
+            padding: '16px',
+            borderRadius: '12px',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Glassmorphic blur lines */}
+          <svg
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              opacity: 0.1,
+              pointerEvents: 'none',
+            }}
+            preserveAspectRatio="none"
+            viewBox="0 0 100 100"
+          >
+            <line x1="10" y1="0" x2="20" y2="100" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.5" />
+            <line x1="30" y1="0" x2="40" y2="100" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.5" />
+            <line x1="50" y1="0" x2="60" y2="100" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.5" />
+            <line x1="70" y1="0" x2="80" y2="100" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.5" />
+            <path d="M 0 30 Q 25 20, 50 30 T 100 30" fill="none" stroke="rgba(232, 93, 47, 0.2)" strokeWidth="0.4" />
+          </svg>
+
+          {/* Company Info Content */}
+          <div style={{ position: 'relative', zIndex: 2 }}>
+            <h2 style={{ color: '#FFFFFF', fontWeight: 700, marginBottom: '4px', fontSize: '16px' }}>
+              {companyName}
+            </h2>
+            <p style={{ color: '#FFFFFF', opacity: 0.7, fontSize: '12px' }}>
+              ID: {companyId}
+            </p>
+            {isPremium && (
+              <span style={{ color: '#BFFF00', fontSize: '11px', marginTop: '8px', display: 'inline-block' }}>
+                ✓ Premium
+              </span>
+            )}
+          </div>
+        </div>
+
         {/* STATS ROW */}
         <div className="px-4 py-6 grid grid-cols-3 gap-3">
           {/* Briefcase - Total Posted */}
