@@ -55,7 +55,7 @@ const sizeConfig = {
     padding: 'px-3 py-1.5',
     iconSize: 14,
     fontSize: 'text-xs',
-    gap: 'gap-1.5',
+    gap: 'gap-2',
   },
   md: {
     padding: 'px-4 py-2',
@@ -67,7 +67,7 @@ const sizeConfig = {
     padding: 'px-6 py-3',
     iconSize: 20,
     fontSize: 'text-base',
-    gap: 'gap-2.5',
+    gap: 'gap-3',
   },
 };
 

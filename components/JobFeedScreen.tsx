@@ -109,7 +109,7 @@ export default function JobFeedScreen() {
 
       {/* JOB CARDS FEED */}
       <div className="flex-1 overflow-y-auto pt-24 pb-32 px-5 font-sans">
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
           {filteredJobs.length > 0 ? (
             filteredJobs.map((job) => (
               <div
@@ -118,27 +118,21 @@ export default function JobFeedScreen() {
                   router.push(`/job/${job.id}`)
                   console.log(`[v0] Navigating to job ${job.id}`)
                 }}
-                className="rounded-3xl p-5 cursor-pointer transition-all duration-200 hover:shadow-2xl"
+                className="rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-2xl hover:scale-105"
                 style={{
                   background: '#F5F5F5',
                   boxShadow: job.urgent ? '0 4px 16px rgba(232, 93, 47, 0.15)' : '0 2px 8px rgba(0, 0, 0, 0.15)',
                   border: job.urgent ? '2px solid #E85D2F' : 'none',
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)'
-                }}
               >
                 {/* Job Type Header */}
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-base font-bold text-gray-900 flex-1" style={{ color: '#1A1A1A' }}>
+                <div className="flex items-start justify-between gap-4 mb-4">
+                  <h3 className="text-2xl font-semibold text-gray-900 flex-1 leading-snug" style={{ color: '#1A1A1A' }}>
                     {job.type}
                   </h3>
                   {job.urgent && (
                     <span
-                      className="text-xs font-bold uppercase px-2.5 py-1 rounded-lg ml-2 flex-shrink-0"
+                      className="text-xs font-bold uppercase px-3 py-1 rounded-full flex-shrink-0 whitespace-nowrap"
                       style={{ background: '#E85D2F', color: '#FFFFFF' }}
                     >
                       Срочно
@@ -147,7 +141,7 @@ export default function JobFeedScreen() {
                 </div>
 
                 {/* Date & Time */}
-                <div className="flex items-center gap-1.5 mb-2 text-sm" style={{ color: '#6B6B6B' }}>
+                <div className="flex items-center gap-2 mb-3 text-sm font-medium" style={{ color: '#6B6B6B' }}>
                   <Calendar size={14} />
                   <span>
                     {job.date} • {job.time}
@@ -155,40 +149,40 @@ export default function JobFeedScreen() {
                 </div>
 
                 {/* Location */}
-                <div className="flex items-center gap-1.5 mb-4 text-sm" style={{ color: '#6B6B6B' }}>
-                  <MapPin size={14} />
+                <div className="flex items-center gap-2 mb-4 text-sm font-medium" style={{ color: '#6B6B6B' }}>
+                  <MapPin size={16} strokeWidth={2} />
                   <span>{job.location}</span>
                 </div>
 
                 {/* Divider */}
-                <div className="h-px bg-gray-300 my-4" style={{ background: '#D0D0D0' }} />
+                <div className="h-px bg-gray-300 my-6" style={{ background: '#D0D0D0' }} />
 
                 {/* Footer: Rate & Badges */}
-                <div className="flex items-end justify-between mb-4">
+                <div className="flex items-end justify-between mb-6">
                   <div>
-                    <div className="text-xl font-bold" style={{ color: '#1A1A1A' }}>
+                    <div className="text-2xl font-semibold" style={{ color: '#1A1A1A' }}>
                       {job.rate} ₽
                     </div>
-                    <div className="text-xs" style={{ color: '#6B6B6B' }}>
+                    <div className="text-sm text-gray-500" style={{ color: '#6B6B6B' }}>
                       {job.duration}
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     {job.escrow && (
                       <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center"
-                        style={{ background: 'rgba(232, 93, 47, 0.1)' }}
+                        className="w-10 h-10 rounded-full flex items-center justify-center"
+                        style={{ background: 'rgba(232, 93, 47, 0.15)', border: '1px solid rgba(232, 93, 47, 0.3)' }}
                       >
-                        <Shield size={16} style={{ color: '#E85D2F' }} />
+                        <Shield size={20} strokeWidth={2} style={{ color: '#E85D2F' }} />
                       </div>
                     )}
                     {job.verified && (
                       <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center"
-                        style={{ background: 'rgba(191, 255, 0, 0.1)' }}
+                        className="w-10 h-10 rounded-full flex items-center justify-center"
+                        style={{ background: 'rgba(191, 255, 0, 0.15)', border: '1px solid rgba(191, 255, 0, 0.3)' }}
                       >
-                        <CheckCircle size={16} style={{ color: '#BFFF00' }} />
+                        <CheckCircle size={20} strokeWidth={2} style={{ color: '#BFFF00' }} />
                       </div>
                     )}
                   </div>
@@ -201,22 +195,20 @@ export default function JobFeedScreen() {
                     router.push(`/application?jobId=${job.id}`)
                     console.log(`[v0] Apply to job ${job.id}`)
                   }}
-                  className="w-full h-12 rounded-2xl font-bold text-white flex items-center justify-center gap-2 transition-all duration-200"
+                  className="w-full h-12 rounded-lg font-semibold text-white flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 active:scale-95"
                   style={{
                     background: '#E85D2F',
-                    boxShadow: '0 4px 12px rgba(232, 93, 47, 0.25)',
+                    boxShadow: '0 6px 20px rgba(232, 93, 47, 0.3)',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = '#D04D1F'
-                    e.currentTarget.style.transform = 'translateX(2px)'
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = '#E85D2F'
-                    e.currentTarget.style.transform = 'translateX(0)'
                   }}
                 >
                   <span>Откликнуться</span>
-                  <ArrowRight size={16} />
+                  <ArrowRight size={20} strokeWidth={2} />
                 </button>
               </div>
             ))

@@ -207,65 +207,56 @@ export default function OnboardingScreen() {
           </div>
 
           {/* SLIDE TEXT */}
-          <h2 style={{ color: '#FFFFFF', textAlign: 'right' }} className="text-2xl font-sans mb-3" style={{ fontWeight: 800, lineHeight: 1.2 }}>
+          <h2 style={{ color: '#FFFFFF', textAlign: 'right' }} className="text-4xl font-sans mb-4 leading-tight" style={{ fontWeight: 800, letterSpacing: '-0.02em' }}>
             {slides[currentSlide].title}
           </h2>
-          <p style={{ color: '#FFFFFF' }} className="text-base font-normal leading-relaxed font-sans">
+          <p style={{ color: '#FFFFFF' }} className="text-base font-normal leading-relaxed font-sans mb-6">
             {slides[currentSlide].subtitle}
           </p>
         </div>
 
         {/* BUTTONS */}
-        <div className="space-y-3 flex-shrink-0">
+        <div className="space-y-4 flex-shrink-0">
           <button
             onClick={handleNext}
-            className="w-full text-white rounded-2xl transition-all duration-200 font-sans flex items-center justify-center gap-2"
+            className="w-full text-white rounded-lg transition-all duration-300 font-sans flex items-center justify-center gap-2 font-semibold h-12 hover:scale-105 active:scale-95"
             style={{
-              height: '56px',
-              background: 'rgba(232, 93, 47, 0.85)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              boxShadow: '0 10px 28px rgba(232,93,47,0.3), inset 0 0 0 1px rgba(255,255,255,0.3)',
+              background: '#E85D2F',
+              boxShadow: '0 6px 20px rgba(232, 93, 47, 0.3)',
               cursor: 'pointer',
               border: 'none',
-              fontWeight: 700,
               fontSize: '16px',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-3px)'
-              e.currentTarget.style.boxShadow = '0 12px 32px rgba(232,93,47,0.4), inset 0 0 0 1px rgba(255,255,255,0.4)'
-              e.currentTarget.style.background = 'rgba(232, 93, 47, 0.95)'
+              e.currentTarget.style.background = '#D04D1F'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)'
-              e.currentTarget.style.boxShadow = '0 10px 28px rgba(232,93,47,0.3), inset 0 0 0 1px rgba(255,255,255,0.3)'
-              e.currentTarget.style.background = 'rgba(232, 93, 47, 0.85)'
+              e.currentTarget.style.background = '#E85D2F'
             }}
           >
             {currentSlide === slides.length - 1 ? 'Начать' : 'Далее'}
-            {currentSlide < slides.length - 1 && <ChevronRight size={18} />}
+            {currentSlide < slides.length - 1 && <ChevronRight size={20} strokeWidth={2} />}
           </button>
 
           {currentSlide > 0 && (
             <button
               onClick={handleSkip}
-              className="w-full rounded-2xl transition-all duration-200 font-sans"
+              className="w-full rounded-lg transition-all duration-300 font-sans font-semibold h-12"
               style={{
-                height: '56px',
                 background: 'rgba(255, 255, 255, 0.1)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: '1.5px solid rgba(255, 255, 255, 0.3)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
                 cursor: 'pointer',
-                fontWeight: 700,
                 fontSize: '16px',
                 color: '#FFFFFF',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)'
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
               }}
             >
               Пропустить
@@ -274,7 +265,7 @@ export default function OnboardingScreen() {
         </div>
 
         {/* FINE PRINT */}
-        <p style={{ color: '#FFFFFF' }} className="text-xs text-center tracking-tight leading-snug mt-4 flex-shrink-0 font-sans">
+        <p style={{ color: '#FFFFFF' }} className="text-sm text-center leading-relaxed mt-8 flex-shrink-0 font-sans font-medium">
           Вход и регистрация внутри приложения
         </p>
         </div>
