@@ -122,94 +122,28 @@ export default function CreateShiftScreen({ onClose, onSuccess }: { onClose?: ()
     alert('Смена успешно создана!');
   };
 
-  const selectedCategory = categories.find((c) => c.value === formData.category);
-  const SelectedCategoryIcon = selectedCategory?.icon;
-
   return (
-    <div
-      style={{
-        width: '100%',
-        minHeight: '100vh',
-        backgroundImage: 'url(/images/bg-gradient.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-        fontFamily: "'Montserrat', system-ui, -apple-system, sans-serif",
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Dark overlay */}
-      <div
+    <div className="w-full flex flex-col">
+      {/* Header */}
+      <header
         style={{
           position: 'fixed',
           top: 0,
           left: 0,
           right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.3)',
-          pointerEvents: 'none',
-          zIndex: 1,
+          height: '64px',
+          background: 'rgba(42, 42, 42, 0.98)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingLeft: '20px',
+          paddingRight: '20px',
+          zIndex: 50,
         }}
-      />
-
-      {/* FLOATING CONCRETE - бетон 2 */}
-      <img
-        src="/images/concrete-2.png"
-        alt=""
-        style={{
-          position: 'fixed',
-          top: '50%',
-          right: '3%',
-          width: '112px',
-          height: 'auto',
-          opacity: 0.08,
-          transform: 'translateY(-50%) rotate(12deg)',
-          zIndex: 0,
-          pointerEvents: 'none',
-          animation: 'float 6s ease-in-out infinite',
-        }}
-      />
-
-      {/* FLOATING SCREWDRIVER - Create Shift (левый верхний) */}
-      <img
-        src="/images/screwdriver.png"
-        alt=""
-        style={{
-          position: 'fixed',
-          top: '12%',
-          left: '3%',
-          width: '80px',
-          height: 'auto',
-          opacity: 0.12,
-          transform: 'rotate(-25deg)',
-          zIndex: 0,
-          pointerEvents: 'none',
-          animation: 'float 6s ease-in-out infinite 0.5s',
-        }}
-      />
-
-      <div style={{ position: 'relative', zIndex: 2 }}>
-        {/* Header */}
-        <header
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '64px',
-            background: 'rgba(42, 42, 42, 0.98)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingLeft: '20px',
-            paddingRight: '20px',
-            zIndex: 50,
-          }}
-        >
+      >
           <button
             onClick={() => {
               if (onClose) onClose()
@@ -1346,7 +1280,7 @@ export default function CreateShiftScreen({ onClose, onSuccess }: { onClose?: ()
             borderTop: '1px solid rgba(255, 255, 255, 0.08)',
             boxShadow: '0 -4px 24px rgba(0, 0, 0, 0.3)',
             padding: '16px 20px 28px 20px',
-            zIndex: 10,
+            zIndex: 40,
           }}
         >
           <button

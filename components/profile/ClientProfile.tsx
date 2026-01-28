@@ -92,49 +92,39 @@ const mockCompletedShifts: CompletedShift[] = [
   },
 ];
 
-export const ClientProfile: React.FC<ClientProfileProps> = ({
+export default function ClientProfile({
   userId = 'CL-47821',
   companyName = 'ООО Экспо Сервис',
   companyId = 'SHEF-12345',
   isPremium = true,
-}) => {
+}: ClientProfileProps) {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0F172A] to-[#1E293B] pb-20">
+    <div className="w-full flex flex-col">
       {/* HEADER SECTION */}
-      <div
+      <header
         className="relative pt-6 px-4 pb-8 text-center"
         style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
           background: 'rgba(255, 255, 255, 0.05)',
           backdropFilter: 'blur(20px)',
+          zIndex: 10,
         }}
       >
         {/* Settings Icon */}
         <button className="absolute top-6 right-4 p-2 hover:bg-white/10 rounded-lg transition-all">
           <Settings size={24} className="text-white" />
         </button>
+      </header>
 
-        {/* Company Logo */}
-        <div
-          className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg"
-          style={{
-            background: 'linear-gradient(135deg, #E85D2F 0%, #FF8855 100%)',
-            border: isPremium ? '3px solid #BFFF00' : '3px solid rgba(255,255,255,0.2)',
-          }}
-        >
-          <Briefcase size={48} className="text-white" />
-        </div>
-
-        {/* Company Name */}
-        <h1 className="text-2xl font-bold text-white mb-2">{companyName}</h1>
-
-        {/* ID */}
-        <p className="text-sm text-gray-400">ID: {userId}</p>
-      </div>
-
-      {/* STATS ROW */}
-      <div className="px-4 py-6 grid grid-cols-3 gap-3">
+      {/* MAIN CONTENT */}
+      <div className="flex-1 overflow-y-auto pt-24 pb-24">
+        {/* STATS ROW */}
+        <div className="px-4 py-6 grid grid-cols-3 gap-3">
         {/* Briefcase - Total Posted */}
         <div
           className="rounded-xl p-4 text-center"
@@ -334,6 +324,6 @@ export const ClientProfile: React.FC<ClientProfileProps> = ({
       </div>
     </div>
   );
-};
+}
 
-export default ClientProfile;
+export { ClientProfile };

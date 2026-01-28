@@ -107,18 +107,26 @@ export default function WorkerProfile() {
   }
 
   return (
-    <div
-      style={{
-        width: '100%',
-        minHeight: '100vh',
-        backgroundImage: 'url(/images/bg-dashboard.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-        fontFamily: "'Montserrat', system-ui, -apple-system, sans-serif",
-        position: 'relative',
-      }}
-    >
+    <div className="w-full flex flex-col">
+      {/* HEADER */}
+      <header
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '64px',
+          background: 'rgba(26, 26, 26, 0.95)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 20px',
+          zIndex: 10,
+        }}
+      >
       {/* DECORATIVE ELEMENTS */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
         <img src="/images/tape-2.png" className="absolute top-10 left-1/4 w-16 h-16" alt="" />
