@@ -62,46 +62,46 @@ export default function LoginScreen() {
       {/* Removed to prevent overflow issues in Telegram Mini App */}
 
       <div className="relative z-10">
-        <header className="h-16 flex items-center px-4">
+        <header className="h-16 flex items-center px-5">
           <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
-            <ArrowLeft className="w-5 h-5 text-white" strokeWidth={1.5} />
+            <ArrowLeft size={20} strokeWidth={2} className="text-white" />
           </button>
         </header>
 
-        <div className="px-4 py-6">
+        <div className="px-5 py-8">
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-white mb-3">С возвращением!</h1>
-            <p className="text-[#9B9B9B] font-medium">Войдите, чтобы продолжить работу</p>
+            <p className="text-gray-300 text-base font-normal">Войдите, чтобы продолжить работу</p>
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-6">
+            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-8">
               <div className="flex gap-3">
-                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" strokeWidth={1.5} />
-                <p className="text-sm text-red-500 font-semibold">{error}</p>
+                <AlertCircle size={20} strokeWidth={2} className="text-red-400 flex-shrink-0" />
+                <p className="text-sm text-red-300 font-semibold">{error}</p>
               </div>
             </div>
           )}
 
-          <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
+          <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
             <div>
-              <label className="block text-sm font-semibold text-white mb-2">Номер телефона</label>
+              <label className="block text-sm font-semibold text-white mb-3">Номер телефона</label>
               <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#9B9B9B]" strokeWidth={1.5} />
+                <Phone size={20} strokeWidth={2} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="tel"
                   placeholder="+7 (900) 123-45-67"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full h-14 bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-[#6B6B6B] font-medium focus:outline-none focus:border-[#E85D2F]/50"
+                  className="w-full h-12 bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-gray-400 text-base font-normal focus:outline-none focus:border-white/30 focus:bg-white/8 transition-all duration-300"
                 />
               </div>
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-3">
                 <label className="text-sm font-semibold text-white">Пароль</label>
-                <button type="button" onClick={() => router.push('/forgot-password')} className="text-xs text-[#E85D2F] font-bold">
+                <button type="button" onClick={() => router.push('/forgot-password')} className="text-xs text-[#E85D2F] font-semibold">
                   Забыли пароль?
                 </button>
               </div>
@@ -111,10 +111,10 @@ export default function LoginScreen() {
                   placeholder="Введите пароль"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-14 bg-white/5 border border-white/10 rounded-xl px-4 pr-12 text-white placeholder:text-[#6B6B6B] font-medium focus:outline-none focus:border-[#E85D2F]/50"
+                  className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 pr-12 text-white placeholder:text-gray-400 text-base font-normal focus:outline-none focus:border-white/30 focus:bg-white/8 transition-all duration-300"
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2">
-                  {showPassword ? <EyeOff className="w-5 h-5 text-[#9B9B9B]" strokeWidth={1.5} /> : <Eye className="w-5 h-5 text-[#9B9B9B]" strokeWidth={1.5} />}
+                  {showPassword ? <EyeOff size={20} strokeWidth={2} className="text-gray-400" /> : <Eye size={20} strokeWidth={2} className="text-gray-400" />}
                 </button>
               </div>
             </div>
@@ -122,15 +122,15 @@ export default function LoginScreen() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-14 bg-[#E85D2F] hover:bg-[#D94D1F] active:scale-95 disabled:opacity-50 rounded-xl font-bold text-white transition-all mt-6"
+              className="w-full h-12 bg-[#E85D2F] hover:bg-[#D04D1F] active:scale-95 disabled:opacity-50 rounded-lg font-semibold text-white transition-all duration-300 mt-8"
             >
               {loading ? 'Входим...' : 'Войти'}
             </button>
           </form>
 
-          <div className="text-center mt-6">
-            <span className="text-sm text-[#9B9B9B] font-medium">Нет аккаунта? </span>
-            <button onClick={() => router.push('/register')} className="text-sm text-[#E85D2F] font-bold underline">
+          <div className="text-center mt-8">
+            <span className="text-sm text-gray-300 font-normal">Нет аккаунта? </span>
+            <button onClick={() => router.push('/register')} className="text-sm text-[#E85D2F] font-semibold hover:underline">
               Зарегистрироваться
             </button>
           </div>
