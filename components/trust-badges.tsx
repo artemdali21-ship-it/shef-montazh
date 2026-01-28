@@ -1,13 +1,9 @@
 'use client'
 
-import { Shield, CheckCircle, Zap } from 'lucide-react'
+import { CheckCircle, Zap } from 'lucide-react'
 
 export function TrustBadges() {
   const badges = [
-    {
-      icon: <Shield size={14} className="text-[#9EBAC8]" />,
-      text: 'Эскроу-оплата',
-    },
     {
       icon: <CheckCircle size={14} className="text-[#9EBAC8]" />,
       text: 'Верификация',

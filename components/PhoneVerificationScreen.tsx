@@ -31,12 +31,23 @@ export default function PhoneVerificationScreen() {
   const role = searchParams?.get('role') as 'worker' | 'client' | 'shef' | null
   const [code, setCode] = useState(['', '', '', '', '', ''])
   const [loading, setLoading] = useState(false)
+  const [countdown, setCountdown] = useState(59)
 
   useEffect(() => {
     if (role) {
       localStorage.setItem('userRole', role)
     }
   }, [role])
+
+  useEffect(() => {
+    if (countdown <= 0) return
+    
+    const timer = setTimeout(() => {
+      setCountdown(countdown - 1)
+    }, 1000)
+    
+    return () => clearTimeout(timer)
+  }, [countdown])
 
   const handleCodeChange = (index: number, value: string) => {
     if (value.length > 1) return
@@ -122,7 +133,12 @@ export default function PhoneVerificationScreen() {
 
             <div className="text-center mt-4">
               <p className="text-sm text-[#9B9B9B] font-medium mb-2">Не получили код?</p>
-              <button className="text-sm text-[#E85D2F] font-bold underline hover:text-[#FF8B4A]">Отправить заново (59 сек)</button>
+              <button 
+                disabled={countdown > 0}
+                className="text-sm text-[#E85D2F] font-bold underline hover:text-[#FF8B4A] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Отправить заново ({countdown} сек)
+              </button>
             </div>
           </div>
         </div>

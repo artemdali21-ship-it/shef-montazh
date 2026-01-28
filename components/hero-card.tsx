@@ -24,7 +24,7 @@ export function HeroCard() {
           Гарантированный выход бригады
         </h2>
         <p className="text-sm font-normal text-secondary leading-relaxed">
-          Эскроу-оплата, проверенные специалисты, страхование смен
+          Проверенные специалисты, страхование смен, быстрое выполнение
         </p>
       </div>
     </div>
