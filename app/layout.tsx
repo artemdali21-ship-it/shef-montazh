@@ -76,7 +76,7 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body className={`${_montserrat.variable} ${_geistMono.variable} min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] text-white`}>
+      <body className={`${_montserrat.variable} ${_geistMono.variable} h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] text-white p-0 m-0 overflow-hidden`}>
         <TelegramProvider>
           {children}
         </TelegramProvider>
