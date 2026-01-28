@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { ArrowLeft, Phone, Mail, User, Eye, EyeOff, Shield } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -42,6 +42,9 @@ export default function RegistrationScreen() {
     confirmPassword: '',
   })
   const [errors, setErrors] = useState<any>({})
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const passwordInputRef = useRef<HTMLInputElement>(null)
+  const confirmPasswordInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (roleFromQuery) {
@@ -50,6 +53,14 @@ export default function RegistrationScreen() {
       setStep(2)
     }
   }, [roleFromQuery])
+
+  const scrollToField = (ref: React.RefObject<HTMLInputElement>) => {
+    if (ref.current && scrollContainerRef.current) {
+      setTimeout(() => {
+        ref.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 100)
+    }
+  }
 
   const validatePhone = (phone: string) => {
     const phoneRegex = /^(\+7|8)?[\s-]?\(?[0-9]{3}\)?[\s-]?[0-9]{3}[\s-]?[0-9]{2}[\s-]?[0-9]{2}$/
@@ -97,19 +108,12 @@ export default function RegistrationScreen() {
 
   return (
     <div style={{
-      height: '100vh',
+      minHeight: '100vh',
       background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)',
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
       display: 'flex',
       flexDirection: 'column',
     }}>
       <NoisePattern />
-      {/* 3D decorative elements - HIDDEN FOR TELEGRAM MINI APP */}
-      {/* Removed to prevent overflow issues in Telegram Mini App */}
       
       <header style={{
         position: 'relative',
@@ -130,15 +134,19 @@ export default function RegistrationScreen() {
         <div className="w-10"></div>
       </header>
 
-      <div style={{
-        flex: 1,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        position: 'relative',
-        zIndex: 10,
-      }} className="px-4 py-6">
+      <div
+        ref={scrollContainerRef}
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          position: 'relative',
+          zIndex: 10,
+          WebkitOverflowScrolling: 'touch',
+        }}
+        className="px-4 py-6"
+      >
         <div className="max-w-md mx-auto pb-32">
-          {/* SKIP ROLE SELECTION IF PROVIDED VIA QUERY PARAMS - ONLY SHOW FORM */}
           {step === 2 && (
             <div className="space-y-6">
               <div>
@@ -179,9 +187,11 @@ export default function RegistrationScreen() {
                 </div>
                 <div className="relative">
                   <input
+                    ref={passwordInputRef}
                     type={showPassword ? 'text' : 'password'}
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onFocus={() => scrollToField(passwordInputRef)}
                     className="w-full pl-4 pr-12 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
                     placeholder="Пароль"
                   />
@@ -195,9 +205,11 @@ export default function RegistrationScreen() {
                 </div>
                 <div className="relative">
                   <input
+                    ref={confirmPasswordInputRef}
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    onFocus={() => scrollToField(confirmPasswordInputRef)}
                     className="w-full pl-4 pr-12 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
                     placeholder="Подтвердите пароль"
                   />
