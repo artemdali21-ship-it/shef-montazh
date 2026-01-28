@@ -434,6 +434,10 @@ export default function WorkerProfile() {
                   e.currentTarget.style.color = '#E85D2F'
                 }}
               >
+                Все смены →
+              </button>
+                }}
+              >
                 Все →
               </button>
             </div>
