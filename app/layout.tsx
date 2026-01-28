@@ -5,6 +5,7 @@ import { Montserrat, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import TelegramProvider from '@/components/providers/telegram-provider'
+import TelegramViewportHandler from '@/components/telegram-viewport-handler'
 
 const _montserrat = Montserrat({ 
   weight: ['400', '500', '600', '700', '800'], 
@@ -81,6 +82,7 @@ export default function RootLayout({
           {children}
         </TelegramProvider>
         <Analytics />
+        <TelegramViewportHandler />
       </body>
     </html>
   )

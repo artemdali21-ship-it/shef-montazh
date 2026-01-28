@@ -39,8 +39,10 @@ export default function TelegramProvider({ children }: TelegramProvider) {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#1A1A1A] text-white" style={{
+    <div className="w-full text-white" style={{
+      minHeight: 'var(--app-height, 100vh)',
       paddingBottom: 'var(--twa-bottom-safe-area, 0px)',
+      backgroundColor: '#1A1A1A',
     }}>
       {children}
     </div>

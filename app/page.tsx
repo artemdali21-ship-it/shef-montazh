@@ -87,8 +87,6 @@ export default function OnboardingScreen() {
         backgroundAttachment: 'fixed',
         padding: 0,
         margin: 0,
-        width: '100vw',
-        maxWidth: '100vw',
       }}
     >
       <NoisePattern />
