@@ -256,7 +256,6 @@ export default function OnboardingScreen() {
         <p style={{ color: '#FFFFFF' }} className="text-sm text-center leading-relaxed mt-8 flex-shrink-0 font-sans font-medium">
           Вход и регистрация внутри приложения
         </p>
-        </div>
       </div>
     </div>
   )
