@@ -232,35 +232,24 @@ export default function ApplicationConfirmationScreen() {
                       </div>
                     )
                   })}
-                </div>
-              </div>
-            </div>
+          </div>
+        </div>
 
-            {/* TIMELINE SECTION */}
-            <div style={{ padding: '0 0 16px 0' }}>
-              <h3
-                style={{
-                  fontFamily: 'Montserrat, sans-serif',
-                  fontWeight: 700,
-                  fontSize: '16px',
-                  color: '#FFFFFF',
-                  marginBottom: '12px',
-                }}
-              >
-                Что дальше?
-              </h3>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                {timelineSteps.map((step, idx) => {
-                  const IconComponent = step.icon
-                  const isLast = idx === timelineSteps.length - 1
-
-                  const getIconStyles = () => {
-                    if (step.status === 'completed') {
-                      return {
-                        background: 'rgba(191, 255, 0, 0.15)',
-                        border: '2px solid #BFFF00',
-                      }
+        {/* PULSE ANIMATION */}
+        <style>{`
+          @keyframes pulse {
+            0%, 100% {
+              transform: scale(1);
+            }
+            50% {
+              transform: scale(1.05);
+            }
+          }
+        `}</style>
+      </div>
+    </div>
+  )
+}
                     } else if (step.status === 'active') {
                       return {
                         background: 'rgba(232, 93, 47, 0.15)',
@@ -441,9 +430,6 @@ export default function ApplicationConfirmationScreen() {
             </button>
           </div>
         </div>
-
-        {/* PULSE ANIMATION */}
-        <style>{`
           @keyframes pulse {
             0%, 100% {
               transform: scale(1);
