@@ -62,8 +62,64 @@ export default function WorkerCategoriesPage() {
         }}
       />
 
-      {/* FLOATING 3D ELEMENTS - HIDDEN TO FIX SCROLL */}
-      {/* Removed fixed positioning elements that blocked scrolling */}
+      {/* FLOATING 3D ELEMENTS - WITH POINTER EVENTS NONE SO THEY DON'T BLOCK SCROLL */}
+      <div style={{ 
+        position: 'fixed', 
+        inset: 0, 
+        pointerEvents: 'none', 
+        zIndex: 2,
+        overflow: 'hidden',
+      }}>
+        <img
+          src="/images/wrench.png"
+          alt=""
+          style={{
+            position: 'fixed',
+            top: '10%',
+            right: '8%',
+            width: '160px',
+            height: 'auto',
+            opacity: 0.5,
+            zIndex: 1,
+            pointerEvents: 'none',
+            animation: 'float 7s ease-in-out infinite',
+            filter: 'drop-shadow(0 10px 30px rgba(232, 93, 47, 0.2))',
+          }}
+        />
+        <img
+          src="/images/pliers.png"
+          alt=""
+          style={{
+            position: 'fixed',
+            bottom: '20%',
+            left: '8%',
+            width: '140px',
+            height: 'auto',
+            opacity: 0.6,
+            transform: 'rotate(-25deg)',
+            zIndex: 1,
+            pointerEvents: 'none',
+            animation: 'float 8s ease-in-out infinite 0.5s',
+            filter: 'drop-shadow(0 10px 30px rgba(191, 255, 0, 0.25))',
+          }}
+        />
+        <img
+          src="/images/bolts.png"
+          alt=""
+          style={{
+            position: 'fixed',
+            top: '60%',
+            right: '5%',
+            width: '100px',
+            height: 'auto',
+            opacity: 0.55,
+            zIndex: 1,
+            pointerEvents: 'none',
+            animation: 'float 6s ease-in-out infinite 1s',
+            filter: 'drop-shadow(0 4px 12px rgba(255, 214, 10, 0.25))',
+          }}
+        />
+      </div>
 
       {/* Header */}
       <header style={{
@@ -215,6 +271,13 @@ export default function WorkerCategoriesPage() {
           </button>
         </div>
       </footer>
+
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(var(--rotate, 0deg)); }
+          50% { transform: translateY(-20px) rotate(var(--rotate, 0deg)); }
+        }
+      `}</style>
     </div>
   )
 }
