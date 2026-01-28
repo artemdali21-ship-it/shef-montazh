@@ -1345,3 +1345,5 @@ export default function CreateShiftScreen({ onClose, onSuccess }: { onClose?: ()
     </div>
   );
 }
+
+export default CreateShiftScreen;
