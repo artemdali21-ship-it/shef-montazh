@@ -143,9 +143,9 @@ export default function RoleSelectScreen() {
       `}</style>
 
       {/* MAIN CONTENT */}
-      <div className="w-full max-w-sm px-6 py-12 relative z-20 overflow-y-auto flex flex-col" style={{ maxHeight: '100vh' }}>
+      <div className="w-full max-w-sm px-6 relative z-20 flex flex-col" style={{ maxHeight: '100vh', paddingTop: '40px', paddingBottom: '40px' }}>
         {/* HEADER */}
-        <div className="mb-12 animate-slide-up">
+        <div className="mb-8 animate-slide-up">
           <div className="flex items-center gap-2 mb-3">
             <div style={{ width: '4px', height: '28px', background: '#E85D2F', borderRadius: '2px' }} />
             <h1 style={{ color: '#FFFFFF' }} className="text-4xl" style={{ fontWeight: 800, lineHeight: 1.2, fontFamily: 'Montserrat' }}>
@@ -158,7 +158,7 @@ export default function RoleSelectScreen() {
         </div>
 
         {/* ROLE CARDS */}
-        <div className="space-y-4 flex-1 flex flex-col justify-center mb-8">
+        <div className="space-y-3 mb-8">
           {roles.map((role, index) => {
             const isSelected = selectedRole === role.id
 
@@ -167,7 +167,7 @@ export default function RoleSelectScreen() {
                 key={role.id}
                 onClick={() => handleSelectRole(role.id)}
                 disabled={selectedRole !== null && selectedRole !== role.id}
-                className="relative group w-full flex items-start gap-4 p-6 rounded-2xl transition-all duration-300 text-left overflow-hidden"
+                className="relative group w-full flex items-start gap-4 p-4 rounded-2xl transition-all duration-300 text-left overflow-hidden"
                 style={{
                   animation: `slideUp 0.6s ease-out forwards`,
                   animationDelay: `${0.1 + index * 0.1}s`,
@@ -184,6 +184,7 @@ export default function RoleSelectScreen() {
                   cursor: selectedRole === null || isSelected ? 'pointer' : 'default',
                   opacity: selectedRole !== null && !isSelected ? 0.4 : 1,
                   transform: isSelected ? 'scale(1.02)' : 'scale(1)',
+                  minHeight: '72px',
                 }}
                 onMouseEnter={(e) => {
                   if (selectedRole === null || isSelected) {
@@ -219,8 +220,8 @@ export default function RoleSelectScreen() {
                 <div
                   className="flex items-center justify-center flex-shrink-0 rounded-xl transition-all duration-300"
                   style={{
-                    width: '64px',
-                    height: '64px',
+                    width: '56px',
+                    height: '56px',
                     background: isSelected
                       ? `${role.colorLight}`
                       : 'rgba(255, 255, 255, 0.08)',
@@ -234,8 +235,8 @@ export default function RoleSelectScreen() {
                     src={role.icon || "/placeholder.svg"}
                     alt={role.title}
                     style={{
-                      width: '40px',
-                      height: '40px',
+                      width: '32px',
+                      height: '32px',
                       objectFit: 'contain',
                       filter: isSelected ? `drop-shadow(0 4px 12px ${role.colorLight})` : 'opacity(0.7)',
                       transition: 'all 0.3s ease-out',
@@ -244,11 +245,11 @@ export default function RoleSelectScreen() {
                 </div>
 
                 {/* TEXT CONTENT */}
-                <div className="flex-1 py-1">
-                  <h3 style={{ color: '#FFFFFF' }} className="text-lg mb-1" style={{ fontWeight: 700, fontFamily: 'Montserrat' }}>
+                <div className="flex-1 py-0">
+                  <h3 style={{ color: '#FFFFFF' }} className="text-base mb-0.5" style={{ fontWeight: 700, fontFamily: 'Montserrat' }}>
                     {role.title}
                   </h3>
-                  <p style={{ color: 'rgba(255, 255, 255, 0.6)' }} className="text-sm font-normal" style={{ fontFamily: 'Montserrat' }}>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.6)' }} className="text-xs font-normal" style={{ fontFamily: 'Montserrat' }}>
                     {role.subtitle}
                   </p>
                 </div>
@@ -258,15 +259,15 @@ export default function RoleSelectScreen() {
                   <div
                     className="flex items-center justify-center flex-shrink-0 rounded-full transition-all duration-300"
                     style={{
-                      width: '36px',
-                      height: '36px',
+                      width: '32px',
+                      height: '32px',
                       background: role.color,
                       boxShadow: `0 6px 16px ${role.colorLight}`,
                       animation: `slideUp 0.4s ease-out 0.2s forwards`,
                       opacity: 0,
                     }}
                   >
-                    <Check size={20} className="text-white" strokeWidth={3} style={{ color: '#1A1A1A' }} />
+                    <Check size={18} className="text-white" strokeWidth={3} style={{ color: '#1A1A1A' }} />
                   </div>
                 )}
               </button>
@@ -275,7 +276,7 @@ export default function RoleSelectScreen() {
         </div>
 
         {/* FOOTER TEXT */}
-        <p style={{ color: 'rgba(255, 255, 255, 0.5)' }} className="text-xs text-center tracking-tight leading-snug flex-shrink-0" style={{ fontFamily: 'Montserrat' }}>
+        <p style={{ color: 'rgba(255, 255, 255, 0.5)' }} className="text-xs text-center tracking-tight leading-snug" style={{ fontFamily: 'Montserrat' }}>
           Можно изменить роль в настройках позже
         </p>
       </div>
