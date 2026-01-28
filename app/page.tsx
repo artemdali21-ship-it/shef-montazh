@@ -149,7 +149,8 @@ export default function OnboardingScreen() {
       `}</style>
 
       {/* MAIN CONTENT */}
-      <div className="w-full max-w-sm px-6 py-12 relative z-20 overflow-y-auto flex flex-col" style={{ maxHeight: '100vh' }}>
+      <div className="w-screen h-screen flex flex-col relative z-20 overflow-y-auto" style={{ padding: 0, margin: 0 }}>
+        <div className="w-full px-5 py-8 flex flex-col flex-1">
         {/* HEADER */}
         <div className="mb-6">
           <div className="flex items-center justify-center gap-1.5 mb-2">
@@ -276,6 +277,7 @@ export default function OnboardingScreen() {
         <p style={{ color: '#FFFFFF' }} className="text-xs text-center tracking-tight leading-snug mt-4 flex-shrink-0 font-sans">
           Вход и регистрация внутри приложения
         </p>
+        </div>
       </div>
     </div>
   )
