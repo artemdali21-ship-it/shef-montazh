@@ -146,12 +146,9 @@ export default function RoleSelectScreen() {
       <div className="w-full max-w-sm px-6 relative z-20 flex flex-col" style={{ maxHeight: '100vh', paddingTop: '40px', paddingBottom: '40px' }}>
         {/* HEADER */}
         <div className="mb-8 animate-slide-up">
-          <div className="flex items-center gap-2 mb-3">
-            <div style={{ width: '4px', height: '28px', background: '#E85D2F', borderRadius: '2px' }} />
-            <h1 style={{ color: '#FFFFFF' }} className="text-4xl" style={{ fontWeight: 800, lineHeight: 1.2, fontFamily: 'Montserrat' }}>
-              Кто вы?
-            </h1>
-          </div>
+          <h1 style={{ color: '#FFFFFF' }} className="text-4xl mb-3" style={{ fontWeight: 800, lineHeight: 1.2, fontFamily: 'Montserrat' }}>
+            Кто вы?
+          </h1>
           <p style={{ color: 'rgba(255, 255, 255, 0.7)' }} className="text-base font-normal leading-relaxed" style={{ fontFamily: 'Montserrat' }}>
             Выберите подходящий статус
           </p>
