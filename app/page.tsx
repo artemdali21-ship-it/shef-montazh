@@ -79,15 +79,24 @@ export default function OnboardingScreen() {
 
   return (
     <div
-      className="w-screen h-screen flex flex-col items-center justify-center font-sans relative"
       style={{
         backgroundImage: 'url(/images/bg-dashboard.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
         padding: 0,
         margin: 0,
         overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: 'Montserrat, system-ui, sans-serif',
       }}
     >
       <NoisePattern />
@@ -152,7 +161,15 @@ export default function OnboardingScreen() {
       `}</style>
 
       {/* MAIN CONTENT - Компактный контейнер, центрируется главным */}
-      <div className="relative z-20 px-5 py-8 max-w-sm flex flex-col" style={{ margin: 0, padding: 0 }}>
+      <div style={{ 
+        position: 'relative',
+        zIndex: 20,
+        maxWidth: '320px',
+        display: 'flex',
+        flexDirection: 'column',
+        margin: 0,
+        padding: '20px 20px',
+      }}>
         {/* HEADER */}
         <div className="mb-8">
           <div className="flex items-center justify-center gap-1.5 mb-2">
