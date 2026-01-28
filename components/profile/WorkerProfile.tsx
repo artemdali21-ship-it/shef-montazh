@@ -154,10 +154,10 @@ export default function WorkerProfile() {
 
           {/* User Info */}
           <h2 style={{ fontSize: '22px', fontWeight: 700, color: '#FFFFFF', marginBottom: '6px' }}>
-            {userProfile.name}
+            Иван Петров
           </h2>
           <p style={{ fontSize: '13px', color: '#FFFFFF', opacity: 0.7 }}>
-            ID: {userProfile.id}
+            ID: SHF-0001
           </p>
 
           {/* Stats Row */}
@@ -170,9 +170,9 @@ export default function WorkerProfile() {
             }}
           >
             {[
-              { label: 'Смен', value: userProfile.stats.shiftsCompleted, icon: Briefcase },
-              { label: 'Рейтинг', value: userProfile.stats.rating, icon: Star },
-              { label: 'Надёжность', value: `${userProfile.stats.reliability}%`, icon: Shield },
+              { label: 'Смен', value: '127', icon: Briefcase },
+              { label: 'Рейтинг', value: '4.9', icon: Star },
+              { label: 'Надёжность', value: '98%', icon: Shield },
             ].map((stat, idx) => {
               const IconComponent = stat.icon
               return (

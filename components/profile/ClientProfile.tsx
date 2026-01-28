@@ -158,16 +158,14 @@ export default function ClientProfile({
           {/* Company Info Content */}
           <div style={{ position: 'relative', zIndex: 2 }}>
             <h2 style={{ color: '#FFFFFF', fontWeight: 700, marginBottom: '4px', fontSize: '16px' }}>
-              {companyName}
+              ООО "Компания"
             </h2>
             <p style={{ color: '#FFFFFF', opacity: 0.7, fontSize: '12px' }}>
-              ID: {companyId}
+              ID: CLIENT-001
             </p>
-            {isPremium && (
-              <span style={{ color: '#BFFF00', fontSize: '11px', marginTop: '8px', display: 'inline-block' }}>
-                ✓ Premium
-              </span>
-            )}
+            <span style={{ color: '#BFFF00', fontSize: '11px', marginTop: '8px', display: 'inline-block' }}>
+              ✓ Проверен
+            </span>
           </div>
         </div>
 
