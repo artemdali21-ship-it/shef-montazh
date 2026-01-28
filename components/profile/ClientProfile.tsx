@@ -337,5 +337,3 @@ export const ClientProfile: React.FC<ClientProfileProps> = ({
 };
 
 export default ClientProfile;
-
-export default ClientProfile;
