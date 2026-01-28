@@ -53,37 +53,29 @@ export default function PaymentDetailScreen() {
     {
       id: 1,
       status: 'completed',
-      title: 'Средства заморожены',
-      description: 'Заказчик внёс оплату на эскроу-счёт',
+      title: 'Вы откликнулись',
+      description: 'Заявка отправлена заказчику',
       timestamp: '27 января, 14:30',
-      icon: Lock,
+      icon: Send,
     },
     {
       id: 2,
       status: 'completed',
-      title: 'Вы откликнулись',
-      description: 'Заявка отправлена заказчику',
+      title: 'Заявка одобрена',
+      description: 'Вас выбрали для выполнения работ',
       timestamp: '27 января, 14:45',
-      icon: Send,
+      icon: CheckCircle,
     },
     {
       id: 3,
       status: 'completed',
-      title: 'Заявка одобрена',
-      description: 'Вас выбрали для выполнения работ',
-      timestamp: '27 января, 16:20',
-      icon: CheckCircle,
-    },
-    {
-      id: 4,
-      status: 'completed',
       title: 'Вы вышли на объект',
       description: 'Check-in подтверждён фотографией',
-      timestamp: '28 января, 18:05',
+      timestamp: '27 января, 16:20',
       icon: MapPin,
     },
     {
-      id: 5,
+      id: 4,
       status: 'current',
       title: 'Смена в процессе',
       description: 'Ожидается завершение работ',
@@ -91,7 +83,7 @@ export default function PaymentDetailScreen() {
       icon: Clock,
     },
     {
-      id: 6,
+      id: 5,
       status: 'pending',
       title: 'Подтверждение шефа',
       description: 'Шеф-монтажник должен принять работу',
@@ -99,11 +91,19 @@ export default function PaymentDetailScreen() {
       icon: UserCheck,
     },
     {
+      id: 6,
+      status: 'pending',
+      title: 'Взаимная оценка',
+      description: 'Вы оцениваете работу друг друга',
+      timestamp: 'После завершения',
+      icon: CheckCircle,
+    },
+    {
       id: 7,
       status: 'pending',
       title: 'Выплата',
       description: 'Средства поступят на ваш счёт',
-      timestamp: 'После подтверждения',
+      timestamp: 'После оценки',
       icon: Wallet,
     },
   ];
@@ -133,11 +133,11 @@ export default function PaymentDetailScreen() {
   ];
 
   const statusStyles = {
-    frozen: {
-      bg: 'rgba(255, 214, 10, 0.15)',
-      border: '#FFD60A',
-      color: '#FFD60A',
-      text: 'ЗАМОРОЖЕНО',
+    pending: {
+      bg: 'rgba(232, 93, 47, 0.15)',
+      border: '#E85D2F',
+      color: '#E85D2F',
+      text: 'ОЖИДАЕТСЯ',
     },
     approved: {
       bg: 'rgba(59, 130, 246, 0.15)',

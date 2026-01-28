@@ -33,7 +33,6 @@ const JobDetailsScreen = () => {
     categoryDetail: 'Требуется опыт работы',
     urgent: true,
     verified: true,
-    escrow: true,
     description: 'Требуется монтаж выставочного стенда площадью 36 кв.м. Работа включает сборку алюминиевых ферм, установку панелей, подключение освещения. Проект под ключ с последующим демонтажом через 3 дня.',
     workerId: 'worker-123',
     platformFeePercent: 2.5, // 2.5% commission
