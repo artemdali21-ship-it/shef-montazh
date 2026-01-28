@@ -125,7 +125,7 @@ export default function ClientProfile({
       <div className="flex-1 overflow-y-auto pt-24 pb-24">
         {/* STATS ROW */}
         <div className="px-4 py-6 grid grid-cols-3 gap-3">
-        {/* Briefcase - Total Posted */}
+          {/* Briefcase - Total Posted */}
         <div
           className="rounded-xl p-4 text-center"
           style={{
@@ -166,7 +166,7 @@ export default function ClientProfile({
           <div className="text-xl font-bold text-white">{mockStats.completed}</div>
           <div className="text-xs text-gray-400">Завершено</div>
         </div>
-      </div>
+        </div>
 
       {/* RATING SECTION */}
       <div className="px-4 py-6">
@@ -325,5 +325,3 @@ export default function ClientProfile({
     </div>
   );
 }
-
-export { ClientProfile };
