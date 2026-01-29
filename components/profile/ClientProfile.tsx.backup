@@ -1,3 +1,98 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import {
+  Briefcase,
+  Clock,
+  CheckCircle,
+  Settings,
+  Plus,
+  ArrowRight,
+  MessageCircle,
+  Star,
+} from 'lucide-react'
+import { StarRating } from '../rating/StarRating'
+import { getClientProfile, getClientActiveShifts, getClientCompletedShifts } from '@/lib/api/profiles'
+
+interface ClientProfileProps {
+  userId?: string
+  companyName?: string
+  companyId?: string
+  isPremium?: boolean
+}
+
+export default function ClientProfile({
+  userId = 'mock-client-id',
+  companyName,
+  companyId,
+  isPremium = true,
+}: ClientProfileProps) {
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  
+  const [profile, setProfile] = useState<any>(null)
+  const [activeShifts, setActiveShifts] = useState<any[]>([])
+  const [completedShifts, setCompletedShifts] = useState<any[]>([])
+
+  useEffect(() => {
+    async function loadProfileData() {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        // Load profile
+        const { data: profileData, error: profileError } = await getClientProfile(userId)
+        if (profileError) throw profileError
+        
+        // Load active shifts
+        const { data: activeData, error: activeError } = await getClientActiveShifts(userId)
+        if (activeError) throw activeError
+        
+        // Load completed shifts
+        const { data: completedData, error: completedError } = await getClientCompletedShifts(userId)
+        if (completedError) throw completedError
+        
+        setProfile(profileData)
+        setActiveShifts(activeData || [])
+        setCompletedShifts(completedData || [])
+        
+      } catch (err) {
+        console.error('Error loading client profile:', err)
+        setError('Не удалось загрузить профиль')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadProfileData()
+  }, [userId])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#0F172A] to-[#1E293B] flex items-center justify-center">
+        <div className="text-white text-lg">Загрузка профиля...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#0F172A] to-[#1E293B] flex items-center justify-center p-4">
+        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 max-w-md">
+          <p className="text-red-400 text-center mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full py-3 bg-red-500/20 hover:bg-red-500/30 rounded-xl text-red-400 transition"
+          >
+            Попробовать снова
+          </button>
+        </div>
+      </div>
+    )
+  }
+
 export default function ClientProfile({
   userId = 'CL-47821',
   companyName = 'ООО Экспо Сервис',
