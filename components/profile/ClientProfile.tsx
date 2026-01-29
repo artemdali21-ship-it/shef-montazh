@@ -36,19 +36,9 @@ export default function ClientProfile({
         setLoading(true);
         setError(null);
         
-        // Load profile
-        const { data: profileData, error: profileError } = await getClientProfile(userId);
-        if (profileError) throw profileError;
+        const { data: activeData } = await getClientActiveShifts(userId);
+        const { data: completedData } = await getClientCompletedShifts(userId);
         
-        // Load active shifts
-        const { data: activeData, error: activeError } = await getClientActiveShifts(userId);
-        if (activeError) throw activeError;
-        
-        // Load completed shifts
-        const { data: completedData, error: completedError } = await getClientCompletedShifts(userId);
-        if (completedError) throw completedError;
-        
-        setProfile(profileData);
         setActiveShifts(activeData || []);
         setCompletedShifts(completedData || []);
         
