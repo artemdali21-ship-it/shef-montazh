@@ -32,6 +32,22 @@ export default function WorkerProfile() {
   const router = useRouter()
   const [selectedSkills, setSelectedSkills] = useState(new Set())
   const [isGosuslugiVerified, setIsGosuslugiVerified] = useState(false)
+  
+  // Mock data for stats
+  const [ratings, setRatings] = useState([
+    { id: '1', rating: 5, comment: 'Отличная работа!', date: '2026-01-20' },
+    { id: '2', rating: 5, comment: 'Профессионал', date: '2026-01-15' },
+    { id: '3', rating: 4, comment: 'Хорошо справился', date: '2026-01-10' },
+  ]);
+  
+  const [workHistory, setWorkHistory] = useState([
+    { id: '1', title: 'Монтаж стенда', date: '2026-01-20', client: 'Event Pro' },
+    { id: '2', title: 'Декорирование сцены', date: '2026-01-15', client: 'Art Studio' },
+    { id: '3', title: 'Монтаж освещения', date: '2026-01-10', client: 'Light Masters' },
+  ]);
+  
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const toggleSkill = (skillName) => {
     const newSkills = new Set(selectedSkills)

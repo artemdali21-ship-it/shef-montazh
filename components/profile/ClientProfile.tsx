@@ -31,6 +31,18 @@ export default function ClientProfile({
 }: ClientProfileProps) {
   const router = useRouter();
 
+  // STATE - mock data for now
+  const [totalPosted, setTotalPosted] = useState(12);
+  const [activeShifts, setActiveShifts] = useState([
+    { id: '1', title: 'Монтаж стенда', date: '2026-02-05', workers: 3, pay_amount: 8000 },
+    { id: '2', title: 'Декорирование сцены', date: '2026-02-08', workers: 2, pay_amount: 6000 },
+    { id: '3', title: 'Монтаж освещения', date: '2026-02-10', workers: 2, pay_amount: 12000 },
+  ]);
+  const [completedShifts, setCompletedShifts] = useState([
+    { id: '4', title: 'Завершенная смена 1', date: '2026-01-25', workers: 2, pay_amount: 5000 },
+    { id: '5', title: 'Завершенная смена 2', date: '2026-01-28', workers: 3, pay_amount: 7500 },
+  ]);
+
   return (
     <div className="w-full h-full flex flex-col overflow-hidden bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
       {/* HEADER SECTION */}
