@@ -14,10 +14,10 @@ import {
 import { getClientProfile, getClientActiveShifts, getClientCompletedShifts } from '@/lib/api/profiles';
 
 interface ClientProfileProps {
-  userId?: string
-  companyName?: string
-  companyId?: string
-  isPremium?: boolean
+  userId?: string;
+  companyName?: string;
+  companyId?: string;
+  isPremium?: boolean;
 }
 
 export default function ClientProfile({
