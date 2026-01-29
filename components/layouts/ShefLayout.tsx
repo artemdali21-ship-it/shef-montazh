@@ -20,14 +20,14 @@ export default function ShefLayout({ children }: ShefLayoutProps) {
   ];
 
   return (
-    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col">
-      {/* CONTENT */}
-      <div className="flex-1 overflow-y-auto pb-24 w-full">
+    <div className="w-full flex flex-col bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]" style={{ height: '100dvh' }}>
+      {/* CONTENT - занимает всё свободное место и скроллится */}
+      <div className="flex-1 overflow-y-auto w-full" style={{ paddingBottom: '80px' }}>
         {children}
       </div>
 
-      {/* TABBAR */}
-      <nav className="fixed bottom-0 left-0 right-0 flex-shrink-0 backdrop-blur-xl border-t border-white/10 h-20 z-50 max-w-screen-md mx-auto" style={{
+      {/* TABBAR - фиксирован внизу, не занимает место в контенте */}
+      <nav className="fixed bottom-0 left-0 right-0 flex-shrink-0 backdrop-blur-xl border-t border-white/10 h-20 w-full z-50" style={{
         background: 'rgba(26, 26, 26, 0.4)',
         WebkitBackdropFilter: 'blur(20px)',
       }}>
