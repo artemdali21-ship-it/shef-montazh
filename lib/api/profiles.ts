@@ -102,60 +102,6 @@ export async function getWorkerRatings(workerId: string) {
   return { data, error }
 }
 
-// Get client profile with user data
-export async function getClientProfile(userId: string) {
-  try {
-    const { data: user, error: userError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', userId)
-      .single()
-
-    if (userError && userError.code !== 'PGRST116') {
-      return { data: null, error: userError }
-    }
-
-    // Return mock data if user not found (table might not exist yet)
-    if (!user) {
-      return { 
-        data: { 
-          id: userId, 
-          company_name: 'ООО Экспо Сервис',
-          rating: 4.8,
-          profile: {}
-        }, 
-        error: null 
-      }
-    }
-
-    const { data: profile, error: profileError } = await supabase
-      .from('client_profiles')
-      .select('*')
-      .eq('user_id', userId)
-      .single()
-
-    // If profile table doesn't exist, just return user data
-    if (profileError && profileError.code === 'PGRST116') {
-      return { data: user, error: null }
-    }
-
-    if (profileError) return { data: null, error: profileError }
-
-    return { data: { ...user, profile }, error: null }
-  } catch (error) {
-    console.error('Error fetching client profile:', error)
-    // Return mock data on complete failure
-    return { 
-      data: { 
-        id: userId,
-        company_name: 'ООО Экспо Сервис',
-        rating: 4.8,
-      }, 
-      error: null 
-    }
-  }
-}
-
 // Get client active shifts
 export async function getClientActiveShifts(clientId: string) {
   try {
