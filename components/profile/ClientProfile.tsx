@@ -1,3 +1,28 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import {
+  Briefcase,
+  Clock,
+  CheckCircle,
+  Settings,
+  Plus,
+  ArrowRight,
+  MessageCircle,
+  Star,
+} from 'lucide-react'
+import { StarRating } from '../rating/StarRating'
+import { getClientProfile, getClientActiveShifts, getClientCompletedShifts } from '@/lib/api/profiles'
+
+interface ClientProfileProps {
+  userId?: string
+  companyName?: string
+  companyId?: string
+  isPremium?: boolean
+}
+
+
 export default function ClientProfile({
   userId = 'CL-47821',
   companyName = 'ООО Экспо Сервис',
