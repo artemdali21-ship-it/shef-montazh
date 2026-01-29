@@ -738,7 +738,7 @@ export const Constants = {
   },
 } as const
 
-// Convenience exports for commonly used types
+// Type exports for commonly used tables
 export type Shift = Tables<'shifts'>
 export type User = Tables<'users'>
 export type Application = Tables<'applications'>
