@@ -26,7 +26,7 @@
 
 **Все существующие страницы (37 штук):**
 
-```
+\`\`\`
 ROOT:
   ├── / (OnboardingScreen)
   └── /page.tsx → /role-select
@@ -87,12 +87,12 @@ LEGAL:
 TEST/DEBUG:
   ├── /debug/page.tsx 🗑️ УДАЛИТЬ
   └── /navigation-test/page.tsx 🗑️ УДАЛИТЬ
-```
+\`\`\`
 
 ### 1.2 Роли и User Flows ✅
 
 #### WORKER FLOW: ✅ Правильная структура
-```
+\`\`\`
 /register 
   → /verify-phone 
   → /role-select (выбрать "Worker")
@@ -112,10 +112,10 @@ TEST/DEBUG:
   → /rating (оценить заказчика)
      ↓ (подождать платеж)
   → уведомление "Оплачено" ✅
-```
+\`\`\`
 
 #### CLIENT FLOW: ✅ Правильная структура
-```
+\`\`\`
 /register
   → /verify-phone
   → /role-select (выбрать "Client")
@@ -139,10 +139,10 @@ TEST/DEBUG:
   → /payment-details (оплата через ЮKassa)
      ↓ (платить)
   → уведомление "Платеж прошел" ✅
-```
+\`\`\`
 
 #### SHEF FLOW: ⚠️ Неясная
-```
+\`\`\`
 /register
   → /verify-phone
   → /role-select (выбрать "Shef")
@@ -151,7 +151,7 @@ TEST/DEBUG:
      ↓ что дальше?
   → /teams (?)
   → /monitoring (?)
-```
+\`\`\`
 **ПРОБЛЕМА:** Shef flow не документирован, не ясна разница между Worker и Shef привилегиями.
 
 ---
@@ -189,7 +189,7 @@ TEST/DEBUG:
 **ИТОГО: 9 страниц с mock data (24%)**
 
 **ЧТО НУЖНО СДЕЛАТЬ:**
-```typescript
+\`\`\`typescript
 // ❌ БЫЛО (JobFeedScreen.tsx):
 const jobs = [
   { id: 1, type: 'Монтаж', ... },
@@ -225,7 +225,7 @@ export default function JobFeedScreen() {
     </div>
   )
 }
-```
+\`\`\`
 
 ---
 
@@ -240,7 +240,7 @@ export default function JobFeedScreen() {
 - ❌ `/lib/api/payments.ts` - НЕ НАЙДЕН
 
 **НУЖНО СОЗДАТЬ:**
-```
+\`\`\`
 /lib/api/
   ├── shifts.ts (getShifts, getShiftById, createShift, updateShift)
   ├── applications.ts (getApplications, createApplication, updateApplicationStatus)
@@ -250,7 +250,7 @@ export default function JobFeedScreen() {
   ├── payments.ts (getPayments, createPayment)
   ├── messages.ts (getMessages, sendMessage)
   └── index.ts (export все функции)
-```
+\`\`\`
 
 ---
 
@@ -395,7 +395,7 @@ export default function JobFeedScreen() {
 | `/settings/*` | ✅ | ✅ | ✅ | ❌ |
 
 **ЧТО НУЖНО ДОБАВИТЬ:**
-```typescript
+\`\`\`typescript
 // В каждой protected странице:
 'use client'
 
@@ -422,7 +422,7 @@ export default function ProtectedPage() {
   
   return <ActualPageContent />
 }
-```
+\`\`\`
 
 ---
 
@@ -432,7 +432,7 @@ export default function ProtectedPage() {
 
 **Приоритет подключения Supabase:**
 
-```
+\`\`\`
 1️⃣ CRITICAL (Неделя 1):
    ├─ /feed → getShifts() с фильтрами
    ├─ /dashboard → getUserData() + getMyShifts()
@@ -449,7 +449,7 @@ export default function ProtectedPage() {
    ├─ /search → searchShifts() + searchWorkers()
    ├─ /messages → getMessages() (real-time)
    └─ /rating → createRating()
-```
+\`\`\`
 
 ### 6.2 Верификация
 
@@ -461,12 +461,12 @@ export default function ProtectedPage() {
 - ❌ Логика "если не верифицирован → ограничить доступ" отсутствует
 
 **ЧТО НУЖНО:**
-```typescript
+\`\`\`typescript
 // Если User НЕ верифицирован через Госуслуги:
 // → Показать warning на /feed
 // → Ограничить возможность откликнуться на смены
 // → Показать "Сначала пройдите верификацию"
-```
+\`\`\`
 
 ---
 
@@ -496,12 +496,12 @@ export default function ProtectedPage() {
 | `/navigation-test` | Для тестирования навигации | 🗑️ Удалить в prod или скрыть env check |
 
 **КОД ДЛЯ СКРЫТИЯ:**
-```typescript
+\`\`\`typescript
 // app/debug/page.tsx
 if (process.env.NODE_ENV === 'production') {
   notFound()
 }
-```
+\`\`\`
 
 ---
 
@@ -551,9 +551,9 @@ if (process.env.NODE_ENV === 'production') {
 ### НЕДЕЛЯ 1: CRITICAL (API подключение)
 
 **Понедельник-Вторник: Создать API хуки**
-```bash
+\`\`\`bash
 touch /lib/api/{shifts,applications,workers,users,ratings}.ts
-```
+\`\`\`
 
 **Среда-Четверг: Подключить к страницам**
 - [ ] `/feed` → `useShifts()`

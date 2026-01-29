@@ -737,3 +737,14 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
+// Convenience exports for commonly used types
+export type Shift = Tables<'shifts'>
+export type User = Tables<'users'>
+export type Application = Tables<'applications'>
+export type ClientProfile = Tables<'client_profiles'>
+export type WorkerProfile = Tables<'worker_profiles'>
+export type Payment = Tables<'payments'>
+export type Rating = Tables<'ratings'>
+export type ShiftWorker = Tables<'shift_workers'>
+export type Notification = Tables<'notifications'>
