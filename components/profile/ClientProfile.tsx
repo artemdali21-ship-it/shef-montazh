@@ -97,52 +97,35 @@ export default function ClientProfile({
 
   return (
     <div className="w-full flex flex-col">
-      {/* PROFILE INFO GLASSMORPHIC SECTION WITH RAINBOW SPLASH */}
+      {/* PROFILE INFO SECTION */}
       <div
-          style={{
-            background: 'rgba(0, 0, 0, 0.4)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            margin: '16px',
-            padding: '16px',
-            borderRadius: '12px',
-            position: 'relative',
-            overflow: 'hidden',
-            backgroundImage: 'url(/images/bg-main-splash.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          {/* Dark overlay for readability - NO BLUR */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.2)',
-              zIndex: 1,
-            }}
-          />
-
-          {/* Company Info Content */}
-          <div style={{ position: 'relative', zIndex: 2 }}>
-            <h2 style={{ color: '#FFFFFF', fontWeight: 700, marginBottom: '4px', fontSize: '16px' }}>
-              {companyName || 'ООО "Компания"'}
-            </h2>
-            <p style={{ color: '#FFFFFF', opacity: 0.7, fontSize: '12px' }}>
-              ID: {companyId || 'CLIENT-001'}
-            </p>
-            <span style={{ color: '#BFFF00', fontSize: '11px', marginTop: '8px', display: 'inline-block' }}>
-              {isPremium ? '✓ Проверен' : '○ Не проверен'}
-            </span>
-          </div>
+        style={{
+          background: 'rgba(0, 0, 0, 0.4)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          margin: '16px',
+          padding: '16px',
+          borderRadius: '12px',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <h2 style={{ color: '#FFFFFF', fontWeight: 700, marginBottom: '4px', fontSize: '16px' }}>
+            {companyName || 'ООО "Компания"'}
+          </h2>
+          <p style={{ color: '#FFFFFF', opacity: 0.7, fontSize: '12px' }}>
+            ID: {companyId || 'CLIENT-001'}
+          </p>
+          <span style={{ color: '#BFFF00', fontSize: '11px', marginTop: '8px', display: 'inline-block' }}>
+            {isPremium ? '✓ Проверен' : '○ Не проверен'}
+          </span>
         </div>
+      </div>
 
-        {/* STATS ROW */}
-        <div className="px-4 py-6 grid grid-cols-3 gap-3">
+      {/* STATS ROW */}
+      <div className="px-4 py-6 grid grid-cols-3 gap-3">
         <div
           className="rounded-xl p-4 text-center"
           style={{
@@ -156,7 +139,6 @@ export default function ClientProfile({
           <div className="text-xs text-gray-400">Опубликовано</div>
         </div>
 
-        {/* Active Shifts */}
         <div
           className="rounded-xl p-4 text-center"
           style={{
@@ -170,7 +152,6 @@ export default function ClientProfile({
           <div className="text-xs text-gray-400">Активных</div>
         </div>
 
-        {/* Completed */}
         <div
           className="rounded-xl p-4 text-center"
           style={{
@@ -183,10 +164,10 @@ export default function ClientProfile({
           <div className="text-xl font-bold text-white">{completedShifts.length}</div>
           <div className="text-xs text-gray-400">Завершено</div>
         </div>
-        </div>
+      </div>
 
-        {/* RATING SECTION */}
-        <div className="px-4 py-6">
+      {/* RATING SECTION */}
+      <div className="px-4 py-6">
         <div
           className="rounded-2xl p-6 text-center"
           style={{
@@ -201,11 +182,11 @@ export default function ClientProfile({
           <div className="flex justify-center">
             <StarRating rating={4.7} size="lg" showNumber={false} />
           </div>
-          </div>
         </div>
+      </div>
 
-        {/* ACTIVE SHIFTS SECTION */}
-        <div className="px-4 py-6">
+      {/* ACTIVE SHIFTS SECTION */}
+      <div className="px-4 py-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold text-white">Активные смены</h2>
           <button className="text-[#E85D2F] text-sm font-semibold flex items-center gap-1 hover:text-[#FF8855]">
@@ -273,10 +254,10 @@ export default function ClientProfile({
             ))}
           </div>
         )}
-        </div>
+      </div>
 
-        {/* QUICK ACTIONS */}
-        <div className="px-4 py-6 space-y-3">
+      {/* QUICK ACTIONS */}
+      <div className="px-4 py-6 space-y-3">
         <button
           onClick={() => router.push('/create-shift')}
           className="w-full py-3 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all hover:shadow-lg"
@@ -299,10 +280,10 @@ export default function ClientProfile({
           <Star size={20} />
           Избранные исполнители
         </button>
-        </div>
+      </div>
 
-        {/* RECENT ACTIVITY */}
-        <div className="px-4 py-6">
+      {/* RECENT ACTIVITY */}
+      <div className="px-4 py-6">
         <h2 className="text-lg font-bold text-white mb-4">Последние завершённые</h2>
 
         {completedShifts.length === 0 ? (
