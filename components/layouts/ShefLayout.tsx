@@ -20,51 +20,46 @@ export default function ShefLayout({ children }: ShefLayoutProps) {
   ];
 
   return (
-    <div className="w-full flex flex-col bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]" style={{ height: '100dvh' }}>
-      {/* CONTENT - занимает всё свободное место и скроллится */}
-      <div className="flex-1 overflow-y-auto w-full" style={{ paddingBottom: '80px' }}>
+    <div className="w-screen h-screen flex flex-col bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] overflow-hidden">
+      {/* CONTENT - скроллится свободно */}
+      <div className="flex-1 overflow-y-scroll w-full pb-24">
         {children}
       </div>
 
-      {/* TABBAR - фиксирован внизу, не занимает место в контенте */}
-      <nav className="fixed bottom-0 left-0 right-0 flex-shrink-0 backdrop-blur-xl border-t border-white/10 h-20 w-full z-50" style={{
-        background: 'rgba(26, 26, 26, 0.4)',
-        WebkitBackdropFilter: 'blur(20px)',
-      }}>
-        <div className="flex items-center justify-around h-full px-4 max-w-screen-md mx-auto">
-          {tabs.map(({ icon: Icon, label, path }) => {
-            const isActive = pathname === path;
-            return (
-              <button
-                key={path}
-                onClick={() => router.push(path)}
-                className="flex flex-col items-center gap-1 py-2 px-3 rounded-lg transition-all"
+      {/* TABBAR - фиксирован внизу экрана */}
+      <nav className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[rgba(26,26,26,0.95)] to-[rgba(26,26,26,0.8)] backdrop-blur-xl border-t border-white/10 z-50 flex items-center justify-around px-4">
+        {tabs.map(({ icon: Icon, label, path }) => {
+          const isActive = pathname === path;
+          return (
+            <button
+              key={path}
+              onClick={() => router.push(path)}
+              className="flex flex-col items-center gap-1 py-2 px-3 rounded-lg transition-all"
+              style={{
+                background: isActive ? 'rgba(232, 93, 47, 0.15)' : 'transparent',
+              }}
+            >
+              <Icon
+                size={24}
+                strokeWidth={1.5}
                 style={{
-                  background: isActive ? 'rgba(232, 93, 47, 0.15)' : 'transparent',
+                  color: isActive ? '#E85D2F' : 'rgba(255, 255, 255, 0.6)',
+                  transition: 'color 0.2s'
+                }}
+              />
+              <span
+                style={{
+                  fontSize: '11px',
+                  fontWeight: isActive ? 600 : 500,
+                  color: isActive ? '#E85D2F' : 'rgba(255, 255, 255, 0.6)',
+                  transition: 'color 0.2s'
                 }}
               >
-                <Icon
-                  size={24}
-                  strokeWidth={1.5}
-                  style={{
-                    color: isActive ? '#E85D2F' : 'rgba(255, 255, 255, 0.6)',
-                    transition: 'color 0.2s'
-                  }}
-                />
-                <span
-                  style={{
-                    fontSize: '11px',
-                    fontWeight: isActive ? 600 : 500,
-                    color: isActive ? '#E85D2F' : 'rgba(255, 255, 255, 0.6)',
-                    transition: 'color 0.2s'
-                  }}
-                >
-                  {label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+                {label}
+              </span>
+            </button>
+          );
+        })}
       </nav>
     </div>
   );

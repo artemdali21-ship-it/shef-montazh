@@ -96,7 +96,7 @@ export default function ClientProfile({
   const totalPosted = activeShifts.length + completedShifts.length
 
   return (
-    <div className="w-full min-h-screen flex flex-col bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
+    <div className="w-full h-screen flex flex-col bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] overflow-hidden">
       {/* HEADER SECTION */}
       <header
         className="pt-6 px-4 pb-8 text-center flex-shrink-0"
@@ -116,8 +116,8 @@ export default function ClientProfile({
         </button>
       </header>
 
-      {/* MAIN CONTENT */}
-      <div className="flex-1 overflow-y-auto w-full">
+      {/* MAIN CONTENT - SCROLLABLE */}
+      <div className="flex-1 overflow-y-scroll w-full pb-24">
         {/* PROFILE INFO GLASSMORPHIC SECTION WITH RAINBOW SPLASH */}
         <div
           style={{

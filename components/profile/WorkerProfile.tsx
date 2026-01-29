@@ -82,8 +82,8 @@ export default function WorkerProfile() {
         </button>
       </header>
 
-      {/* CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto pt-16 pb-4 relative z-5">
+      {/* CONTENT AREA - SCROLLABLE */}
+      <div className="flex-1 overflow-y-scroll pb-24 relative z-5">
         {/* PROFILE HEADER SECTION - GLASSMORPHIC WITH RAINBOW SPLASH */}
         <div
           style={{
