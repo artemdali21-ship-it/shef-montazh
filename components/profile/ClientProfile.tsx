@@ -26,53 +26,53 @@ export default function ClientProfile({
   companyId = 'SHEF-12345',
   isPremium = true,
 }: ClientProfileProps) {
-  const router = useRouter()
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
-  const [profile, setProfile] = useState<any>(null)
-  const [activeShifts, setActiveShifts] = useState<any[]>([])
-  const [completedShifts, setCompletedShifts] = useState<any[]>([])
+  const [profile, setProfile] = useState<any>(null);
+  const [activeShifts, setActiveShifts] = useState<any[]>([]);
+  const [completedShifts, setCompletedShifts] = useState<any[]>([]);
 
   useEffect(() => {
     async function loadProfileData() {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
         
         // Load profile
-        const { data: profileData, error: profileError } = await getClientProfile(userId)
-        if (profileError) throw profileError
+        const { data: profileData, error: profileError } = await getClientProfile(userId);
+        if (profileError) throw profileError;
         
         // Load active shifts
-        const { data: activeData, error: activeError } = await getClientActiveShifts(userId)
-        if (activeError) throw activeError
+        const { data: activeData, error: activeError } = await getClientActiveShifts(userId);
+        if (activeError) throw activeError;
         
         // Load completed shifts
-        const { data: completedData, error: completedError } = await getClientCompletedShifts(userId)
-        if (completedError) throw completedError
+        const { data: completedData, error: completedError } = await getClientCompletedShifts(userId);
+        if (completedError) throw completedError;
         
-        setProfile(profileData)
-        setActiveShifts(activeData || [])
-        setCompletedShifts(completedData || [])
+        setProfile(profileData);
+        setActiveShifts(activeData || []);
+        setCompletedShifts(completedData || []);
         
       } catch (err) {
-        console.error('Error loading client profile:', err)
-        setError('Не удалось загрузить профиль')
+        console.error('Error loading client profile:', err);
+        setError('Не удалось загрузить профиль');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    loadProfileData()
-  }, [userId])
+    loadProfileData();
+  }, [userId]);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-white text-lg">Загрузка профиля...</div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -88,10 +88,10 @@ export default function ClientProfile({
           </button>
         </div>
       </div>
-    )
+    );
   }
 
-  const totalPosted = activeShifts.length + completedShifts.length
+  const totalPosted = activeShifts.length + completedShifts.length;
 
   return (
     <div className="w-full flex flex-col">

@@ -26,22 +26,22 @@ const userProfile = {
     { id: 2, title: 'Установка окон', date: '24 января', price: 3500, status: 'completed' },
     { id: 3, title: 'Электромонтажные работы', date: '22 января', price: 4000, status: 'completed' },
   ],
-}
+};
 
 export default function WorkerProfile() {
-  const router = useRouter()
-  const [selectedSkills, setSelectedSkills] = useState(new Set())
-  const [isGosuslugiVerified, setIsGosuslugiVerified] = useState(false)
+  const router = useRouter();
+  const [selectedSkills, setSelectedSkills] = useState(new Set());
+  const [isGosuslugiVerified, setIsGosuslugiVerified] = useState(false);
 
   const toggleSkill = (skillName) => {
-    const newSkills = new Set(selectedSkills)
+    const newSkills = new Set(selectedSkills);
     if (newSkills.has(skillName)) {
-      newSkills.delete(skillName)
+      newSkills.delete(skillName);
     } else {
-      newSkills.add(skillName)
+      newSkills.add(skillName);
     }
-    setSelectedSkills(newSkills)
-  }
+    setSelectedSkills(newSkills);
+  };
 
   const availableSkills = [
     'Монтаж',
@@ -51,7 +51,7 @@ export default function WorkerProfile() {
     'Сварщик',
     'Бутафор',
     'Разнорабочий'
-  ]
+  ];
 
   return (
     <div className="w-full flex flex-col">
