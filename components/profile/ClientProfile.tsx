@@ -13,24 +13,20 @@ import {
 } from 'lucide-react';
 import { getClientProfile, getClientActiveShifts, getClientCompletedShifts } from '@/lib/api/profiles';
 
-interface ClientProfileProps {
-  userId?: string;
-  companyName?: string;
-  companyId?: string;
-  isPremium?: boolean;
-}
-
 export default function ClientProfile({
   userId = 'CL-47821',
   companyName = 'ООО Экспо Сервис',
   companyId = 'SHEF-12345',
   isPremium = true,
-}: ClientProfileProps) {
+}: {
+  userId?: string;
+  companyName?: string;
+  companyId?: string;
+  isPremium?: boolean;
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  const [profile, setProfile] = useState<any>(null);
   const [activeShifts, setActiveShifts] = useState<any[]>([]);
   const [completedShifts, setCompletedShifts] = useState<any[]>([]);
 
