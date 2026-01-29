@@ -11,7 +11,7 @@ import {
   MessageCircle,
   Star,
 } from 'lucide-react';
-import { getClientProfile, getClientActiveShifts, getClientCompletedShifts } from '@/lib/api/profiles';
+import { getClientActiveShifts, getClientCompletedShifts } from '@/lib/api/profiles';
 
 export default function ClientProfile({
   userId = 'CL-47821',
