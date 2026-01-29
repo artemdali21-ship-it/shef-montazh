@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import ShiftCheckInScreen from '@/components/ShiftCheckInScreen';
 import { useParams } from 'next/navigation';

@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import PaymentDetailScreen from '@/components/PaymentDetailScreen';
 

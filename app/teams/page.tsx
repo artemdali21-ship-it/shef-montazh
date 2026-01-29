@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import ShefLayout from '@/components/layouts/ShefLayout';
 import { Users, Plus, Trash2 } from 'lucide-react';

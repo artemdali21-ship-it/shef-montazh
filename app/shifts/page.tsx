@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import WorkerLayout from '@/components/layouts/WorkerLayout';
 import { Briefcase, Clock, MapPin, DollarSign } from 'lucide-react';
