@@ -78,18 +78,8 @@ export default function OnboardingScreen() {
   }
 
   return (
-    <div
-      className="w-screen h-screen flex flex-col items-center justify-center font-sans relative"
-      style={{
-        backgroundImage: 'url(/images/bg-dashboard.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-      }}
-    >
-      <NoisePattern />
-
-      {/* FLOATING 3D ELEMENTS */}
+    <div className="w-screen h-screen flex flex-col items-center justify-center font-sans relative bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] overflow-hidden">
+      {/* FLOATING 3D ELEMENTS - ГЛАВНАЯ СТРАНИЦА */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <img
           src="/images/carabiner.png"
@@ -149,21 +139,20 @@ export default function OnboardingScreen() {
       `}</style>
 
       {/* MAIN CONTENT */}
-      <div className="w-full max-w-sm px-6 py-12 relative z-20 overflow-y-auto flex flex-col" style={{ maxHeight: '100vh' }}>
-        {/* HEADER */}
-        <div className="mb-6">
-          <div className="flex items-center justify-center gap-1.5 mb-2">
-            <div style={{ color: '#E85D2F' }} className="flex-shrink-0">
-              <AsteriskIcon />
+      <div className="w-screen h-screen flex flex-col relative z-20 overflow-y-auto" style={{ padding: 0, margin: 0 }}>
+        <div className="w-full px-5 py-8 flex flex-col flex-1">
+          {/* HEADER */}
+          <div className="mb-6">
+            <div className="flex items-center justify-center gap-1.5 mb-2">
+              <div style={{ color: '#E85D2F' }} className="flex-shrink-0">
+                <AsteriskIcon />
+              </div>
+              <h1 style={{ color: '#FFFFFF', fontWeight: 800, letterSpacing: '-0.02em' }} className="text-xl uppercase tracking-wider font-sans">ШЕФ-МОНТАЖ</h1>
             </div>
-            <h1 style={{ color: '#1A1A1A' }} className="text-xl uppercase tracking-wider font-sans" style={{ fontWeight: 800, letterSpacing: '-0.02em' }}>
-              ШЕФ-МОНТАЖ
-            </h1>
+            <p style={{ color: '#FFFFFF' }} className="text-sm font-normal text-center tracking-tight leading-snug font-sans">
+              Финтех-платформа гарантированных смен
+            </p>
           </div>
-          <p style={{ color: '#FFFFFF' }} className="text-sm font-normal text-center tracking-tight leading-snug font-sans">
-            Финтех-платформа гарантированных смен
-          </p>
-        </div>
 
         {/* SLIDE COUNTER */}
         <div className="flex justify-center gap-1 mb-6 flex-shrink-0">
@@ -206,65 +195,56 @@ export default function OnboardingScreen() {
           </div>
 
           {/* SLIDE TEXT */}
-          <h2 style={{ color: '#1A1A1A' }} className="text-2xl font-sans mb-3" style={{ fontWeight: 800, lineHeight: 1.2 }}>
+          <h2 style={{ color: '#FFFFFF', textAlign: 'left', fontWeight: 800, letterSpacing: '-0.02em' }} className="text-4xl font-sans mb-4 leading-tight">
             {slides[currentSlide].title}
           </h2>
-          <p style={{ color: '#FFFFFF' }} className="text-base font-normal leading-relaxed font-sans">
+          <p style={{ color: '#FFFFFF', textAlign: 'left' }} className="text-base font-normal leading-relaxed font-sans mb-6">
             {slides[currentSlide].subtitle}
           </p>
         </div>
 
         {/* BUTTONS */}
-        <div className="space-y-3 flex-shrink-0">
+        <div className="space-y-4 flex-shrink-0">
           <button
             onClick={handleNext}
-            className="w-full text-white rounded-2xl transition-all duration-200 font-sans flex items-center justify-center gap-2"
+            className="w-full text-white rounded-lg transition-all duration-300 font-sans flex items-center justify-center gap-2 font-semibold h-12 hover:scale-105 active:scale-95"
             style={{
-              height: '56px',
-              background: 'rgba(232, 93, 47, 0.85)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              boxShadow: '0 10px 28px rgba(232,93,47,0.3), inset 0 0 0 1px rgba(255,255,255,0.3)',
+              background: '#E85D2F',
+              boxShadow: '0 6px 20px rgba(232, 93, 47, 0.3)',
               cursor: 'pointer',
               border: 'none',
-              fontWeight: 700,
               fontSize: '16px',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-3px)'
-              e.currentTarget.style.boxShadow = '0 12px 32px rgba(232,93,47,0.4), inset 0 0 0 1px rgba(255,255,255,0.4)'
-              e.currentTarget.style.background = 'rgba(232, 93, 47, 0.95)'
+              e.currentTarget.style.background = '#D04D1F'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)'
-              e.currentTarget.style.boxShadow = '0 10px 28px rgba(232,93,47,0.3), inset 0 0 0 1px rgba(255,255,255,0.3)'
-              e.currentTarget.style.background = 'rgba(232, 93, 47, 0.85)'
+              e.currentTarget.style.background = '#E85D2F'
             }}
           >
             {currentSlide === slides.length - 1 ? 'Начать' : 'Далее'}
-            {currentSlide < slides.length - 1 && <ChevronRight size={18} />}
+            {currentSlide < slides.length - 1 && <ChevronRight size={20} strokeWidth={2} />}
           </button>
 
           {currentSlide > 0 && (
             <button
               onClick={handleSkip}
-              className="w-full rounded-2xl transition-all duration-200 font-sans"
+              className="w-full rounded-lg transition-all duration-300 font-sans font-semibold h-12"
               style={{
-                height: '56px',
                 background: 'rgba(255, 255, 255, 0.1)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: '1.5px solid rgba(255, 255, 255, 0.3)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
                 cursor: 'pointer',
-                fontWeight: 700,
                 fontSize: '16px',
                 color: '#FFFFFF',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)'
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
               }}
             >
               Пропустить
@@ -273,9 +253,10 @@ export default function OnboardingScreen() {
         </div>
 
         {/* FINE PRINT */}
-        <p style={{ color: '#FFFFFF' }} className="text-xs text-center tracking-tight leading-snug mt-4 flex-shrink-0 font-sans">
+        <p style={{ color: '#FFFFFF' }} className="text-sm text-center leading-relaxed mt-8 flex-shrink-0 font-sans font-medium">
           Вход и регистрация внутри приложения
         </p>
+        </div>
       </div>
     </div>
   )

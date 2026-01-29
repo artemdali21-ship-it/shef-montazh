@@ -3,6 +3,7 @@ import React from 'react';
 import { Clock, MapPin, Users, DollarSign, AlertCircle } from 'lucide-react';
 import { CustomBadge } from '../custom/custom-badge';
 import { StarRating } from '../rating/StarRating';
+import { PaymentStatus } from '../payment/PaymentStatus';
 
 export type ShiftStatus = 'upcoming' | 'active' | 'completed' | 'cancelled';
 
@@ -22,6 +23,9 @@ interface ShiftCardProps {
   status: ShiftStatus;
   category: string;
   requiresCheckIn?: boolean;
+  userRole?: 'client' | 'worker';
+  paymentStatus?: 'pending' | 'paid' | 'overdue';
+  paymentDueDate?: Date;
   onClick?: () => void;
 }
 
@@ -47,6 +51,9 @@ export const ShiftCard: React.FC<ShiftCardProps> = ({
   status,
   category,
   requiresCheckIn = false,
+  userRole = 'worker',
+  paymentStatus,
+  paymentDueDate,
   onClick
 }) => {
   const isUrgent = status === 'upcoming' && requiresCheckIn;
@@ -141,6 +148,17 @@ export const ShiftCard: React.FC<ShiftCardProps> = ({
           </p>
         </div>
       </div>
+
+      {/* Payment Status Badge - Only for Client viewing completed shifts */}
+      {userRole === 'client' && status === 'completed' && paymentStatus && paymentDueDate && (
+        <div className="mt-3 flex justify-end">
+          <PaymentStatus 
+            status={paymentStatus}
+            dueDate={paymentDueDate}
+            size="sm"
+          />
+        </div>
+      )}
     </div>
   );
 };

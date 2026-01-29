@@ -4,27 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check, TrendingUp } from 'lucide-react'
 
-const NoisePattern = () => (
-  <svg
-    style={{
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      pointerEvents: 'none',
-      opacity: 0.03,
-    }}
-  >
-    <defs>
-      <filter id="noise">
-        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" seed="2" />
-      </filter>
-    </defs>
-    <rect width="100%" height="100%" filter="url(#noise)" />
-  </svg>
-)
-
 export default function RoleSelectScreen() {
   const router = useRouter()
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
@@ -67,13 +46,8 @@ export default function RoleSelectScreen() {
 
   return (
     <div
-      className="w-screen h-screen flex flex-col items-center justify-center font-sans relative overflow-hidden"
-      style={{
-        background: 'linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 50%, #1F1F1F 100%)',
-      }}
+      className="w-screen h-screen flex flex-col items-center justify-center font-sans relative overflow-hidden bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]"
     >
-      <NoisePattern />
-
       {/* FLOATING 3D ELEMENTS */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <img

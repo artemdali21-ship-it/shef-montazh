@@ -93,17 +93,24 @@ export default function ClientProfile({
     )
   }
 
-  const displayCompanyName = companyName || profile?.profile?.company_name || 'Компания'
-  const totalPosted = profile?.profile?.shifts_published || 0
+export default function ClientProfile({
+  userId = 'CL-47821',
+  companyName = 'ООО Экспо Сервис',
+  companyId = 'SHEF-12345',
+  isPremium = true,
+}: ClientProfileProps) {
+  const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0F172A] to-[#1E293B] pb-20">
+    <div className="w-full h-full flex flex-col overflow-hidden bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
       {/* HEADER SECTION */}
-      <div
-        className="relative pt-6 px-4 pb-8 text-center"
+      <header
+        className="pt-6 px-4 pb-8 text-center flex-shrink-0"
         style={{
-          background: 'rgba(255, 255, 255, 0.05)',
+          background: 'rgba(26, 26, 26, 0.5)',
           backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         }}
       >
         {/* Settings Icon */}
@@ -113,30 +120,57 @@ export default function ClientProfile({
         >
           <Settings size={24} className="text-white" />
         </button>
+      </header>
 
-        {/* Company Logo */}
+      {/* MAIN CONTENT */}
+      <div className="flex-1 overflow-y-auto w-full">
+        {/* PROFILE INFO GLASSMORPHIC SECTION WITH RAINBOW SPLASH */}
         <div
-          className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg"
           style={{
-            background: 'linear-gradient(135deg, #E85D2F 0%, #FF8855 100%)',
-            border: isPremium ? '3px solid #BFFF00' : '3px solid rgba(255,255,255,0.2)',
+            background: 'rgba(0, 0, 0, 0.4)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            margin: '16px',
+            padding: '16px',
+            borderRadius: '12px',
+            position: 'relative',
+            overflow: 'hidden',
+            backgroundImage: 'url(/images/bg-main-splash.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
           }}
         >
-          <Briefcase size={48} className="text-white" />
+          {/* Dark overlay for readability - NO BLUR */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.2)',
+              zIndex: 1,
+            }}
+          />
+
+          {/* Company Info Content */}
+          <div style={{ position: 'relative', zIndex: 2 }}>
+            <h2 style={{ color: '#FFFFFF', fontWeight: 700, marginBottom: '4px', fontSize: '16px' }}>
+              ООО "Компания"
+            </h2>
+            <p style={{ color: '#FFFFFF', opacity: 0.7, fontSize: '12px' }}>
+              ID: CLIENT-001
+            </p>
+            <span style={{ color: '#BFFF00', fontSize: '11px', marginTop: '8px', display: 'inline-block' }}>
+              ✓ Проверен
+            </span>
+          </div>
         </div>
 
-        {/* Company Name */}
-        <h1 className="text-2xl font-bold text-white mb-2">{displayCompanyName}</h1>
-
-        {/* ID */}
-        <p className="text-sm text-gray-400">
-          ID: {profile?.id?.substring(0, 8).toUpperCase() || '---'}
-        </p>
-      </div>
-
-      {/* STATS ROW */}
-      <div className="px-4 py-6 grid grid-cols-3 gap-3">
-        {/* Total Posted */}
+        {/* STATS ROW */}
+        <div className="px-4 py-6 grid grid-cols-3 gap-3">
+          {/* Briefcase - Total Posted */}
         <div
           className="rounded-xl p-4 text-center"
           style={{
@@ -177,31 +211,35 @@ export default function ClientProfile({
           <div className="text-xl font-bold text-white">{completedShifts.length}</div>
           <div className="text-xs text-gray-400">Завершено</div>
         </div>
-      </div>
+        </div>
 
-      {/* CREATE SHIFT BUTTON */}
-      <div className="px-4 mb-6">
-        <button
-          onClick={() => router.push('/create-shift')}
-          className="w-full bg-gradient-to-r from-[#E85D2F] to-[#FF8855] hover:from-[#D04D1F] hover:to-[#E87744] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-orange-500/30"
+        {/* RATING SECTION */}
+        <div className="px-4 py-6">
+        <div
+          className="rounded-2xl p-6 text-center"
+          style={{
+            background: 'rgba(232, 93, 47, 0.1)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(232, 93, 47, 0.3)',
+          }}
         >
-          <Plus size={24} />
-          Создать новую смену
-        </button>
-      </div>
+          <div className="text-4xl font-bold text-white mb-2">4.7</div>
+          <p className="text-gray-300 text-sm mb-3">Средняя оценка от исполнителей</p>
+          <p className="text-gray-500 text-xs mb-4">(23 отзыва)</p>
+          <div className="flex justify-center">
+            <StarRating rating={4.7} size="lg" showNumber={false} />
+          </div>
+          </div>
+        </div>
 
-      {/* ACTIVE SHIFTS */}
-      <div className="px-4 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-white">Активные смены</h2>
-          {activeShifts.length > 3 && (
-            <button
-              onClick={() => router.push('/shifts')}
-              className="text-[#E85D2F] text-sm font-medium hover:underline"
-            >
-              Все →
-            </button>
-          )}
+        {/* ACTIVE SHIFTS SECTION */}
+        <div className="px-4 py-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-bold text-white">Активные смены</h2>
+          <button className="text-[#E85D2F] text-sm font-semibold flex items-center gap-1 hover:text-[#FF8855]">
+            Все
+            <ArrowRight size={16} />
+          </button>
         </div>
 
         {activeShifts.length === 0 ? (
@@ -263,21 +301,37 @@ export default function ClientProfile({
             ))}
           </div>
         )}
-      </div>
-
-      {/* COMPLETED SHIFTS */}
-      <div className="px-4 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-white">Завершенные смены</h2>
-          {completedShifts.length > 2 && (
-            <button
-              onClick={() => router.push('/shifts?status=completed')}
-              className="text-[#E85D2F] text-sm font-medium hover:underline"
-            >
-              Все →
-            </button>
-          )}
         </div>
+
+        {/* QUICK ACTIONS */}
+        <div className="px-4 py-6 space-y-3">
+        <button
+          onClick={() => router.push('/create-shift')}
+          className="w-full py-3 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all hover:shadow-lg"
+          style={{
+            background: 'linear-gradient(135deg, #E85D2F 0%, #C44A20 100%)',
+          }}
+        >
+          <Plus size={20} />
+          Создать смену
+        </button>
+
+        <button
+          className="w-full py-3 rounded-xl font-bold text-white flex items-center justify-center gap-2"
+          style={{
+            background: 'rgba(255, 255, 255, 0.08)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+          }}
+        >
+          <Star size={20} />
+          Избранные исполнители
+        </button>
+        </div>
+
+        {/* RECENT ACTIVITY */}
+        <div className="px-4 py-6">
+        <h2 className="text-lg font-bold text-white mb-4">Последние завершённые</h2>
 
         {completedShifts.length === 0 ? (
           <div
@@ -331,7 +385,8 @@ export default function ClientProfile({
             ))}
           </div>
         )}
+        </div>
       </div>
     </div>
-  )
+  );
 }

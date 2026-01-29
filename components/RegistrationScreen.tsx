@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { ArrowLeft, Phone, Mail, User, Eye, EyeOff, Shield } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 
 const NoisePattern = () => (
   <svg
@@ -230,6 +231,38 @@ export default function RegistrationScreen() {
                 >
                   Продолжить
                 </button>
+
+                {/* Legal documents acceptance */}
+                <label className="flex items-start gap-3 mt-4 text-sm cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    required
+                    className="mt-1 w-4 h-4 accent-[#E85D2F]"
+                  />
+                  <span className="text-gray-300 leading-relaxed">
+                    Я согласен с{' '}
+                    <Link 
+                      href="/legal/terms"
+                      className="text-[#E85D2F] underline hover:no-underline"
+                    >
+                      условиями использования
+                    </Link>
+                    {', '}
+                    <Link 
+                      href="/legal/privacy"
+                      className="text-[#E85D2F] underline hover:no-underline"
+                    >
+                      политикой конфиденциальности
+                    </Link>
+                    {' '}и{' '}
+                    <Link 
+                      href="/legal/offer"
+                      className="text-[#E85D2F] underline hover:no-underline"
+                    >
+                      договором оферты
+                    </Link>
+                  </span>
+                </label>
               </div>
             </div>
           )}

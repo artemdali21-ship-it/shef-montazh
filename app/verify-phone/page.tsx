@@ -7,8 +7,10 @@ function VerifyPhoneContent() {
 
 export default function VerifyPhonePage() {
   return (
-    <Suspense fallback={<div style={{ backgroundColor: '#0F172A', minHeight: '100vh' }} />}>
-      <VerifyPhoneContent />
-    </Suspense>
+    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] overflow-hidden">
+      <Suspense fallback={<div className="w-screen h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]" />}>
+        <VerifyPhoneContent />
+      </Suspense>
+    </div>
   )
 }

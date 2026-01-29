@@ -34,35 +34,7 @@ export default function WorkerCategoriesPage() {
   }
 
   return (
-    <div style={{
-      height: '100dvh',
-      backgroundColor: '#0F172A',
-      display: 'flex',
-      flexDirection: 'column',
-      position: 'relative',
-    }}>
-      {/* Background Image */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        backgroundImage: 'url(/images/bg-dashboard.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        opacity: 0.3,
-        zIndex: 0,
-      }} />
-
-      {/* Gradient overlay */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%)',
-          pointerEvents: 'none',
-          zIndex: 1,
-        }}
-      />
-
+    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col relative">
       {/* FLOATING 3D ELEMENTS - WITH POINTER EVENTS NONE SO THEY DON'T BLOCK SCROLL */}
       <div style={{ 
         position: 'fixed', 

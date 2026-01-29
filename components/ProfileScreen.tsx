@@ -18,7 +18,6 @@ import {
   LogOut,
 } from 'lucide-react'
 import { Header } from './Header'
-import { BottomNav } from './BottomNav'
 import { GosuslugiButton } from './verification/GosuslugiButton'
 
 const userProfile = {

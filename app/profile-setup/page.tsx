@@ -4,27 +4,6 @@ import React, { useState } from 'react'
 import { ChevronLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
-const NoisePattern = () => (
-  <svg
-    style={{
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      pointerEvents: 'none',
-      opacity: 0.03,
-    }}
-  >
-    <defs>
-      <filter id="noise">
-        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" seed="2" />
-      </filter>
-    </defs>
-    <rect width="100%" height="100%" filter="url(#noise)" />
-  </svg>
-)
-
 export default function ProfileSetupPage() {
   const router = useRouter()
   const [step, setStep] = useState(0)
@@ -492,30 +471,18 @@ export default function ProfileSetupPage() {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundImage: 'url(/images/bg-dashboard.jpg)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundAttachment: 'fixed',
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
-      <NoisePattern />
-      
-      {/* 3D decorative elements - HIDDEN FOR TELEGRAM MINI APP */}
-      {/* Removed to prevent overflow issues in Telegram Mini App */}
-
-      <header style={{
-        position: 'relative',
-        background: 'rgba(42, 42, 42, 0.6)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-        zIndex: 20,
-        flexShrink: 0,
-        height: '4rem',
-      }} className="flex items-center justify-between px-4">
+    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col overflow-hidden">
+      {/* HEADER */}
+      <header 
+        className="flex items-center justify-between px-4 fixed top-0 left-0 right-0 h-16"
+        style={{
+          background: 'rgba(42, 42, 42, 0.6)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          zIndex: 20,
+        }}
+      >
         <button onClick={handleBack} className="w-10 h-10 flex items-center justify-center">
           <ChevronLeft className="w-5 h-5 text-white" />
         </button>
@@ -529,13 +496,12 @@ export default function ProfileSetupPage() {
         <div className="w-10"></div>
       </header>
 
-      <div style={{
-        flex: 1,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        position: 'relative',
-        zIndex: 10,
-      }} className="px-4 py-6">
+      <div 
+        className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-6 relative"
+        style={{
+          zIndex: 10,
+        }}
+      >
         <main className="max-w-md mx-auto w-full pb-32">
           {renderStep()}
         </main>

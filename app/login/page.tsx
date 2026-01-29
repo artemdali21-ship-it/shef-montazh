@@ -6,5 +6,9 @@ export const metadata = {
 }
 
 export default function LoginPage() {
-  return <LoginScreen />
+  return (
+    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] overflow-hidden">
+      <LoginScreen />
+    </div>
+  )
 }

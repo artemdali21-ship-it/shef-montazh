@@ -6,7 +6,7 @@
 Flex-контейнер с `flex: 1` и `overflow-y: auto` не может правильно рассчитать свою высоту без `minHeight: 0`.
 
 ### РЕШЕНИЕ - ОБЯЗАТЕЛЬНО!
-```tsx
+\`\`\`tsx
 // ❌ НЕ РАБОТАЕТ - контейнер не скролится
 <div style={{ flex: 1, overflowY: 'auto' }}>
   Content here
@@ -20,22 +20,22 @@ Flex-контейнер с `flex: 1` и `overflow-y: auto` не может пр�
 }}>
   Content here
 </div>
-```
+\`\`\`
 
 ## Правильная структура для мобильного приложения
 
 ### Main Container
-```tsx
+\`\`\`tsx
 <div style={{
   height: '100dvh',  // 100% dynamic viewport height (мобилка)
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
 }}>
-```
+\`\`\`
 
 ### Header (прилипает к верху при скроле)
-```tsx
+\`\`\`tsx
 <header style={{
   position: 'sticky',
   top: 0,
@@ -45,10 +45,10 @@ Flex-контейнер с `flex: 1` и `overflow-y: auto` не может пр�
   background: 'rgba(...)',
   backdropFilter: 'blur(20px)',
 }} />
-```
+\`\`\`
 
 ### Content (скролится)
-```tsx
+\`\`\`tsx
 <div style={{
   flex: 1,
   overflowY: 'auto',
@@ -62,10 +62,10 @@ Flex-контейнер с `flex: 1` и `overflow-y: auto` не может пр�
     {/* контент здесь */}
   </div>
 </div>
-```
+\`\`\`
 
 ### Footer (фиксирован внизу)
-```tsx
+\`\`\`tsx
 <footer style={{
   background: 'rgba(...)',
   backdropFilter: 'blur(20px)',
@@ -77,10 +77,10 @@ Flex-контейнер с `flex: 1` и `overflow-y: auto` не может пр�
 }} className="px-4 py-4">
   <button>Кнопка</button>
 </footer>
-```
+\`\`\`
 
 ### 3D Элементы (декоративные, не блокируют скролирование)
-```tsx
+\`\`\`tsx
 <div style={{ 
   position: 'fixed', 
   inset: 0, 
@@ -90,7 +90,7 @@ Flex-контейнер с `flex: 1` и `overflow-y: auto` не может пр�
 }}>
   <img src="..." style={{ position: 'fixed', ... }} />
 </div>
-```
+\`\`\`
 
 ## Ключевые CSS свойства
 

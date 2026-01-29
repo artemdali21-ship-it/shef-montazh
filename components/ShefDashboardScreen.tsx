@@ -24,7 +24,6 @@ import {
   Send,
 } from 'lucide-react';
 import { Header } from './Header';
-import { BottomNav } from './BottomNav';
 
 interface CrewMember {
   id: number;

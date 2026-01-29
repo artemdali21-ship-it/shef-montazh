@@ -21,7 +21,6 @@ import {
   EyeOff,
 } from 'lucide-react';
 import { Header } from './Header';
-import { BottomNav } from './BottomNav';
 
 export default function RatingReviewScreen() {
   const router = useRouter()
@@ -232,46 +231,19 @@ export default function RatingReviewScreen() {
       style={{
         width: '100%',
         minHeight: '100vh',
-        backgroundImage: 'url(/images/bg-dashboard.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
+        background: 'linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 50%, #1A1A1A 100%)',
         fontFamily: "'Montserrat', system-ui, -apple-system, sans-serif",
         position: 'relative',
         overflowY: 'auto',
         overflowX: 'hidden',
       }}
     >
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.3)',
-          pointerEvents: 'none',
-          zIndex: 1,
-        }}
-      />
+      {/* RATING 3D ELEMENTS - HELMET AND CARABINER */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
+        <img src="/images/helmet333.png" className="absolute top-1/4 left-5 w-32 h-32" alt="" />
+        <img src="/images/carabiner.png" className="absolute bottom-20 right-10 w-28 h-28" style={{animation: 'float 6s ease-in-out infinite 0.7s', transform: 'rotate(15deg)'}} alt="" />
+      </div>
 
-      {/* FLOATING TAPE MAIN - Rating (SMALL - far) */}
-      <img
-        src="/images/tape-main.png"
-        alt=""
-        style={{
-          position: 'fixed',
-          bottom: '15%',
-          right: '4%',
-          width: '80px',
-          height: 'auto',
-          opacity: 0.1,
-          transform: 'rotate(45deg)',
-          zIndex: 0,
-          pointerEvents: 'none',
-          animation: 'float 6s ease-in-out infinite 1.5s',
-        }}
-      />
       <div style={{ position: 'relative', zIndex: 2 }}>
         {/* HEADER */}
         <div
