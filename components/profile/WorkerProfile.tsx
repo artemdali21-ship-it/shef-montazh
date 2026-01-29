@@ -54,38 +54,9 @@ export default function WorkerProfile() {
   ]
 
   return (
-    <div className="w-full min-h-screen flex flex-col bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
-      {/* HEADER */}
-      <header
-        className="h-16 flex items-center justify-between px-5 flex-shrink-0"
-        style={{
-          background: 'rgba(26, 26, 26, 0.95)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-        }}
-      >
-        <button
-          onClick={() => router.back()}
-          className="p-2 hover:bg-white/10 rounded-lg transition-all"
-        >
-          <ArrowLeft size={20} color="#FFFFFF" />
-        </button>
-
-        <h1 className="text-base font-bold text-white">Профиль</h1>
-
-        <button
-          onClick={() => console.log('Open settings')}
-          className="p-2 hover:bg-white/10 rounded-lg transition-all"
-        >
-          <Settings size={18} color="#FFFFFF" />
-        </button>
-      </header>
-
-      {/* CONTENT AREA - NOT SCROLLABLE, EXPANDS NATURALLY */}
-      <div className="flex-1 w-full pb-24 overflow-y-scroll" data-allow-scroll>
-        {/* PROFILE HEADER SECTION - GLASSMORPHIC WITH RAINBOW SPLASH */}
-        <div
+    <div className="w-full flex flex-col">
+      {/* PROFILE HEADER SECTION - GLASSMORPHIC WITH RAINBOW SPLASH */}
+      <div
           style={{
             padding: '20px',
             textAlign: 'center',

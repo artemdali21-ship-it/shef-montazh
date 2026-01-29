@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import WorkerProfile from '@/components/profile/WorkerProfile';
 import ClientProfile from '@/components/profile/ClientProfile';
+import WorkerLayout from '@/components/layouts/WorkerLayout';
+import ClientLayout from '@/components/layouts/ClientLayout';
 import { getUserRole } from '@/lib/auth';
 
 export default function ProfilePage() {
@@ -16,13 +18,13 @@ export default function ProfilePage() {
 
   if (!mounted) return null;
 
-  // Don't wrap with Layout - the parent layout already provides the navbar
-  // Just render the profile component directly
+  const Layout = role === 'worker' ? WorkerLayout : ClientLayout;
+
   return (
-    <>
+    <Layout>
       {role === 'worker' && <WorkerProfile />}
       {role === 'client' && <ClientProfile />}
       {role === 'shef' && <WorkerProfile />}
-    </>
+    </Layout>
   );
 }

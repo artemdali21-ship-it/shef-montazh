@@ -71,7 +71,7 @@ export default function ClientProfile({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#0F172A] to-[#1E293B] flex items-center justify-center">
+      <div className="flex items-center justify-center p-8">
         <div className="text-white text-lg">Загрузка профиля...</div>
       </div>
     )
@@ -79,7 +79,7 @@ export default function ClientProfile({
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#0F172A] to-[#1E293B] flex items-center justify-center p-4">
+      <div className="flex items-center justify-center p-4">
         <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 max-w-md">
           <p className="text-red-400 text-center mb-4">{error}</p>
           <button
@@ -96,30 +96,9 @@ export default function ClientProfile({
   const totalPosted = activeShifts.length + completedShifts.length
 
   return (
-    <div className="w-full min-h-screen flex flex-col bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
-      {/* HEADER SECTION */}
-      <header
-        className="pt-6 px-4 pb-8 text-center flex-shrink-0"
-        style={{
-          background: 'rgba(26, 26, 26, 0.5)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-        }}
-      >
-        {/* Settings Icon */}
-        <button 
-          onClick={() => router.push('/settings')}
-          className="absolute top-6 right-4 p-2 hover:bg-white/10 rounded-lg transition-all"
-        >
-          <Settings size={24} className="text-white" />
-        </button>
-      </header>
-
-      {/* MAIN CONTENT - NOT SCROLLABLE, EXPANDS NATURALLY */}
-      <div className="flex-1 w-full pb-24 overflow-y-scroll" data-allow-scroll>
-        {/* PROFILE INFO GLASSMORPHIC SECTION WITH RAINBOW SPLASH */}
-        <div
+    <div className="w-full flex flex-col">
+      {/* PROFILE INFO GLASSMORPHIC SECTION WITH RAINBOW SPLASH */}
+      <div
           style={{
             background: 'rgba(0, 0, 0, 0.4)',
             backdropFilter: 'blur(20px)',
@@ -164,7 +143,6 @@ export default function ClientProfile({
 
         {/* STATS ROW */}
         <div className="px-4 py-6 grid grid-cols-3 gap-3">
-          {/* Briefcase - Total Posted */}
         <div
           className="rounded-xl p-4 text-center"
           style={{
