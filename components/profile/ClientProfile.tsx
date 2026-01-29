@@ -6,13 +6,11 @@ import {
   Briefcase,
   Clock,
   CheckCircle,
-  Settings,
   Plus,
   ArrowRight,
   MessageCircle,
   Star,
 } from 'lucide-react'
-import { StarRating } from '../rating/StarRating'
 import { getClientProfile, getClientActiveShifts, getClientCompletedShifts } from '@/lib/api/profiles'
 
 interface ClientProfileProps {
@@ -179,8 +177,14 @@ export default function ClientProfile({
           <div className="text-4xl font-bold text-white mb-2">4.7</div>
           <p className="text-gray-300 text-sm mb-3">Средняя оценка от исполнителей</p>
           <p className="text-gray-500 text-xs mb-4">(23 отзыва)</p>
-          <div className="flex justify-center">
-            <StarRating rating={4.7} size="lg" showNumber={false} />
+          <div className="flex justify-center gap-1">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                size={20}
+                className={i < 4 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-400'}
+              />
+            ))}
           </div>
         </div>
       </div>
