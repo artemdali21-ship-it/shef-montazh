@@ -359,5 +359,5 @@ export default function ClientProfile({
         )}
       </div>
     </div>
-  );
+  )
 }
