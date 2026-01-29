@@ -83,7 +83,7 @@ export default function WorkerProfile() {
       </header>
 
       {/* CONTENT AREA - NOT SCROLLABLE, EXPANDS NATURALLY */}
-      <div className="flex-1 w-full pb-24">
+      <div className="flex-1 w-full pb-24 overflow-y-scroll" data-allow-scroll>
         {/* PROFILE HEADER SECTION - GLASSMORPHIC WITH RAINBOW SPLASH */}
         <div
           style={{

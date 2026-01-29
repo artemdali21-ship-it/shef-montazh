@@ -117,7 +117,7 @@ export default function ClientProfile({
       </header>
 
       {/* MAIN CONTENT - NOT SCROLLABLE, EXPANDS NATURALLY */}
-      <div className="flex-1 w-full pb-24">
+      <div className="flex-1 w-full pb-24 overflow-y-scroll" data-allow-scroll>
         {/* PROFILE INFO GLASSMORPHIC SECTION WITH RAINBOW SPLASH */}
         <div
           style={{
