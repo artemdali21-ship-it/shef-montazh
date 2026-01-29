@@ -126,7 +126,7 @@ const JobDetailsScreen = () => {
       />
 
       {/* SCROLLABLE CONTENT */}
-      <div className="flex-1 overflow-y-auto px-4 pt-4 pb-20 w-full">
+      <div className="flex-1 overflow-y-scroll px-4 pt-4 pb-24 w-full" data-allow-scroll>
         {/* HERO SECTION - ТОЛЬКО ЗДЕСЬ ОРАНЖЕВЫЙ ГРАДИЕНТ */}
         <section
           style={{

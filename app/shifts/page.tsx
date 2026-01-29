@@ -25,7 +25,7 @@ export default function ShiftsPage() {
 
   return (
     <WorkerLayout>
-      <div style={{ padding: '20px' }}>
+      <div style={{ padding: '20px' }} data-allow-scroll className="overflow-y-scroll">
         <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', marginBottom: '20px' }}>
           Мои смены
         </h1>
