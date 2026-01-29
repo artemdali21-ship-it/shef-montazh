@@ -12,13 +12,13 @@ export default function ProfilePage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setRole(getUserRole());
+    const userRole = getUserRole();
+    setRole(userRole);
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
-
-  const Layout = role === 'worker' ? WorkerLayout : ClientLayout;
+  // Use WorkerLayout by default, then switch based on role
+  const Layout = role === 'client' ? ClientLayout : WorkerLayout;
 
   return (
     <Layout>
