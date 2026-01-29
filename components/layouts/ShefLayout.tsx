@@ -20,7 +20,7 @@ export default function ShefLayout({ children }: ShefLayoutProps) {
   ];
 
   return (
-    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col overflow-hidden">
+    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col">
       {/* CONTENT */}
       <div className="flex-1 overflow-y-auto pb-24 w-full">
         {children}

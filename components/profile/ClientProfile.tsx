@@ -96,7 +96,7 @@ export default function ClientProfile({
   const totalPosted = activeShifts.length + completedShifts.length
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
+    <div className="w-full min-h-screen flex flex-col bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
       {/* HEADER SECTION */}
       <header
         className="pt-6 px-4 pb-8 text-center flex-shrink-0"
