@@ -116,7 +116,7 @@ const JobDetailsScreen = () => {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col overflow-hidden">
+    <div className="w-screen h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col">
       {/* HEADER */}
       <Header 
         title="Детали смены" 
@@ -126,7 +126,7 @@ const JobDetailsScreen = () => {
       />
 
       {/* SCROLLABLE CONTENT */}
-      <div className="flex-1 overflow-y-scroll px-4 pt-4 pb-24 w-full" data-allow-scroll>
+      <div className="flex-1 overflow-y-scroll w-full px-4 pt-4 pb-24" data-allow-scroll style={{ WebkitOverflowScrolling: 'touch' }}>
         {/* HERO SECTION - ТОЛЬКО ЗДЕСЬ ОРАНЖЕВЫЙ ГРАДИЕНТ */}
         <section
           style={{
