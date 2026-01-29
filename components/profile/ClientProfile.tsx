@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Briefcase,
   Clock,
@@ -10,8 +10,8 @@ import {
   ArrowRight,
   MessageCircle,
   Star,
-} from 'lucide-react'
-import { getClientProfile, getClientActiveShifts, getClientCompletedShifts } from '@/lib/api/profiles'
+} from 'lucide-react';
+import { getClientProfile, getClientActiveShifts, getClientCompletedShifts } from '@/lib/api/profiles';
 
 interface ClientProfileProps {
   userId?: string

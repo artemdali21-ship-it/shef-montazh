@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { ArrowLeft, Settings, CheckCircle, Circle, User, Briefcase, Star, Shield } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react';
+import { ArrowLeft, Settings, CheckCircle, Circle, User, Briefcase, Star, Shield } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const userProfile = {
   id: 'SHF-0001',
