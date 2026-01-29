@@ -29,7 +29,6 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import { Header } from './Header';
-import { BottomNav } from './BottomNav';
 
 export default function PaymentDetailScreen() {
   const [activeStatus] = useState('current');
@@ -53,37 +52,29 @@ export default function PaymentDetailScreen() {
     {
       id: 1,
       status: 'completed',
-      title: 'Средства заморожены',
-      description: 'Заказчик внёс оплату на эскроу-счёт',
+      title: 'Вы откликнулись',
+      description: 'Заявка отправлена заказчику',
       timestamp: '27 января, 14:30',
-      icon: Lock,
+      icon: Send,
     },
     {
       id: 2,
       status: 'completed',
-      title: 'Вы откликнулись',
-      description: 'Заявка отправлена заказчику',
+      title: 'Заявка одобрена',
+      description: 'Вас выбрали для выполнения работ',
       timestamp: '27 января, 14:45',
-      icon: Send,
+      icon: CheckCircle,
     },
     {
       id: 3,
       status: 'completed',
-      title: 'Заявка одобрена',
-      description: 'Вас выбрали для выполнения работ',
-      timestamp: '27 января, 16:20',
-      icon: CheckCircle,
-    },
-    {
-      id: 4,
-      status: 'completed',
       title: 'Вы вышли на объект',
       description: 'Check-in подтверждён фотографией',
-      timestamp: '28 января, 18:05',
+      timestamp: '27 января, 16:20',
       icon: MapPin,
     },
     {
-      id: 5,
+      id: 4,
       status: 'current',
       title: 'Смена в процессе',
       description: 'Ожидается завершение работ',
@@ -91,7 +82,7 @@ export default function PaymentDetailScreen() {
       icon: Clock,
     },
     {
-      id: 6,
+      id: 5,
       status: 'pending',
       title: 'Подтверждение шефа',
       description: 'Шеф-монтажник должен принять работу',
@@ -99,11 +90,19 @@ export default function PaymentDetailScreen() {
       icon: UserCheck,
     },
     {
+      id: 6,
+      status: 'pending',
+      title: 'Взаимная оценка',
+      description: 'Вы оцениваете работу друг друга',
+      timestamp: 'После завершения',
+      icon: CheckCircle,
+    },
+    {
       id: 7,
       status: 'pending',
       title: 'Выплата',
       description: 'Средства поступят на ваш счёт',
-      timestamp: 'После подтверждения',
+      timestamp: 'После оценки',
       icon: Wallet,
     },
   ];
@@ -133,11 +132,11 @@ export default function PaymentDetailScreen() {
   ];
 
   const statusStyles = {
-    frozen: {
-      bg: 'rgba(255, 214, 10, 0.15)',
-      border: '#FFD60A',
-      color: '#FFD60A',
-      text: 'ЗАМОРОЖЕНО',
+    pending: {
+      bg: 'rgba(232, 93, 47, 0.15)',
+      border: '#E85D2F',
+      color: '#E85D2F',
+      text: 'ОЖИДАЕТСЯ',
     },
     approved: {
       bg: 'rgba(59, 130, 246, 0.15)',
@@ -166,16 +165,18 @@ export default function PaymentDetailScreen() {
       style={{
         width: '100%',
         minHeight: '100vh',
-        backgroundImage: 'url(/images/bg-dashboard.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
+        background: 'linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 50%, #1A1A1A 100%)',
         fontFamily: "'Montserrat', system-ui, -apple-system, sans-serif",
         position: 'relative',
         overflowY: 'auto',
         overflowX: 'hidden',
       }}
     >
+      {/* PAYMENT 3D ELEMENTS - BOLTS AND HELMET */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
+        <img src="/images/bolts.png" className="absolute top-20 right-10 w-20 h-20" alt="" />
+        <img src="/images/helmet-silver.png" className="absolute bottom-1/4 left-8 w-36 h-36" style={{animation: 'float 8s ease-in-out infinite 1.2s', transform: 'rotate(-15deg)'}} alt="" />
+      </div>
       <div
         style={{
           position: 'fixed',

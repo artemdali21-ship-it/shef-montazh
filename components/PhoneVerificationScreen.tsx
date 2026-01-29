@@ -95,20 +95,20 @@ export default function PhoneVerificationScreen() {
       {/* Removed to prevent overflow issues in Telegram Mini App */}
 
       <div className="relative z-10">
-        <header className="h-16 flex items-center px-4">
+        <header className="h-16 flex items-center px-5">
           <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
-            <ArrowLeft className="w-5 h-5 text-white" strokeWidth={1.5} />
+            <ArrowLeft size={20} strokeWidth={2} className="text-white" />
           </button>
         </header>
 
-        <div className="px-4 py-8 flex flex-col justify-center" style={{ minHeight: 'calc(100vh - 64px)' }}>
-          <div className="mb-10">
+        <div className="px-5 py-8 flex flex-col justify-center" style={{ minHeight: 'calc(100vh - 64px)' }}>
+          <div className="mb-12">
             <h1 className="text-3xl font-bold text-white mb-3">Подтверждение номера</h1>
-            <p className="text-[#9B9B9B] font-medium">Мы отправили код подтверждения на ваш номер</p>
+            <p className="text-gray-300 text-base font-normal">Мы отправили код подтверждения на ваш номер</p>
           </div>
 
-          <div className="space-y-6 flex flex-col items-center">
-            <div className="flex gap-2 justify-center">
+          <div className="space-y-8 flex flex-col items-center">
+            <div className="flex gap-3 justify-center">
               {code.map((digit, index) => (
                 <input
                   key={index}
@@ -118,7 +118,7 @@ export default function PhoneVerificationScreen() {
                   maxLength={1}
                   value={digit}
                   onChange={(e) => handleCodeChange(index, e.target.value)}
-                  className="w-12 h-14 bg-white/10 border-2 border-white/20 rounded-lg text-center text-xl font-bold text-white focus:outline-none focus:border-[#E85D2F] transition-all"
+                  className="w-12 h-12 bg-white/10 border-2 border-white/20 rounded-lg text-center text-2xl font-bold text-white focus:outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
                 />
               ))}
             </div>
@@ -126,16 +126,16 @@ export default function PhoneVerificationScreen() {
             <button
               onClick={handleVerify}
               disabled={code.join('').length !== 6 || loading}
-              className="w-full max-w-xs h-14 bg-[#E85D2F] hover:bg-[#D94D1F] active:scale-95 disabled:opacity-50 rounded-xl font-bold text-white transition-all"
+              className="w-full max-w-xs h-12 bg-[#E85D2F] hover:bg-[#D04D1F] active:scale-95 disabled:opacity-50 rounded-lg font-semibold text-white transition-all duration-300"
             >
               {loading ? 'Проверяем...' : 'Подтвердить'}
             </button>
 
-            <div className="text-center mt-4">
-              <p className="text-sm text-[#9B9B9B] font-medium mb-2">Не получили код?</p>
+            <div className="text-center mt-6">
+              <p className="text-sm text-gray-300 font-normal mb-3">Не получили код?</p>
               <button 
                 disabled={countdown > 0}
-                className="text-sm text-[#E85D2F] font-bold underline hover:text-[#FF8B4A] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-sm text-[#E85D2F] font-semibold hover:text-[#FF8B4A] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
                 Отправить заново ({countdown} сек)
               </button>

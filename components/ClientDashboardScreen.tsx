@@ -19,8 +19,6 @@ import {
   BarChart3,
 } from 'lucide-react'
 import { Header } from './Header'
-import { BottomNav } from './BottomNav'
-import CreateShiftScreen from './CreateShiftScreen'
 
 const clientData = {
   company: {
@@ -96,7 +94,6 @@ const quickActions = [
 export default function ClientDashboardScreen() {
   const router = useRouter()
   const [fabHovered, setFabHovered] = useState(false)
-  const [showCreateShift, setShowCreateShift] = useState(false)
 
   return (
     <div
@@ -713,7 +710,7 @@ export default function ClientDashboardScreen() {
                     key={idx}
                     onClick={() => {
                       if (action.label === 'Создать смену') {
-                        setShowCreateShift(true)
+                        router.push('/create-shift')
                       }
                       console.log(`[v0] Action: ${action.label}`)
                     }}
@@ -788,12 +785,12 @@ export default function ClientDashboardScreen() {
         {/* CREATE SHIFT FAB */}
         <button
           onClick={() => {
-            setShowCreateShift(true)
-            console.log('[v0] Open create shift modal')
+            router.push('/create-shift')
+            console.log('[v0] Open create shift page')
           }}
           style={{
-            position: 'fixed',
-            bottom: '24px',
+            position: 'absolute',
+            bottom: '0px',
             right: '20px',
             width: '64px',
             height: '64px',
@@ -840,39 +837,6 @@ export default function ClientDashboardScreen() {
           }
         }
       `}</style>
-
-      {/* CREATE SHIFT MODAL */}
-      {showCreateShift && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0, 0, 0, 0.6)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 50,
-          backdropFilter: 'blur(4px)',
-          WebkitBackdropFilter: 'blur(4px)',
-        }}>
-          <div style={{
-            position: 'relative',
-            width: '90%',
-            maxWidth: '600px',
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            background: '#1A1A1A',
-            borderRadius: '16px',
-          }}>
-            <CreateShiftScreen 
-              onClose={() => setShowCreateShift(false)}
-              onSuccess={() => {
-                setShowCreateShift(false)
-                console.log('[v0] Shift created successfully')
-              }}
-            />
-          </div>
-        </div>
-      )}
     </div>
   )
 }

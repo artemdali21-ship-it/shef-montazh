@@ -1,5 +1,4 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -192,11 +191,11 @@ select {
   font-size: 16px;
 }
 
-/* Safe area support */
+/* Safe area support - Telegram safe area handled via viewport-fit: cover */
 @supports (padding: max(0px)) {
   body {
-    padding-left: max(12px, env(safe-area-inset-left));
-    padding-right: max(12px, env(safe-area-inset-right));
-    padding-top: max(12px, env(safe-area-inset-top));
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
   }
 }

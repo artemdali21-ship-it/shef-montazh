@@ -8,8 +8,10 @@ export const metadata = {
 
 export default function RegisterPage() {
   return (
-    <Suspense fallback={<div className="w-screen h-screen bg-[#1A1A1A]" />}>
-      <RegistrationScreen />
-    </Suspense>
+    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] overflow-hidden">
+      <Suspense fallback={<div className="w-screen h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]" />}>
+        <RegistrationScreen />
+      </Suspense>
+    </div>
   )
 }

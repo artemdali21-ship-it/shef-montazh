@@ -22,7 +22,6 @@ import {
   XCircle,
 } from 'lucide-react'
 import { Header } from './Header'
-import { BottomNav } from './BottomNav'
 
 interface Application {
   id: number
@@ -220,6 +219,9 @@ export default function MyApplicationsScreen() {
         fontFamily: 'Montserrat, system-ui, -apple-system, sans-serif',
         display: 'flex',
         flexDirection: 'column',
+        width: '100%',
+        height: '100vh',
+        overflow: 'hidden',
       }}
     >
       <div
@@ -815,8 +817,6 @@ export default function MyApplicationsScreen() {
           </div>
       </div>
 
-      {/* BOTTOM NAVIGATION */}
-      <BottomNav userType="worker" />
     </div>
   )
 }

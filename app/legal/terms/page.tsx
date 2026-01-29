@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { ArrowLeft, Copy, Download } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { NoisePattern } from '@/components/noise-pattern';
 
 export default function Terms() {
   const router = useRouter();
@@ -130,16 +129,7 @@ Telegram: @shef_montazh_support`;
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundImage: 'url(/images/bg-dashboard.jpg)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundAttachment: 'fixed',
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
-      <NoisePattern />
+    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col overflow-hidden">
 
       <header style={{
         position: 'relative',

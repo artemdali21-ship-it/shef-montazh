@@ -1,8 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { ArrowLeft, Copy, DollarSign } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { NoisePattern } from '@/components/noise-pattern';
 
 export default function Offer() {
   const router = useRouter();
@@ -96,7 +95,95 @@ export default function Offer() {
 
 Обход Платформы влечёт штраф 50,000₽ и блокировку аккаунта.
 
-## 6. Отмена смены
+## 6. Отмена смены`
+
+  return (
+    <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col overflow-hidden">
+      {/* HEADER */}
+      <header className="flex items-center justify-between px-4 py-4 border-b border-white/10 bg-white/5 backdrop-blur">
+        <button
+          onClick={() => router.back()}
+          className="p-2 hover:bg-white/10 rounded-lg transition"
+        >
+          <ArrowLeft size={20} className="text-white" />
+        </button>
+        <h1 className="text-lg font-bold text-white flex-1 text-center">Оферта</h1>
+        <div className="w-8" />
+      </header>
+
+      {/* SCROLLABLE CONTENT */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-2xl mx-auto px-4 py-6 pb-24">
+          <div className="prose prose-invert max-w-none">
+            {offerContent.split('\n\n').map((section, idx) => {
+              if (section.startsWith('# ')) {
+                return (
+                  <h1 key={idx} className="text-2xl font-bold text-white mt-6 mb-4">
+                    {section.replace('# ', '')}
+                  </h1>
+                );
+              }
+              if (section.startsWith('## ')) {
+                return (
+                  <h2 key={idx} className="text-xl font-bold text-white mt-5 mb-3">
+                    {section.replace('## ', '')}
+                  </h2>
+                );
+              }
+              if (section.startsWith('### ')) {
+                return (
+                  <h3 key={idx} className="text-lg font-bold text-white mt-4 mb-2">
+                    {section.replace('### ', '')}
+                  </h3>
+                );
+              }
+              if (section.startsWith('**')) {
+                return (
+                  <p key={idx} className="text-white/90 mb-3 font-semibold">
+                    {section}
+                  </p>
+                );
+              }
+              if (section.startsWith('- ')) {
+                return (
+                  <ul key={idx} className="list-disc list-inside text-white/80 mb-3 space-y-1">
+                    {section.split('\n').map((item, i) => (
+                      <li key={i}>{item.replace('- ', '')}</li>
+                    ))}
+                  </ul>
+                );
+              }
+              if (section.startsWith('|')) {
+                return (
+                  <div key={idx} className="overflow-x-auto mb-4">
+                    <table className="w-full text-sm text-white/80 border border-white/20">
+                      <tbody>
+                        {section.split('\n').map((row, i) => (
+                          <tr key={i} className="border-b border-white/20">
+                            {row.split('|').filter(Boolean).map((cell, j) => (
+                              <td key={j} className="px-4 py-2 border-r border-white/10 last:border-r-0">
+                                {cell.trim()}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                );
+              }
+              return (
+                <p key={idx} className="text-white/80 mb-3 leading-relaxed">
+                  {section}
+                </p>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 - **Более чем за 24 часа** — бесплатно
 - **Менее чем за 24 часа** — комиссия 50%
