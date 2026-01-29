@@ -20,7 +20,7 @@ export default function ShefLayout({ children }: ShefLayoutProps) {
   ];
 
   return (
-    <div className="w-screen h-screen flex flex-col bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] overflow-hidden">
+    <div className="w-screen h-screen flex flex-col bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
       {/* CONTENT - скроллится свободно */}
       <div className="flex-1 overflow-y-scroll w-full pb-24">
         {children}

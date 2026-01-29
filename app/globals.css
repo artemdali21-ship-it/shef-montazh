@@ -143,7 +143,6 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 /* Font weight utility classes */
