@@ -22,7 +22,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   return (
     <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col overflow-hidden">
       {/* CONTENT */}
-      <div className="flex-1 overflow-y-auto pb-24 w-full">
+      <div className="flex-1 overflow-y-scroll pb-24 w-full" data-allow-scroll>
         {children}
       </div>
 
