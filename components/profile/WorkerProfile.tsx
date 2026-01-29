@@ -43,16 +43,6 @@ export default function WorkerProfile() {
     setSelectedSkills(newSkills)
   }
 
-  // Calculate stats from ratings
-  const averageRating = ratings.length > 0 
-    ? (ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length).toFixed(1)
-    : '0.0'
-  
-  const completedShifts = workHistory.length
-  const reliability = completedShifts > 0 
-    ? Math.round((completedShifts / (completedShifts + 2)) * 100) // Mock calculation
-    : 0
-
   const availableSkills = [
     'Монтаж',
     'Декоратор',
@@ -62,30 +52,6 @@ export default function WorkerProfile() {
     'Бутафор',
     'Разнорабочий'
   ]
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center">
-        <div className="text-white text-lg">Загрузка профиля...</div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4">
-        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 max-w-md">
-          <p className="text-red-400 text-center mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="w-full py-3 bg-red-500/20 hover:bg-red-500/30 rounded-xl text-red-400 transition"
-          >
-            Попробовать снова
-          </button>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="w-full flex flex-col overflow-hidden">
