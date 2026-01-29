@@ -1,7 +1,7 @@
-'use client';
+'use client'
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   Briefcase,
   Clock,
@@ -11,86 +11,87 @@ import {
   ArrowRight,
   MessageCircle,
   Star,
-} from 'lucide-react';
-import { StarRating } from '../rating/StarRating';
+} from 'lucide-react'
+import { StarRating } from '../rating/StarRating'
+import { getClientProfile, getClientActiveShifts, getClientCompletedShifts } from '@/lib/api/profiles'
 
 interface ClientProfileProps {
-  userId?: string;
-  companyName?: string;
-  companyId?: string;
-  isPremium?: boolean;
+  userId?: string
+  companyName?: string
+  companyId?: string
+  isPremium?: boolean
 }
 
-interface ActiveShift {
-  id: string;
-  title: string;
-  location: string;
-  date: string;
-  status: 'open' | 'in_progress';
-  responsesCount: number;
-  price: number;
-}
+export default function ClientProfile({
+  userId = 'mock-client-id',
+  companyName,
+  companyId,
+  isPremium = true,
+}: ClientProfileProps) {
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  
+  const [profile, setProfile] = useState<any>(null)
+  const [activeShifts, setActiveShifts] = useState<any[]>([])
+  const [completedShifts, setCompletedShifts] = useState<any[]>([])
 
-interface CompletedShift {
-  id: string;
-  workerName: string;
-  title: string;
-  rating: number;
-  date: string;
-}
+  useEffect(() => {
+    async function loadProfileData() {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        // Load profile
+        const { data: profileData, error: profileError } = await getClientProfile(userId)
+        if (profileError) throw profileError
+        
+        // Load active shifts
+        const { data: activeData, error: activeError } = await getClientActiveShifts(userId)
+        if (activeError) throw activeError
+        
+        // Load completed shifts
+        const { data: completedData, error: completedError } = await getClientCompletedShifts(userId)
+        if (completedError) throw completedError
+        
+        setProfile(profileData)
+        setActiveShifts(activeData || [])
+        setCompletedShifts(completedData || [])
+        
+      } catch (err) {
+        console.error('Error loading client profile:', err)
+        setError('Не удалось загрузить профиль')
+      } finally {
+        setLoading(false)
+      }
+    }
 
-const mockStats = {
-  totalPosted: 47,
-  activeShifts: 3,
-  completed: 44,
-};
+    loadProfileData()
+  }, [userId])
 
-const mockActiveShifts: ActiveShift[] = [
-  {
-    id: '1',
-    title: 'Монтаж выставочного стенда',
-    location: 'Москва, Центр',
-    date: '28 января, 18:00',
-    status: 'open',
-    responsesCount: 5,
-    price: 2500,
-  },
-  {
-    id: '2',
-    title: 'Демонтаж конструкции',
-    location: 'Санкт-Петербург',
-    date: '29 января, 10:00',
-    status: 'in_progress',
-    responsesCount: 2,
-    price: 3000,
-  },
-  {
-    id: '3',
-    title: 'Сборка декораций',
-    location: 'Москва, ВДНХ',
-    date: '30 января, 14:00',
-    status: 'open',
-    responsesCount: 8,
-    price: 1800,
-  },
-];
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#0F172A] to-[#1E293B] flex items-center justify-center">
+        <div className="text-white text-lg">Загрузка профиля...</div>
+      </div>
+    )
+  }
 
-const mockCompletedShifts: CompletedShift[] = [
-  {
-    id: '1',
-    workerName: 'Иван Петров',
-    title: 'Монтаж выставки',
-    rating: 5,
-    date: '24 января 2026',
-  },
-  {
-    id: '2',
-    workerName: 'Сергей Волков',
-    title: 'Демонтаж конструкции',
-    rating: 4.5,
-    date: '22 января 2026',
-  },
-];
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#0F172A] to-[#1E293B] flex items-center justify-center p-4">
+        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 max-w-md">
+          <p className="text-red-400 text-center mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full py-3 bg-red-500/20 hover:bg-red-500/30 rounded-xl text-red-400 transition"
+          >
+            Попробовать снова
+          </button>
+        </div>
+      </div>
+    )
+  }
 
 export default function ClientProfile({
   userId = 'CL-47821',
@@ -113,7 +114,10 @@ export default function ClientProfile({
         }}
       >
         {/* Settings Icon */}
-        <button className="absolute top-6 right-4 p-2 hover:bg-white/10 rounded-lg transition-all">
+        <button 
+          onClick={() => router.push('/settings')}
+          className="absolute top-6 right-4 p-2 hover:bg-white/10 rounded-lg transition-all"
+        >
           <Settings size={24} className="text-white" />
         </button>
       </header>
@@ -176,11 +180,11 @@ export default function ClientProfile({
           }}
         >
           <Briefcase size={24} className="text-[#E85D2F] mx-auto mb-2" />
-          <div className="text-xl font-bold text-white">{mockStats.totalPosted}</div>
+          <div className="text-xl font-bold text-white">{totalPosted}</div>
           <div className="text-xs text-gray-400">Опубликовано</div>
         </div>
 
-        {/* Clock - Active Shifts */}
+        {/* Active Shifts */}
         <div
           className="rounded-xl p-4 text-center"
           style={{
@@ -190,11 +194,11 @@ export default function ClientProfile({
           }}
         >
           <Clock size={24} className="text-[#BFFF00] mx-auto mb-2" />
-          <div className="text-xl font-bold text-white">{mockStats.activeShifts}</div>
+          <div className="text-xl font-bold text-white">{activeShifts.length}</div>
           <div className="text-xs text-gray-400">Активных</div>
         </div>
 
-        {/* CheckCircle - Completed */}
+        {/* Completed */}
         <div
           className="rounded-xl p-4 text-center"
           style={{
@@ -203,8 +207,8 @@ export default function ClientProfile({
             border: '1px solid rgba(255, 255, 255, 0.1)',
           }}
         >
-          <CheckCircle size={24} className="text-green-400 mx-auto mb-2" />
-          <div className="text-xl font-bold text-white">{mockStats.completed}</div>
+          <CheckCircle size={24} className="text-[#4ADE80] mx-auto mb-2" />
+          <div className="text-xl font-bold text-white">{completedShifts.length}</div>
           <div className="text-xs text-gray-400">Завершено</div>
         </div>
         </div>
@@ -238,7 +242,7 @@ export default function ClientProfile({
           </button>
         </div>
 
-        {mockActiveShifts.length === 0 ? (
+        {activeShifts.length === 0 ? (
           <div
             className="rounded-xl p-8 text-center"
             style={{
@@ -247,50 +251,53 @@ export default function ClientProfile({
               border: '1px solid rgba(255, 255, 255, 0.1)',
             }}
           >
-            <Briefcase size={32} className="text-gray-500 mx-auto mb-3" />
-            <p className="text-gray-400 mb-3">Нет активных смен</p>
-            <button className="text-[#E85D2F] font-semibold hover:text-[#FF8855]">
-              Создать первую смену
-            </button>
+            <Clock size={48} className="text-gray-600 mx-auto mb-3" />
+            <p className="text-gray-400">Нет активных смен</p>
+            <p className="text-gray-500 text-sm mt-2">
+              Создайте новую смену, чтобы найти исполнителей
+            </p>
           </div>
         ) : (
           <div className="space-y-3">
-            {mockActiveShifts.map((shift) => (
-              <button
+            {activeShifts.slice(0, 3).map((shift) => (
+              <div
                 key={shift.id}
-                onClick={() => router.push(`/job/${shift.id}`)}
-                className="w-full text-left rounded-xl p-4 hover:bg-white/10 transition-all"
+                onClick={() => router.push(`/shift/${shift.id}`)}
+                className="rounded-xl p-4 cursor-pointer hover:bg-white/10 transition-all"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
+                  background: 'rgba(255, 255, 255, 0.05)',
                   backdropFilter: 'blur(20px)',
                   border: '1px solid rgba(255, 255, 255, 0.1)',
                 }}
               >
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-white font-semibold">{shift.title}</h3>
-                  <span className="text-[#E85D2F] font-bold">{shift.price}₽</span>
-                </div>
-                <div className="text-sm text-gray-400 mb-3">
-                  📍 {shift.location} • {shift.date}
-                </div>
-                <div className="flex justify-between items-center">
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1">
+                    <h3 className="text-white font-semibold mb-1">{shift.title}</h3>
+                    <p className="text-gray-400 text-sm">{shift.location_address}</p>
+                  </div>
                   <span
-                    className="text-xs px-2 py-1 rounded-full"
-                    style={{
-                      background:
-                        shift.status === 'open'
-                          ? 'rgba(191, 255, 0, 0.2)'
-                          : 'rgba(72, 187, 120, 0.2)',
-                      color: shift.status === 'open' ? '#BFFF00' : '#48BB78',
-                    }}
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      shift.status === 'open'
+                        ? 'bg-blue-500/20 text-blue-400'
+                        : 'bg-green-500/20 text-green-400'
+                    }`}
                   >
                     {shift.status === 'open' ? 'Открыта' : 'В работе'}
                   </span>
-                  <span className="text-xs text-gray-400">
-                    Откликов: <span className="text-white font-semibold">{shift.responsesCount}</span>
+                </div>
+
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/10">
+                  <div className="flex items-center gap-2">
+                    <MessageCircle size={16} className="text-gray-400" />
+                    <span className="text-sm text-gray-400">
+                      {shift.applications_count || 0} откликов
+                    </span>
+                  </div>
+                  <span className="text-white font-bold">
+                    {shift.pay_amount.toLocaleString('ru-RU')} ₽
                   </span>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         )}
@@ -326,7 +333,7 @@ export default function ClientProfile({
         <div className="px-4 py-6">
         <h2 className="text-lg font-bold text-white mb-4">Последние завершённые</h2>
 
-        {mockCompletedShifts.length === 0 ? (
+        {completedShifts.length === 0 ? (
           <div
             className="rounded-xl p-8 text-center"
             style={{
@@ -335,29 +342,45 @@ export default function ClientProfile({
               border: '1px solid rgba(255, 255, 255, 0.1)',
             }}
           >
-            <CheckCircle size={32} className="text-gray-500 mx-auto mb-3" />
-            <p className="text-gray-400">Ещё нет завершённых смен</p>
+            <CheckCircle size={48} className="text-gray-600 mx-auto mb-3" />
+            <p className="text-gray-400">Нет завершенных смен</p>
           </div>
         ) : (
           <div className="space-y-3">
-            {mockCompletedShifts.map((shift) => (
+            {completedShifts.slice(0, 2).map((shift) => (
               <div
                 key={shift.id}
-                className="rounded-xl p-4"
+                onClick={() => router.push(`/shift/${shift.id}`)}
+                className="rounded-xl p-4 cursor-pointer hover:bg-white/10 transition-all"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
+                  background: 'rgba(255, 255, 255, 0.05)',
                   backdropFilter: 'blur(20px)',
                   border: '1px solid rgba(255, 255, 255, 0.1)',
                 }}
               >
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h3 className="text-white font-semibold">{shift.workerName}</h3>
-                    <p className="text-sm text-gray-400">{shift.title}</p>
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1">
+                    <h3 className="text-white font-semibold mb-1">{shift.title}</h3>
+                    <p className="text-gray-400 text-sm">
+                      {new Date(shift.created_at).toLocaleDateString('ru-RU', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                      })}
+                    </p>
                   </div>
-                  <StarRating rating={shift.rating} size="sm" showNumber={true} />
+                  <div className="flex items-center gap-1">
+                    <Star size={16} className="text-yellow-400 fill-yellow-400" />
+                    <span className="text-white font-medium">5.0</span>
+                  </div>
                 </div>
-                <p className="text-xs text-gray-500">{shift.date}</p>
+
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/10">
+                  <span className="text-sm text-gray-400">{shift.location_address}</span>
+                  <span className="text-white font-bold">
+                    {shift.pay_amount.toLocaleString('ru-RU')} ₽
+                  </span>
+                </div>
               </div>
             ))}
           </div>
