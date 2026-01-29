@@ -1,4 +1,5 @@
-'use client';
+'use client'
+
 import React from 'react';
 import { MapPin, Clock, Wrench, TrendingUp, ChevronRight, Star } from 'lucide-react';
 import { CustomAvatar } from '../custom/custom-avatar';

@@ -1,4 +1,5 @@
-'use client';
+'use client'
+
 import { useRouter, usePathname } from 'next/navigation';
 import { Briefcase, FileText, User, LayoutDashboard, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
