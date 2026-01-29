@@ -54,10 +54,10 @@ export default function WorkerProfile() {
   ]
 
   return (
-    <div className="w-full flex flex-col overflow-hidden">
+    <div className="w-full min-h-screen flex flex-col bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
       {/* HEADER */}
       <header
-        className="fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-5 z-10"
+        className="h-16 flex items-center justify-between px-5 flex-shrink-0"
         style={{
           background: 'rgba(26, 26, 26, 0.95)',
           backdropFilter: 'blur(20px)',
@@ -82,8 +82,8 @@ export default function WorkerProfile() {
         </button>
       </header>
 
-      {/* CONTENT AREA - SCROLLABLE */}
-      <div className="flex-1 overflow-y-scroll pb-24 relative z-5">
+      {/* CONTENT AREA - NOT SCROLLABLE, EXPANDS NATURALLY */}
+      <div className="flex-1 w-full pb-24">
         {/* PROFILE HEADER SECTION - GLASSMORPHIC WITH RAINBOW SPLASH */}
         <div
           style={{
