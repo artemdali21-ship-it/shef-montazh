@@ -52,7 +52,7 @@ export function BottomNav({ userType: propsUserType }: BottomNavProps) {
   
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 max-w-[390px] mx-auto"
+      className="fixed bottom-0 left-0 right-0 max-w-[390px] mx-auto z-40"
       style={{
         background: 'rgba(255, 255, 255, 0.1)',
         backdropFilter: 'blur(20px)',

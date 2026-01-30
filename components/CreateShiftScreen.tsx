@@ -239,7 +239,7 @@ export default function CreateShiftScreen({ onClose, onSuccess }: CreateShiftScr
       </div>
 
       {/* BOTTOM CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#1A1A1A] border-t border-white/10 p-5 z-40">
+      <div className="fixed bottom-0 left-0 right-0 bg-[#1A1A1A] border-t border-white/10 p-5 z-50">
         <div className="flex gap-3">
           {step === 2 && (
             <button
