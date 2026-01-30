@@ -17,17 +17,55 @@ export default function ShiftDetailPage() {
   const [showSuccess, setShowSuccess] = useState(false)
 
   useEffect(() => {
-    async function loadShift() {
+    async function loadShiftData() {
       try {
         setLoading(true)
         setError(null)
-        
-        const { data, error: fetchError } = await getShiftById(shiftId)
-        
-        if (fetchError) throw fetchError
-        if (!data) throw new Error('Смена не найдена')
-        
-        setShift(data)
+
+        // Load shift
+        const { data: shiftData, error: shiftError } = await getShiftById(shiftId)
+
+        if (shiftError) throw shiftError
+        if (!shiftData) throw new Error('Смена не найдена')
+
+        setShift(shiftData)
+
+        // Load client info
+        if (shiftData.client_id) {
+          const { data: clientData, error: clientError } = await getUserById(shiftData.client_id)
+          if (!clientError && clientData) {
+            setClient(clientData)
+          }
+        }
+
+        // Check if already applied (only for open shifts)
+        if (shiftData.status === 'open') {
+          const { data: applicationData } = await checkExistingApplication(shiftId, MOCK_WORKER_ID)
+          if (applicationData) {
+            setHasApplied(true)
+          }
+        }
+
+        // Load pending applications count if user is shift owner
+        if (shiftData.client_id === currentUserId) {
+          const { count } = await getPendingApplicationsCount(shiftId)
+          setPendingApplicationsCount(count || 0)
+        }
+
+        // Check if worker is assigned to this shift
+        const { data: workerStatus } = await getWorkerShiftStatus(shiftId, MOCK_WORKER_ID)
+        if (workerStatus) {
+          setWorkerShiftStatus(workerStatus.status as 'confirmed' | 'on_way' | 'checked_in' | 'checked_out')
+        }
+
+        // Check if user has already rated this shift
+        if (shiftData.status === 'completed') {
+          const userIdToRate = shiftData.client_id === currentUserId ? MOCK_WORKER_ID : shiftData.client_id
+          const { data: ratingData } = await getRating(shiftId, currentUserId, userIdToRate || '')
+          if (ratingData) {
+            setUserRating(ratingData)
+          }
+        }
       } catch (err) {
         console.error('Error loading shift:', err)
         setError('Не удалось загрузить информацию о смене')
@@ -37,7 +75,7 @@ export default function ShiftDetailPage() {
     }
 
     if (shiftId) {
-      loadShift()
+      loadShiftData()
     }
   }, [shiftId])
 
@@ -123,19 +161,67 @@ export default function ShiftDetailPage() {
       </div>
 
       <div className="p-4 space-y-4">
+        {/* Client Info Card */}
+        {client && (
+          <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5">
+            <p className="text-xs text-gray-400 mb-3">Заказчик</p>
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                {client.avatar_url ? (
+                  <img
+                    src={client.avatar_url}
+                    alt={client.full_name}
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  client.full_name.charAt(0).toUpperCase()
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="text-white font-semibold">{client.full_name}</h3>
+                  {client.gosuslugi_verified && (
+                    <Shield className="w-4 h-4 text-blue-400" />
+                  )}
+                  {client.is_verified && (
+                    <CheckCircle className="w-4 h-4 text-green-400" />
+                  )}
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                    <span className="text-gray-300">{(client.rating || 0).toFixed(1)}</span>
+                  </div>
+                  <span className="text-gray-400">•</span>
+                  <span className="text-gray-400">{client.total_shifts || 0} смен</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Main Info Card */}
         <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
           <div className="mb-4">
-            <span className="inline-block px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-xs font-medium mb-3">
-              {shift.category}
-            </span>
+            <div className="flex items-center justify-between mb-3">
+              <span className="inline-block px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-xs font-medium">
+                {shift.category}
+              </span>
+              <ShiftStatus
+                status={shift.status as 'open' | 'accepted' | 'on_way' | 'checked_in' | 'completed'}
+                size="sm"
+              />
+            </div>
             <h2 className="text-2xl font-bold text-white mb-2">{shift.title}</h2>
           </div>
 
           {shift.description && (
-            <p className="text-gray-300 text-sm leading-relaxed mb-4 pb-4 border-b border-white/10">
-              {shift.description}
-            </p>
+            <div className="mb-4 pb-4 border-b border-white/10">
+              <p className="text-xs text-gray-400 mb-2">Описание</p>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                {shift.description}
+              </p>
+            </div>
           )}
 
           <div className="space-y-3">
@@ -165,7 +251,7 @@ export default function ShiftDetailPage() {
               </div>
             </div>
 
-            {shift.required_workers > 1 && (
+            {shift.required_workers && shift.required_workers > 1 && (
               <div className="flex items-start gap-3">
                 <Users className="w-5 h-5 text-orange-400 mt-0.5 flex-shrink-0" />
                 <div>
@@ -175,7 +261,7 @@ export default function ShiftDetailPage() {
               </div>
             )}
 
-            {shift.required_rating > 0 && (
+            {shift.required_rating && shift.required_rating > 0 && (
               <div className="flex items-start gap-3">
                 <Star className="w-5 h-5 text-yellow-400 fill-yellow-400 mt-0.5 flex-shrink-0" />
                 <div>
@@ -187,11 +273,60 @@ export default function ShiftDetailPage() {
           </div>
         </div>
 
+        {/* Tools Required Card */}
+        {shift.tools_required && shift.tools_required.length > 0 && (
+          <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Wrench className="w-5 h-5 text-orange-400" />
+              <p className="text-white font-semibold">Требуемые инструменты</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {shift.tools_required.map((tool, index) => (
+                <span
+                  key={index}
+                  className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-gray-300"
+                >
+                  {tool}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Requirements Card */}
+        <div className="bg-blue-500/10 backdrop-blur-xl rounded-2xl border border-blue-500/20 p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Briefcase className="w-5 h-5 text-blue-400" />
+            <p className="text-white font-semibold">Требования</p>
+          </div>
+          <ul className="space-y-2">
+            {shift.required_rating && shift.required_rating > 0 ? (
+              <li className="flex items-start gap-2 text-sm text-gray-300">
+                <CheckCircle className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                <span>Рейтинг не ниже {shift.required_rating}</span>
+              </li>
+            ) : (
+              <li className="flex items-start gap-2 text-sm text-gray-300">
+                <CheckCircle className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                <span>Подходит для начинающих</span>
+              </li>
+            )}
+            <li className="flex items-start gap-2 text-sm text-gray-300">
+              <CheckCircle className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+              <span>Приходить вовремя</span>
+            </li>
+            <li className="flex items-start gap-2 text-sm text-gray-300">
+              <CheckCircle className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+              <span>Выполнять работу качественно</span>
+            </li>
+          </ul>
+        </div>
+
         {/* Payment Card */}
         <div className="bg-gradient-to-br from-green-500/10 to-green-600/10 backdrop-blur-xl rounded-2xl border border-green-500/20 p-6">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-green-400" />
+            <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
+              <DollarSign className="w-7 h-7 text-green-400" />
             </div>
             <div>
               <p className="text-xs text-gray-400">Оплата</p>
@@ -200,16 +335,32 @@ export default function ShiftDetailPage() {
               </p>
             </div>
           </div>
-          <p className="text-sm text-gray-400">За смену</p>
+          <p className="text-sm text-gray-400">За смену • Выплата после завершения</p>
         </div>
 
-        {/* Status Badge */}
-        <div className="flex items-center justify-center">
-          <span className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-full text-sm font-medium">
-            Статус: {shift.status === 'open' ? 'Открыта' : shift.status}
-          </span>
-        </div>
+        {/* Applications Button - Only for shift owner */}
+        {shift.client_id === currentUserId && (
+          <button
+            onClick={() => router.push(`/shifts/${shift.id}/applications`)}
+            className="w-full py-4 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 rounded-xl text-blue-400 font-semibold transition flex items-center justify-center gap-2"
+          >
+            <Users className="w-5 h-5" />
+            <span>Отклики ({pendingApplicationsCount})</span>
+          </button>
+        )}
       </div>
+
+      {/* Check-In Button - For assigned workers */}
+      {workerShiftStatus && ['confirmed', 'on_way'].includes(workerShiftStatus) && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
+          <CheckInButton
+            shiftId={shift.id}
+            shiftDate={shift.date}
+            startTime={shift.start_time}
+            status={workerShiftStatus}
+          />
+        </div>
+      )}
 
       {/* Apply Button - Fixed at bottom */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10">

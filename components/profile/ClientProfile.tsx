@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { getClientActiveShifts, getClientCompletedShifts } from '@/lib/api/profiles';
 
+
 export default function ClientProfile({
   userId = 'CL-47821',
   companyName = 'ООО Экспо Сервис',
@@ -31,7 +32,7 @@ export default function ClientProfile({
   const [completedShifts, setCompletedShifts] = useState<any[]>([]);
 
   useEffect(() => {
-    async function loadProfileData() {
+    async function loadClientData() {
       try {
         setLoading(true);
         setError(null);
@@ -216,7 +217,7 @@ export default function ClientProfile({
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
                     <h3 className="text-white font-semibold mb-1">{shift.title}</h3>
-                    <p className="text-gray-400 text-sm">{shift.location_address}</p>
+                    <p className="text-gray-400 text-sm">{shift.location_address || 'Адрес не указан'}</p>
                   </div>
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -237,7 +238,7 @@ export default function ClientProfile({
                     </span>
                   </div>
                   <span className="text-white font-bold">
-                    {shift.pay_amount.toLocaleString('ru-RU')} ₽
+                    {(shift.pay_amount || 0).toLocaleString('ru-RU')} ₽
                   </span>
                 </div>
               </div>
@@ -305,11 +306,11 @@ export default function ClientProfile({
                   <div className="flex-1">
                     <h3 className="text-white font-semibold mb-1">{shift.title}</h3>
                     <p className="text-gray-400 text-sm">
-                      {new Date(shift.created_at).toLocaleDateString('ru-RU', {
+                      {shift.created_at ? new Date(shift.created_at).toLocaleDateString('ru-RU', {
                         day: 'numeric',
                         month: 'long',
                         year: 'numeric'
-                      })}
+                      }) : shift.date || 'Дата не указана'}
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
@@ -319,9 +320,9 @@ export default function ClientProfile({
                 </div>
 
                 <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/10">
-                  <span className="text-sm text-gray-400">{shift.location_address}</span>
+                  <span className="text-sm text-gray-400">{shift.location_address || 'Адрес не указан'}</span>
                   <span className="text-white font-bold">
-                    {shift.pay_amount.toLocaleString('ru-RU')} ₽
+                    {(shift.pay_amount || 0).toLocaleString('ru-RU')} ₽
                   </span>
                 </div>
               </div>

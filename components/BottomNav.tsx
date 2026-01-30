@@ -9,7 +9,6 @@ interface BottomNavProps {
 }
 
 export function BottomNav({ userType: propsUserType }: BottomNavProps) {
-  const router = useRouter();
   const pathname = usePathname();
   const [userType, setUserType] = useState<'worker' | 'client' | 'shef'>(propsUserType || 'worker');
 
@@ -65,17 +64,17 @@ export function BottomNav({ userType: propsUserType }: BottomNavProps) {
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const active = isActive(tab.path);
-          
+
           return (
-            <button
+            <Link
               key={tab.path}
-              onClick={() => router.push(tab.path)}
+              href={tab.path}
               className="flex flex-col items-center gap-2 py-2 px-4 rounded-lg transition-all"
               style={{
                 background: active ? 'rgba(232, 93, 47, 0.2)' : 'transparent',
               }}
             >
-              <Icon 
+              <Icon
                 className="w-5 h-5"
                 strokeWidth={1.5}
                 style={{ color: active ? '#E85D2F' : 'rgba(255, 255, 255, 0.6)' }}
@@ -86,7 +85,7 @@ export function BottomNav({ userType: propsUserType }: BottomNavProps) {
               >
                 {tab.label}
               </span>
-            </button>
+            </Link>
           );
         })}
       </div>

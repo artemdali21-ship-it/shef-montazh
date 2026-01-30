@@ -1,187 +1,209 @@
 'use client'
 
-import { useState, useEffect } from 'react';
-import { MessageCircle, Send } from 'lucide-react';
-import WorkerLayout from '@/components/layouts/WorkerLayout';
-import ClientLayout from '@/components/layouts/ClientLayout';
-import ShefLayout from '@/components/layouts/ShefLayout';
-import { getUserRole } from '@/lib/auth';
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { MessageCircle, Search, User } from 'lucide-react'
+import { getConversations } from '@/lib/api/messages'
+import { getUserById } from '@/lib/api/users'
+
+type ConversationWithDetails = {
+  id: string
+  participant_ids: string[]
+  updated_at: string
+  lastMessage?: string
+  lastMessageTime?: string
+  unreadCount: number
+  otherUser?: {
+    id: string
+    full_name: string
+    avatar_url?: string
+  }
+}
 
 export default function MessagesPage() {
-  const [role, setRole] = useState<'worker' | 'client' | 'shef'>('worker');
-  const [mounted, setMounted] = useState(false);
-  const [selectedChat, setSelectedChat] = useState<string | null>(null);
-  const [message, setMessage] = useState('');
+  const router = useRouter()
+
+  // Mock current user ID - in production, get from auth context
+  const MOCK_USER_ID = 'worker-123'
+
+  const [conversations, setConversations] = useState<ConversationWithDetails[]>([])
+  const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
-    setRole(getUserRole());
-    setMounted(true);
-  }, []);
+    loadConversations()
+  }, [])
 
-  if (!mounted) return null;
+  const loadConversations = async () => {
+    try {
+      setLoading(true)
 
-  const Layout = role === 'worker' ? WorkerLayout : role === 'client' ? ClientLayout : ShefLayout;
+      const { data, error } = await getConversations(MOCK_USER_ID)
 
-  const chats = [
-    { id: '1', name: 'Decor Factory', lastMessage: 'Спасибо за работу!', time: '10:30' },
-    { id: '2', name: 'Event Pro', lastMessage: 'Когда ты свободен?', time: '09:15' },
-    { id: '3', name: 'Crocus Support', lastMessage: 'Вопрос по платежу', time: 'вчера' },
-  ];
+      if (error) throw error
 
-  const messages = [
-    { id: '1', sender: 'other', text: 'Привет! Как дела с проектом?' },
-    { id: '2', sender: 'user', text: 'Все хорошо, работаю над монтажом' },
-    { id: '3', sender: 'other', text: 'Отлично! Ждём результатов' },
-  ];
+      if (data) {
+        // Process conversations and load participant details
+        const processedConversations = await Promise.all(
+          data.map(async (conv: any) => {
+            // Get other participant
+            const otherUserId = conv.participant_ids.find((id: string) => id !== MOCK_USER_ID)
+
+            let otherUser = undefined
+            if (otherUserId) {
+              const { data: userData } = await getUserById(otherUserId)
+              if (userData) {
+                otherUser = {
+                  id: userData.id,
+                  full_name: userData.full_name,
+                  avatar_url: userData.avatar_url,
+                }
+              }
+            }
+
+            // Get last message and unread count
+            const messages = conv.messages || []
+            const lastMsg = messages[messages.length - 1]
+            const unreadCount = messages.filter(
+              (msg: any) => !msg.is_read && msg.sender_id !== MOCK_USER_ID
+            ).length
+
+            return {
+              id: conv.id,
+              participant_ids: conv.participant_ids,
+              updated_at: conv.updated_at,
+              lastMessage: lastMsg?.content || '',
+              lastMessageTime: lastMsg?.created_at || conv.updated_at,
+              unreadCount,
+              otherUser,
+            }
+          })
+        )
+
+        setConversations(processedConversations)
+      }
+    } catch (err) {
+      console.error('Error loading conversations:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const formatTime = (dateStr: string) => {
+    const date = new Date(dateStr)
+    const now = new Date()
+    const diffMs = now.getTime() - date.getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMs / 3600000)
+    const diffDays = Math.floor(diffMs / 86400000)
+
+    if (diffMins < 1) return 'только что'
+    if (diffMins < 60) return `${diffMins}м назад`
+    if (diffHours < 24) return `${diffHours}ч назад`
+    if (diffDays < 7) return `${diffDays}д назад`
+    return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })
+  }
+
+  const filteredConversations = conversations.filter((conv) =>
+    conv.otherUser?.full_name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Загрузка сообщений...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <Layout>
-      <div style={{ display: 'flex', height: 'calc(100vh - 80px - 60px)' }}>
-        {/* CHATS LIST */}
-        <div style={{
-          width: selectedChat ? '0' : '100%',
-          transition: 'width 0.3s',
-          borderRight: '1px solid rgba(255, 255, 255, 0.1)',
-          overflowY: 'auto',
-        }}>
-          {chats.map((chat) => (
+    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-24">
+      {/* Header */}
+      <div className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-10">
+        <div className="p-4">
+          <h1 className="text-2xl font-bold text-white mb-4">Сообщения</h1>
+
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Поиск..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="p-4">
+        {/* Empty State */}
+        {filteredConversations.length === 0 && (
+          <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-12 text-center">
+            <MessageCircle className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-white mb-2">
+              {searchQuery ? 'Ничего не найдено' : 'Нет сообщений'}
+            </h3>
+            <p className="text-gray-400">
+              {searchQuery
+                ? 'Попробуйте изменить поисковый запрос'
+                : 'Начните общаться с работниками или заказчиками'}
+            </p>
+          </div>
+        )}
+
+        {/* Conversations List */}
+        <div className="space-y-2">
+          {filteredConversations.map((conversation) => (
             <button
-              key={chat.id}
-              onClick={() => setSelectedChat(chat.id)}
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '16px',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-                background: selectedChat === chat.id ? 'rgba(232, 93, 47, 0.1)' : 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                textAlign: 'left',
-              }}
+              key={conversation.id}
+              onClick={() => router.push(`/messages/${conversation.id}`)}
+              className="w-full bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4 hover:bg-white/10 transition text-left"
             >
-              <div style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '50%',
-                background: 'rgba(232, 93, 47, 0.3)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-                <MessageCircle size={24} color="#E85D2F" />
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ color: 'white', fontWeight: 600, marginBottom: '4px' }}>
-                  {chat.name}
+              <div className="flex items-center gap-4">
+                {/* Avatar */}
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                  {conversation.otherUser?.avatar_url ? (
+                    <img
+                      src={conversation.otherUser.avatar_url}
+                      alt={conversation.otherUser.full_name}
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <User className="w-7 h-7" />
+                  )}
                 </div>
-                <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '14px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {chat.lastMessage}
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="text-white font-semibold truncate">
+                      {conversation.otherUser?.full_name || 'Пользователь'}
+                    </h3>
+                    <span className="text-xs text-gray-400 flex-shrink-0 ml-2">
+                      {formatTime(conversation.lastMessageTime || conversation.updated_at)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-gray-400 truncate">
+                      {conversation.lastMessage || 'Нет сообщений'}
+                    </p>
+                    {conversation.unreadCount > 0 && (
+                      <span className="ml-2 flex-shrink-0 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                        {conversation.unreadCount}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div style={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '12px', whiteSpace: 'nowrap' }}>
-                {chat.time}
               </div>
             </button>
           ))}
         </div>
-
-        {/* CHAT VIEW */}
-        {selectedChat && (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'rgba(0, 0, 0, 0.3)' }}>
-            {/* HEADER */}
-            <div style={{
-              padding: '16px',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-            }}>
-              <button
-                onClick={() => setSelectedChat(null)}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: 'white',
-                  cursor: 'pointer',
-                  fontSize: '20px',
-                }}
-              >
-                ←
-              </button>
-              <div style={{ color: 'white', fontWeight: 600 }}>
-                {chats.find(c => c.id === selectedChat)?.name}
-              </div>
-            </div>
-
-            {/* MESSAGES */}
-            <div style={{ flex: 1, padding: '16px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  style={{
-                    display: 'flex',
-                    justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start',
-                  }}
-                >
-                  <div style={{
-                    maxWidth: '70%',
-                    padding: '12px 16px',
-                    borderRadius: '12px',
-                    background: msg.sender === 'user' ? '#E85D2F' : 'rgba(255, 255, 255, 0.1)',
-                    color: 'white',
-                    fontSize: '14px',
-                  }}>
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* INPUT */}
-            <div style={{
-              padding: '16px',
-              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-              display: 'flex',
-              gap: '12px',
-            }}>
-              <input
-                type="text"
-                placeholder="Сообщение..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                style={{
-                  flex: 1,
-                  padding: '12px 16px',
-                  borderRadius: '8px',
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  color: 'white',
-                  outline: 'none',
-                  fontSize: '14px',
-                }}
-              />
-              <button
-                style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '8px',
-                  background: '#E85D2F',
-                  border: 'none',
-                  color: 'white',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Send size={20} />
-              </button>
-            </div>
-          </div>
-        )}
       </div>
-    </Layout>
-  );
+    </div>
+  )
 }

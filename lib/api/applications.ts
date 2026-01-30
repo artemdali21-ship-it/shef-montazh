@@ -9,7 +9,7 @@ export interface Application {
   created_at: string
 }
 
-// Get all applications for a shift
+// Get all applications for a shift with worker profile
 export async function getShiftApplications(shiftId: string) {
   const { data, error } = await supabase
     .from('applications')
@@ -21,11 +21,38 @@ export async function getShiftApplications(shiftId: string) {
         avatar_url,
         rating,
         total_shifts,
-        gosuslugi_verified
+        gosuslugi_verified,
+        role
       )
     `)
     .eq('shift_id', shiftId)
     .order('created_at', { ascending: false })
+
+  if (error) return { data: null, error }
+
+  // Fetch worker profiles for all applications
+  if (data && data.length > 0) {
+    const workerIds = data.map((app: any) => app.worker_id)
+
+    const { data: workerProfiles } = await supabase
+      .from('worker_profiles')
+      .select('user_id, categories, bio')
+      .in('user_id', workerIds)
+
+    // Attach worker profiles to applications
+    const applicationsWithProfiles = data.map((app: any) => {
+      const profile = workerProfiles?.find((p: any) => p.user_id === app.worker_id)
+      return {
+        ...app,
+        worker: {
+          ...app.worker,
+          profile: profile || null
+        }
+      }
+    })
+
+    return { data: applicationsWithProfiles, error: null }
+  }
 
   return { data, error }
 }
@@ -109,8 +136,20 @@ export async function createApplication(applicationData: {
   return { data, error }
 }
 
-// Accept application
+// Accept application and add worker to shift_workers
 export async function acceptApplication(applicationId: string) {
+  // Get application details
+  const { data: application, error: appError } = await supabase
+    .from('applications')
+    .select('*')
+    .eq('id', applicationId)
+    .single()
+
+  if (appError || !application) {
+    return { data: null, error: appError || new Error('Application not found') }
+  }
+
+  // Update application status
   const { data, error } = await supabase
     .from('applications')
     .update({ status: 'accepted' })
@@ -118,7 +157,24 @@ export async function acceptApplication(applicationId: string) {
     .select()
     .single()
 
-  return { data, error }
+  if (error) return { data: null, error }
+
+  // Add worker to shift_workers table
+  const { error: shiftWorkerError } = await supabase
+    .from('shift_workers')
+    .insert({
+      shift_id: application.shift_id,
+      worker_id: application.worker_id,
+      status: 'confirmed',
+      created_at: new Date().toISOString()
+    })
+
+  if (shiftWorkerError) {
+    console.error('Error adding to shift_workers:', shiftWorkerError)
+    // Don't return error - application is already accepted
+  }
+
+  return { data, error: null }
 }
 
 // Reject application
@@ -161,6 +217,16 @@ export async function getPendingApplicationsCount(shiftId: string) {
     .select('*', { count: 'exact', head: true })
     .eq('shift_id', shiftId)
     .eq('status', 'pending')
+
+  return { count, error }
+}
+
+// Get all applications count for a shift
+export async function getApplicationsCount(shiftId: string) {
+  const { count, error } = await supabase
+    .from('applications')
+    .select('*', { count: 'exact', head: true })
+    .eq('shift_id', shiftId)
 
   return { count, error }
 }
