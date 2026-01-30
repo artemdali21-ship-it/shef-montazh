@@ -116,7 +116,26 @@ export default function WorkerProfile() {
   ];
 
   return (
-    <div className="w-full flex flex-col min-h-screen overflow-y-auto bg-black text-white">
+    <div
+      style={{
+        width: '100%',
+        height: '100dvh',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: 'black',
+        color: 'white',
+        overflow: 'hidden'
+      }}
+    >
+      <div
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          minHeight: 0,
+          WebkitOverflowScrolling: 'touch',
+        }}
+      >
       {/* Profile Header */}
       <div className="p-5 text-center relative bg-cover bg-center border border-white/10" style={{ backgroundImage: 'url(/images/bg-main-splash.jpg)' }}>
         <div className="absolute inset-0 bg-black/20 z-0" />
@@ -208,6 +227,7 @@ export default function WorkerProfile() {
             </div>
           ))}
         </div>
+      </div>
       </div>
     </div>
   );

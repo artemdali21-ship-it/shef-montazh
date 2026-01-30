@@ -74,10 +74,8 @@ export default function RegistrationScreen() {
         nextRef.current.focus()
         scrollToField(nextRef)
       } else {
-        // Last field, try to submit
-        if (acceptedTerms) {
-          handleSubmit()
-        }
+        // Last field - always try to submit (will show validation errors including checkbox)
+        handleSubmit()
       }
     }
   }

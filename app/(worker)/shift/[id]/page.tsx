@@ -185,9 +185,25 @@ export default function WorkerShiftDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-32">
+    <div
+      style={{
+        height: '100dvh',
+        display: 'flex',
+        flexDirection: 'column',
+        background: 'linear-gradient(to bottom, #2A2A2A, #1A1A1A)',
+        overflow: 'hidden'
+      }}
+    >
       {/* Header */}
-      <div className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-10">
+      <div
+        style={{
+          position: 'sticky',
+          top: 0,
+          flexShrink: 0,
+          zIndex: 10
+        }}
+        className="bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10"
+      >
         <div className="p-4 flex items-center gap-4">
           <button
             onClick={() => router.back()}
@@ -199,7 +215,16 @@ export default function WorkerShiftDetailPage() {
         </div>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          minHeight: 0,
+          WebkitOverflowScrolling: 'touch',
+        }}
+      >
+        <div className="p-4 space-y-4 pb-32">
         {/* Client Info Card */}
         {client && (
           <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5">
@@ -368,6 +393,7 @@ export default function WorkerShiftDetailPage() {
             </div>
           </div>
           <p className="text-sm text-gray-400">За смену • Выплата после завершения</p>
+        </div>
         </div>
       </div>
 
