@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { getUserRole } from '@/lib/auth'
 import WorkerDashboard from '@/components/dashboard/WorkerDashboard'
 import ClientDashboard from '@/components/dashboard/ClientDashboard'
+import ShefDashboardScreen from '@/components/ShefDashboardScreen'
 
 export default function DashboardPage() {
   const [role, setRole] = useState<'worker' | 'client' | 'shef'>('worker')
@@ -26,6 +27,12 @@ export default function DashboardPage() {
     )
   }
 
-  // Show worker dashboard for workers and shefs, client dashboard for clients
-  return role === 'client' ? <ClientDashboard /> : <WorkerDashboard />
+  // Show role-specific dashboard
+  if (role === 'client') {
+    return <ClientDashboard />
+  } else if (role === 'shef') {
+    return <ShefDashboardScreen />
+  } else {
+    return <WorkerDashboard />
+  }
 }
