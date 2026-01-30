@@ -116,7 +116,7 @@ export default function FeedPage() {
             {filteredShifts.map((shift) => (
               <Link
                 key={shift.id}
-                href={`/shift/${shift.id}`}
+                href={`/shifts/${shift.id}`}
                 className="block bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4 hover:bg-white/10 transition"
               >
                 <div className="flex items-start justify-between mb-3">
