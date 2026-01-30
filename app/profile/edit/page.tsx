@@ -4,20 +4,25 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   User, Phone, FileText, Briefcase, Award, Building,
-  Hash, Save, X, AlertCircle, CheckCircle, Upload, Camera
+  Hash, Save, X, AlertCircle, CheckCircle, Upload, Camera,
+  Wrench, Paintbrush, Zap, Flame, Mountain, Package, HardHat
 } from 'lucide-react'
-import { getUserById, updateUser } from '@/lib/api/users'
-import { supabase } from '@/lib/supabase'
+import {
+  getCurrentUserProfile,
+  updateUserProfile,
+  updateWorkerProfile,
+  updateClientProfile,
+  uploadAvatar,
+} from '@/lib/api/profile'
 
 const workerCategories = [
-  'Монтажник',
-  'Декоратор',
-  'Электрик',
-  'Сварщик',
-  'Альпинист',
-  'Разнорабочий',
-  'Грузчик',
-  'Бутафор'
+  { id: 'montazhnik', name: 'Монтажник', icon: Wrench },
+  { id: 'decorator', name: 'Декоратор', icon: Paintbrush },
+  { id: 'electrik', name: 'Электрик', icon: Zap },
+  { id: 'svarchik', name: 'Сварщик', icon: Flame },
+  { id: 'alpinist', name: 'Альпинист', icon: Mountain },
+  { id: 'butafor', name: 'Бутафор', icon: Package },
+  { id: 'raznorabochiy', name: 'Разнорабочий', icon: HardHat },
 ]
 
 type Role = 'worker' | 'client' | 'shef'
@@ -59,41 +64,25 @@ export default function EditProfilePage() {
       setLoading(true)
       setError(null)
 
-      // Load user data
-      const { data: userData, error: userError } = await getUserById(MOCK_USER_ID)
-      if (userError) throw userError
-      if (!userData) throw new Error('Пользователь не найден')
+      // Load user profile with role-specific data
+      const { data, error: profileError } = await getCurrentUserProfile(MOCK_USER_ID)
+      if (profileError) throw profileError
+      if (!data) throw new Error('Пользователь не найден')
 
       // Set user fields
-      setFullName(userData.full_name || '')
-      setPhone(userData.phone || '')
-      setAvatarUrl(userData.avatar_url || '')
-      setRole(userData.role as Role)
+      setFullName(data.full_name || '')
+      setPhone(data.phone || '')
+      setAvatarUrl(data.avatar_url || '')
+      setRole(data.role as Role)
 
       // Load role-specific data
-      if (userData.role === 'worker') {
-        const { data: profileData } = await supabase
-          .from('worker_profiles')
-          .select('*')
-          .eq('user_id', MOCK_USER_ID)
-          .single()
-
-        if (profileData) {
-          setBio(profileData.bio || '')
-          setSelectedCategories(profileData.categories || [])
-          setExperienceYears(profileData.experience_years?.toString() || '0')
-        }
-      } else if (userData.role === 'client') {
-        const { data: profileData } = await supabase
-          .from('client_profiles')
-          .select('*')
-          .eq('user_id', MOCK_USER_ID)
-          .single()
-
-        if (profileData) {
-          setCompanyName(profileData.company_name || '')
-          setCompanyInn(profileData.company_inn || '')
-        }
+      if (data.role === 'worker' && data.profile) {
+        setBio(data.profile.bio || '')
+        setSelectedCategories(data.profile.categories || [])
+        setExperienceYears(data.profile.experience_years?.toString() || '0')
+      } else if (data.role === 'client' && data.profile) {
+        setCompanyName(data.profile.company_name || '')
+        setCompanyInn(data.profile.company_inn || '')
       }
     } catch (err: any) {
       console.error('Error loading user data:', err)
@@ -152,11 +141,11 @@ export default function EditProfilePage() {
     }
   }
 
-  const toggleCategory = (category: string) => {
+  const toggleCategory = (categoryId: string) => {
     setSelectedCategories(prev =>
-      prev.includes(category)
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
+      prev.includes(categoryId)
+        ? prev.filter(c => c !== categoryId)
+        : [...prev, categoryId]
     )
   }
 
@@ -174,54 +163,43 @@ export default function EditProfilePage() {
 
       // Upload avatar if changed
       if (avatarFile) {
-        const fileExt = avatarFile.name.split('.').pop()
-        const fileName = `${MOCK_USER_ID}-${Date.now()}.${fileExt}`
-        const filePath = `avatars/${fileName}`
+        const { data: avatarUrlData, error: uploadError } = await uploadAvatar(
+          MOCK_USER_ID,
+          avatarFile
+        )
 
-        const { error: uploadError } = await supabase.storage
-          .from('avatars')
-          .upload(filePath, avatarFile)
+        if (uploadError) {
+          throw new Error('Не удалось загрузить аватар')
+        }
 
-        if (uploadError) throw uploadError
-
-        const { data: urlData } = supabase.storage
-          .from('avatars')
-          .getPublicUrl(filePath)
-
-        uploadedAvatarUrl = urlData.publicUrl
+        if (avatarUrlData) {
+          uploadedAvatarUrl = avatarUrlData
+        }
       }
 
-      // Update user table
-      const { error: updateError } = await updateUser(MOCK_USER_ID, {
+      // Update user profile
+      const { error: userError } = await updateUserProfile(MOCK_USER_ID, {
         full_name: fullName.trim(),
         phone: phone.trim(),
-        avatar_url: uploadedAvatarUrl || null,
+        avatar_url: uploadedAvatarUrl || undefined,
       })
 
-      if (updateError) throw updateError
+      if (userError) throw userError
 
       // Update role-specific profile
       if (role === 'worker') {
-        const { error: profileError } = await supabase
-          .from('worker_profiles')
-          .update({
-            bio: bio.trim() || null,
-            categories: selectedCategories,
-            experience_years: parseInt(experienceYears) || 0,
-          })
-          .eq('user_id', MOCK_USER_ID)
+        const { error: workerError } = await updateWorkerProfile(MOCK_USER_ID, {
+          bio: bio.trim() || undefined,
+          categories: selectedCategories,
+        })
 
-        if (profileError) throw profileError
+        if (workerError) throw workerError
       } else if (role === 'client') {
-        const { error: profileError } = await supabase
-          .from('client_profiles')
-          .update({
-            company_name: companyName.trim() || null,
-            company_inn: companyInn.trim() || null,
-          })
-          .eq('user_id', MOCK_USER_ID)
+        const { error: clientError } = await updateClientProfile(MOCK_USER_ID, {
+          company_name: companyName.trim() || undefined,
+        })
 
-        if (profileError) throw profileError
+        if (clientError) throw clientError
       }
 
       setSuccess(true)
@@ -385,25 +363,31 @@ export default function EditProfilePage() {
                 Категории *
               </label>
               <div className="grid grid-cols-2 gap-3">
-                {workerCategories.map((category) => (
-                  <label
-                    key={category}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition ${
-                      selectedCategories.includes(category)
-                        ? 'bg-orange-500/20 border-orange-500/50'
-                        : 'bg-white/5 border-white/10 hover:bg-white/10'
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedCategories.includes(category)}
-                      onChange={() => toggleCategory(category)}
-                      disabled={saving}
-                      className="w-5 h-5 rounded border-white/20 bg-white/5 text-orange-500 focus:ring-orange-500"
-                    />
-                    <span className="text-white text-sm font-medium">{category}</span>
-                  </label>
-                ))}
+                {workerCategories.map((category) => {
+                  const Icon = category.icon
+                  const isSelected = selectedCategories.includes(category.id)
+
+                  return (
+                    <label
+                      key={category.id}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition ${
+                        isSelected
+                          ? 'bg-orange-500/20 border-orange-500/50'
+                          : 'bg-white/5 border-white/10 hover:bg-white/10'
+                      }`}
+                    >
+                      <Icon className={`w-5 h-5 ${isSelected ? 'text-orange-400' : 'text-gray-400'}`} />
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleCategory(category.id)}
+                        disabled={saving}
+                        className="w-5 h-5 rounded border-white/20 bg-white/5 text-orange-500 focus:ring-orange-500"
+                      />
+                      <span className="text-white text-sm font-medium">{category.name}</span>
+                    </label>
+                  )
+                })}
               </div>
             </div>
 
