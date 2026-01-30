@@ -1,15 +1,8 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next()
-  const supabase = createMiddlewareClient({ req, res })
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
   const { pathname } = req.nextUrl
 
   // Define protected routes
@@ -30,46 +23,23 @@ export async function middleware(req: NextRequest) {
 
   // Check if current path is protected
   const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
-  const isPublicRoute = publicRoutes.some((route) => pathname === route)
 
-  // Allow shift details page for viewing (but some actions may require auth)
-  const isShiftDetailsPage = /^\/shift\/[^/]+$/.test(pathname)
+  // Get auth token from cookies
+  const authToken = req.cookies.get('sb-access-token')?.value ||
+                    req.cookies.get('supabase-auth-token')?.value
 
   // If user is not authenticated and trying to access protected route
-  if (!session && isProtectedRoute) {
+  if (!authToken && isProtectedRoute) {
     const loginUrl = new URL('/auth/login', req.url)
     // Save return URL to redirect after login
     loginUrl.searchParams.set('returnUrl', pathname)
     return NextResponse.redirect(loginUrl)
   }
 
-  // If user is authenticated and trying to access auth pages, redirect to appropriate dashboard
-  if (session && (pathname === '/auth/login' || pathname === '/auth/register')) {
-    // Get user role from users table
-    const { data: userData } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', session.user.id)
-      .single()
+  // For authenticated users trying to access auth pages, we'll handle redirect on client side
+  // to avoid issues with token validation in middleware
 
-    if (userData) {
-      let redirectPath = '/'
-      switch (userData.role) {
-        case 'worker':
-          redirectPath = '/feed'
-          break
-        case 'client':
-          redirectPath = '/dashboard'
-          break
-        case 'shef':
-          redirectPath = '/shef/dashboard'
-          break
-      }
-      return NextResponse.redirect(new URL(redirectPath, req.url))
-    }
-  }
-
-  return res
+  return NextResponse.next()
 }
 
 export const config = {
