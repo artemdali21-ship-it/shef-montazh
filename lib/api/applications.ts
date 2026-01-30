@@ -221,6 +221,16 @@ export async function getPendingApplicationsCount(shiftId: string) {
   return { count, error }
 }
 
+// Get all applications count for a shift
+export async function getApplicationsCount(shiftId: string) {
+  const { count, error } = await supabase
+    .from('applications')
+    .select('*', { count: 'exact', head: true })
+    .eq('shift_id', shiftId)
+
+  return { count, error }
+}
+
 // Get accepted applications for a shift
 export async function getAcceptedApplications(shiftId: string) {
   const { data, error } = await supabase

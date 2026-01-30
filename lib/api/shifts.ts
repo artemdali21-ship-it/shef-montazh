@@ -81,15 +81,71 @@ export async function getShiftById(shiftId: string) {
   return { data, error }
 }
 
-// Get shifts created by client
-export async function getClientShifts(clientId: string) {
-  const { data, error } = await supabase
+// Get shifts created by client (with optional status filter)
+export async function getClientShifts(clientId: string, status?: string) {
+  let query = supabase
     .from('shifts')
     .select('*')
     .eq('client_id', clientId)
-    .order('created_at', { ascending: false })
+
+  if (status) {
+    query = query.eq('status', status)
+  }
+
+  query = query.order('created_at', { ascending: false })
+
+  const { data, error } = await query
 
   return { data, error }
+}
+
+// Get client statistics
+export async function getClientStats(clientId: string) {
+  try {
+    // Get all client shifts
+    const { data: shifts, error: shiftsError } = await getClientShifts(clientId)
+    if (shiftsError) throw shiftsError
+
+    const allShifts = shifts || []
+    const activeShifts = allShifts.filter(
+      (s: Shift) => s.status === 'open' || s.status === 'in_progress'
+    )
+    const totalPublished = allShifts.length
+    const totalSpent = allShifts
+      .filter((s: Shift) => s.status === 'completed')
+      .reduce((sum: number, s: Shift) => sum + s.pay_amount, 0)
+
+    // Get ratings from completed shifts
+    const completedShiftIds = allShifts
+      .filter((s: Shift) => s.status === 'completed')
+      .map((s: Shift) => s.id)
+
+    let averageRating = 0
+    if (completedShiftIds.length > 0) {
+      const { data: ratings } = await supabase
+        .from('ratings')
+        .select('rating')
+        .eq('to_user_id', clientId)
+        .in('shift_id', completedShiftIds)
+
+      if (ratings && ratings.length > 0) {
+        const sum = ratings.reduce((acc: number, r: any) => acc + (r.rating || 0), 0)
+        averageRating = sum / ratings.length
+      }
+    }
+
+    return {
+      data: {
+        activeShifts: activeShifts.length,
+        totalPublished,
+        totalSpent,
+        averageRating: parseFloat(averageRating.toFixed(1)),
+      },
+      error: null,
+    }
+  } catch (error) {
+    return { data: null, error }
+  }
 }
 
 // Create new shift
