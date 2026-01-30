@@ -20,9 +20,13 @@ export default function WorkerLayout({
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-20">
+    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-24">
       {children}
       <BottomNav userType="worker" userId={userId} />
+      {/* DEBUG: Layout is loaded */}
+      <div className="fixed top-0 right-0 bg-green-500 text-white px-2 py-1 text-xs z-50">
+        Layout OK
+      </div>
     </div>
   )
 }

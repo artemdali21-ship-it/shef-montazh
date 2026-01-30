@@ -89,7 +89,7 @@ export function BottomNav({ userType, userId }: BottomNavProps) {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-30 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-[#2A2A2A] backdrop-blur-xl border-t-2 border-[#E85D2F]"
       style={{
         height: '64px',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
