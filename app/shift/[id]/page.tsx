@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 import { getShiftById } from '@/lib/api/shifts'
 import { getUserById } from '@/lib/api/users'
-import { createApplication, checkExistingApplication } from '@/lib/api/applications'
+import { createApplication, checkExistingApplication, getPendingApplicationsCount } from '@/lib/api/applications'
 import { ShiftStatus } from '@/components/shift/ShiftStatus'
 import type { Tables } from '@/lib/supabase-types'
 
@@ -26,9 +26,13 @@ export default function ShiftDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [applying, setApplying] = useState(false)
   const [hasApplied, setHasApplied] = useState(false)
+  const [pendingApplicationsCount, setPendingApplicationsCount] = useState(0)
 
   // Mock worker ID - in production, get from auth context
   const MOCK_WORKER_ID = 'worker-123'
+  // For testing: use client ID to see client view
+  const MOCK_CLIENT_ID = 'client-456'
+  const currentUserId = MOCK_WORKER_ID // Change to MOCK_CLIENT_ID to test client view
 
   useEffect(() => {
     async function loadShiftData() {
@@ -58,6 +62,12 @@ export default function ShiftDetailPage() {
           if (applicationData) {
             setHasApplied(true)
           }
+        }
+
+        // Load pending applications count if user is shift owner
+        if (shiftData.client_id === currentUserId) {
+          const { count } = await getPendingApplicationsCount(shiftId)
+          setPendingApplicationsCount(count || 0)
         }
       } catch (err) {
         console.error('Error loading shift:', err)
@@ -331,6 +341,17 @@ export default function ShiftDetailPage() {
           </div>
           <p className="text-sm text-gray-400">За смену • Выплата после завершения</p>
         </div>
+
+        {/* Applications Button - Only for shift owner */}
+        {shift.client_id === currentUserId && (
+          <button
+            onClick={() => router.push(`/shifts/${shift.id}/applications`)}
+            className="w-full py-4 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 rounded-xl text-blue-400 font-semibold transition flex items-center justify-center gap-2"
+          >
+            <Users className="w-5 h-5" />
+            <span>Отклики ({pendingApplicationsCount})</span>
+          </button>
+        )}
       </div>
 
       {/* Apply Button - Fixed at bottom */}
