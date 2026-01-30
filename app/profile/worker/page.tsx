@@ -191,7 +191,7 @@ export default function WorkerProfilePage() {
             <span className="text-sm font-medium">Редактировать</span>
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Profile Header Card */}
       <div className="relative">
