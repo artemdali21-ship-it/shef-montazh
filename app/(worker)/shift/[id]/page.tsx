@@ -9,6 +9,7 @@ import {
 import { getShiftById } from '@/lib/api/shifts'
 import { getUserById } from '@/lib/api/users'
 import { createApplication, checkExistingApplication } from '@/lib/api/applications'
+import { supabase } from '@/lib/supabase'
 
 interface Shift {
   id: string
@@ -48,6 +49,8 @@ export default function WorkerShiftDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [applying, setApplying] = useState(false)
   const [hasApplied, setHasApplied] = useState(false)
+  const [workerStatus, setWorkerStatus] = useState<string | null>(null)
+  const [canCheckIn, setCanCheckIn] = useState(false)
 
   // Mock worker ID - in production, get from auth context
   const MOCK_WORKER_ID = 'worker-123'
@@ -76,6 +79,30 @@ export default function WorkerShiftDetailPage() {
         const { data: applicationData } = await checkExistingApplication(shiftId, MOCK_WORKER_ID)
         if (applicationData) {
           setHasApplied(true)
+        }
+
+        // Check worker status in shift_workers
+        const { data: workerData } = await supabase
+          .from('shift_workers')
+          .select('status')
+          .eq('shift_id', shiftId)
+          .eq('worker_id', MOCK_WORKER_ID)
+          .single()
+
+        if (workerData) {
+          setWorkerStatus(workerData.status)
+
+          // Check if can check-in (30 minutes before start)
+          if (workerData.status === 'accepted') {
+            const now = new Date()
+            const shiftDateTime = new Date(`${shiftData.date}T${shiftData.start_time}`)
+            const timeDiff = shiftDateTime.getTime() - now.getTime()
+            const minutesDiff = Math.floor(timeDiff / 60000)
+
+            if (minutesDiff <= 30 && minutesDiff >= -60) {
+              setCanCheckIn(true)
+            }
+          }
         }
       } catch (err) {
         console.error('Error loading shift details:', err)
@@ -344,11 +371,41 @@ export default function WorkerShiftDetailPage() {
         </div>
       </div>
 
-      {/* Apply Button - Fixed at bottom */}
-      {shift.status === 'open' && (
+      {/* Action Buttons - Fixed at bottom */}
+      {workerStatus === 'checked_in' && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
+          <div className="w-full min-h-[44px] py-4 bg-green-500/20 border border-green-500/30 rounded-xl text-green-400 font-bold text-lg text-center flex items-center justify-center gap-2">
+            <CheckCircle className="w-6 h-6" />
+            Вы отметились на смене
+          </div>
+        </div>
+      )}
+
+      {workerStatus === 'accepted' && canCheckIn && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
+          <button
+            onClick={() => router.push(`/shift/${shiftId}/checkin`)}
+            className="w-full min-h-[56px] py-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 rounded-xl text-white font-bold text-lg transition shadow-lg shadow-green-500/30 flex items-center justify-center gap-2"
+          >
+            <CheckCircle className="w-6 h-6" />
+            Я вышел на объект
+          </button>
+        </div>
+      )}
+
+      {workerStatus === 'accepted' && !canCheckIn && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
+          <div className="w-full min-h-[44px] py-4 bg-yellow-500/20 border border-yellow-500/30 rounded-xl text-yellow-400 font-bold text-base text-center flex flex-col gap-1">
+            <span>Check-in будет доступен за 30 минут до начала</span>
+            <span className="text-sm font-normal">Смена начинается: {formatTime(shift.start_time)}</span>
+          </div>
+        </div>
+      )}
+
+      {shift.status === 'open' && !workerStatus && (
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
           {hasApplied ? (
-            <div className="w-full py-4 bg-green-500/20 border border-green-500/30 rounded-xl text-green-400 font-bold text-lg text-center flex items-center justify-center gap-2">
+            <div className="w-full min-h-[44px] py-4 bg-green-500/20 border border-green-500/30 rounded-xl text-green-400 font-bold text-lg text-center flex items-center justify-center gap-2">
               <CheckCircle className="w-6 h-6" />
               Вы откликнулись на эту смену
             </div>
@@ -356,7 +413,7 @@ export default function WorkerShiftDetailPage() {
             <button
               onClick={handleApply}
               disabled={applying}
-              className="w-full py-4 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-500/50 disabled:cursor-not-allowed rounded-xl text-white font-bold text-lg transition shadow-lg shadow-orange-500/30"
+              className="w-full min-h-[44px] py-4 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-500/50 disabled:cursor-not-allowed rounded-xl text-white font-bold text-lg transition shadow-lg shadow-orange-500/30"
             >
               {applying ? 'Отправка...' : 'Откликнуться на смену'}
             </button>
@@ -364,9 +421,9 @@ export default function WorkerShiftDetailPage() {
         </div>
       )}
 
-      {shift.status !== 'open' && (
+      {shift.status !== 'open' && !workerStatus && (
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
-          <div className="w-full py-4 bg-gray-500/20 border border-gray-500/30 rounded-xl text-gray-400 font-bold text-lg text-center">
+          <div className="w-full min-h-[44px] py-4 bg-gray-500/20 border border-gray-500/30 rounded-xl text-gray-400 font-bold text-lg text-center">
             Смена закрыта
           </div>
         </div>
