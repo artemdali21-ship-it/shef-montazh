@@ -5,6 +5,7 @@ import { Montserrat, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import TelegramProvider from '@/components/providers/telegram-provider'
+import Background3D from '@/components/layouts/Background3D'
 
 const _montserrat = Montserrat({ 
   weight: ['400', '500', '600', '700', '800'], 
@@ -77,10 +78,12 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body className={`${_montserrat.variable} ${_geistMono.variable} min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] text-white`}>
-        <TelegramProvider>
-          {children}
-        </TelegramProvider>
+      <body className={`${_montserrat.variable} ${_geistMono.variable} min-h-screen text-white`}>
+        <Background3D>
+          <TelegramProvider>
+            {children}
+          </TelegramProvider>
+        </Background3D>
         <Analytics />
       </body>
     </html>
