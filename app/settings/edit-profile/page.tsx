@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import { useState, useRef } from 'react';
 import React from "react"
 import { ArrowLeft, Camera, Trash2, Save, User, Mail, Phone, MapPin, Briefcase, Award, ExternalLink, Check, Wrench, Palette, Mountain, Zap, Flame, Hammer, Box } from 'lucide-react';

@@ -1,4 +1,5 @@
-'use client';
+'use client'
+
 import React from 'react';
 import { Circle, CheckCircle, Navigation, MapPin, CheckCircle2 } from 'lucide-react';
 

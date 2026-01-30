@@ -161,31 +161,48 @@ export default function RegistrationScreen() {
                     type="text"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
+                    className={`w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border focus:outline-none text-white placeholder:text-white/40 font-500 transition-colors ${
+                      errors.phone
+                        ? 'border-red-500/50 focus:border-red-500'
+                        : 'border-white/10 focus:border-white/20'
+                    }`}
                     placeholder="Номер телефона"
                   />
                   <Phone className="absolute top-1/2 left-4 transform -translate-y-1/2 w-5 h-5 text-white/50 pointer-events-none" />
                 </div>
+                {errors.phone && <p className="text-red-400 text-sm -mt-2">{errors.phone}</p>}
+                
                 <div className="relative">
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
+                    className={`w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border focus:outline-none text-white placeholder:text-white/40 font-500 transition-colors ${
+                      errors.email
+                        ? 'border-red-500/50 focus:border-red-500'
+                        : 'border-white/10 focus:border-white/20'
+                    }`}
                     placeholder="Email"
                   />
                   <Mail className="absolute top-1/2 left-4 transform -translate-y-1/2 w-5 h-5 text-white/50 pointer-events-none" />
                 </div>
+                {errors.email && <p className="text-red-400 text-sm -mt-2">{errors.email}</p>}
+                
                 <div className="relative">
                   <input
                     type="text"
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
+                    className={`w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border focus:outline-none text-white placeholder:text-white/40 font-500 transition-colors ${
+                      errors.fullName
+                        ? 'border-red-500/50 focus:border-red-500'
+                        : 'border-white/10 focus:border-white/20'
+                    }`}
                     placeholder="Полное имя"
                   />
                   <User className="absolute top-1/2 left-4 transform -translate-y-1/2 w-5 h-5 text-white/50 pointer-events-none" />
                 </div>
+                {errors.fullName && <p className="text-red-400 text-sm -mt-2">{errors.fullName}</p>}
                 <div className="relative">
                   <input
                     ref={passwordInputRef}
@@ -193,7 +210,11 @@ export default function RegistrationScreen() {
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     onFocus={() => scrollToField(passwordInputRef)}
-                    className="w-full pl-4 pr-12 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
+                    className={`w-full pl-4 pr-12 py-4 rounded-xl bg-white/5 border focus:outline-none text-white placeholder:text-white/40 font-500 transition-colors ${
+                      errors.password
+                        ? 'border-red-500/50 focus:border-red-500'
+                        : 'border-white/10 focus:border-white/20'
+                    }`}
                     placeholder="Пароль"
                   />
                   <button
@@ -204,6 +225,8 @@ export default function RegistrationScreen() {
                     {showPassword ? <Eye className="w-5 h-5" strokeWidth={1.5} /> : <EyeOff className="w-5 h-5" strokeWidth={1.5} />}
                   </button>
                 </div>
+                {errors.password && <p className="text-red-400 text-sm mt-2">{errors.password}</p>}
+                
                 <div className="relative">
                   <input
                     ref={confirmPasswordInputRef}
@@ -211,7 +234,11 @@ export default function RegistrationScreen() {
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                     onFocus={() => scrollToField(confirmPasswordInputRef)}
-                    className="w-full pl-4 pr-12 py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/20 focus:outline-none text-white placeholder:text-white/40 font-500"
+                    className={`w-full pl-4 pr-12 py-4 rounded-xl bg-white/5 border focus:outline-none text-white placeholder:text-white/40 font-500 transition-colors ${
+                      errors.confirmPassword
+                        ? 'border-red-500/50 focus:border-red-500'
+                        : 'border-white/10 focus:border-white/20'
+                    }`}
                     placeholder="Подтвердите пароль"
                   />
                   <button
@@ -222,6 +249,7 @@ export default function RegistrationScreen() {
                     {showConfirmPassword ? <Eye className="w-5 h-5" strokeWidth={1.5} /> : <EyeOff className="w-5 h-5" strokeWidth={1.5} />}
                   </button>
                 </div>
+                {errors.confirmPassword && <p className="text-red-400 text-sm mt-2">{errors.confirmPassword}</p>}
               </div>
 
               <div className="space-y-2">

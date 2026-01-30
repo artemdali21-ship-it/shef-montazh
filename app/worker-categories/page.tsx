@@ -125,7 +125,7 @@ export default function WorkerCategoriesPage() {
         zIndex: 10,
         WebkitOverflowScrolling: 'touch',
         minHeight: 0,
-      }}>
+      }} data-allow-scroll className="overflow-y-scroll">
         <div className="px-4 py-6 pb-24">
           <div className="max-w-2xl mx-auto">
             <div className="mb-6">

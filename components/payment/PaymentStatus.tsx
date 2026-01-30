@@ -1,4 +1,5 @@
-'use client';
+'use client'
+
 import React from 'react';
 import { Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';

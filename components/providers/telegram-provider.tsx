@@ -30,9 +30,17 @@ export default function TelegramProvider({ children }: TelegramProvider) {
         document.documentElement.style.setProperty('--twa-bottom-safe-area', `${webapp.bottomSafeAreaInset}px`)
       }
       
-      // Prevent double tap zoom
+      // Prevent double tap zoom - BUT ALLOW SCROLL
       document.addEventListener('touchmove', (e) => {
-        if ((e.target as any).closest('[data-allow-scroll]')) return
+        // Allow scroll on elements with overflow-y-scroll or overflow-y-auto
+        const target = e.target as any
+        if (target.closest('[data-allow-scroll]') || 
+            target.closest('.overflow-y-scroll') ||
+            target.closest('.overflow-y-auto') ||
+            target.closest('[style*="overflow-y"]')) {
+          return
+        }
+        // Only prevent on non-scrollable elements
         e.preventDefault()
       }, { passive: false })
     }

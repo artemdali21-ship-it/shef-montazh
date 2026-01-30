@@ -1,4 +1,5 @@
-'use client';
+'use client'
+
 import React from 'react';
 import { Clock, MapPin, Users, DollarSign, AlertCircle } from 'lucide-react';
 import { CustomBadge } from '../custom/custom-badge';

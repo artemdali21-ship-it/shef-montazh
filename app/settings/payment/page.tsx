@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import { useState } from 'react';
 import { ArrowLeft, CreditCard, Plus, Check, AlertCircle, ExternalLink,
          Building2, User, Smartphone, Trash2, Edit2, Shield, Copy } from 'lucide-react';

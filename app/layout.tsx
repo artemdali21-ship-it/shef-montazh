@@ -79,13 +79,10 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body className={`${_montserrat.variable} ${_geistMono.variable} min-h-screen text-white`}>
-        <Background3D>
-          <TelegramProvider>
-            {children}
-          </TelegramProvider>
-        </Background3D>
-        <Toaster />
+      <body className={`${_montserrat.variable} ${_geistMono.variable} bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] text-white`}>
+        <TelegramProvider>
+          {children}
+        </TelegramProvider>
         <Analytics />
       </body>
     </html>

@@ -2,43 +2,19 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import {
-  ArrowLeft, MapPin, Calendar, Clock, DollarSign, Users, Star,
-  Briefcase, Shield, Wrench, CheckCircle, User
-} from 'lucide-react'
-import { getShiftById } from '@/lib/api/shifts'
-import { getUserById } from '@/lib/api/users'
-import { createApplication, checkExistingApplication, getPendingApplicationsCount } from '@/lib/api/applications'
-import { getWorkerShiftStatus } from '@/lib/api/shift-workers'
-import { getRating } from '@/lib/api/ratings'
-import { ShiftStatus } from '@/components/shift/ShiftStatus'
-import CheckInButton from '@/components/shift/CheckInButton'
-import { Star } from 'lucide-react'
-import type { Tables } from '@/lib/supabase-types'
-
-type Shift = Tables<'shifts'>
-type User = Tables<'users'>
+import { ArrowLeft, MapPin, Calendar, Clock, DollarSign, Users, Star, Briefcase } from 'lucide-react'
+import { getShiftById, applyToShift } from '@/lib/api/shifts'
 
 export default function ShiftDetailPage() {
   const params = useParams()
   const router = useRouter()
   const shiftId = params.id as string
 
-  const [shift, setShift] = useState<Shift | null>(null)
-  const [client, setClient] = useState<User | null>(null)
+  const [shift, setShift] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [applying, setApplying] = useState(false)
-  const [hasApplied, setHasApplied] = useState(false)
-  const [pendingApplicationsCount, setPendingApplicationsCount] = useState(0)
-  const [workerShiftStatus, setWorkerShiftStatus] = useState<'confirmed' | 'on_way' | 'checked_in' | 'checked_out' | null>(null)
-  const [userRating, setUserRating] = useState<{ rating: number; to_user: any } | null>(null)
-
-  // Mock worker ID - in production, get from auth context
-  const MOCK_WORKER_ID = 'worker-123'
-  // For testing: use client ID to see client view
-  const MOCK_CLIENT_ID = 'client-456'
-  const currentUserId = MOCK_WORKER_ID // Change to MOCK_CLIENT_ID to test client view
+  const [showSuccess, setShowSuccess] = useState(false)
 
   useEffect(() => {
     async function loadShiftData() {
@@ -104,27 +80,26 @@ export default function ShiftDetailPage() {
   }, [shiftId])
 
   const handleApply = async () => {
-    if (!shift || hasApplied || shift.status !== 'open') return
-
     try {
       setApplying(true)
-
-      const { data, error } = await createApplication({
-        shift_id: shift.id,
-        worker_id: MOCK_WORKER_ID,
-        message: 'Здравствуйте! Хочу откликнуться на эту смену.'
-      })
-
-      if (error) {
-        alert(error.message || 'Не удалось откликнуться на смену')
+      // Get worker ID from localStorage or context
+      const workerId = localStorage.getItem('workerId') || 'worker-' + Math.random().toString(36).substr(2, 9)
+      
+      const { data, error: applyError } = await applyToShift(shiftId, workerId)
+      
+      if (applyError) {
+        setError(applyError)
         return
       }
 
-      setHasApplied(true)
-      alert('Отклик успешно отправлен! Заказчик получит уведомление.')
+      setShowSuccess(true)
+      // Navigate to profile after 2 seconds
+      setTimeout(() => {
+        router.push('/profile')
+      }, 2000)
     } catch (err) {
-      console.error('Error applying:', err)
-      alert('Произошла ошибка при отправке отклика')
+      console.error('Error applying to shift:', err)
+      setError('Не удалось подать отклик')
     } finally {
       setApplying(false)
     }
@@ -171,7 +146,7 @@ export default function ShiftDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-32">
+    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-32 overflow-y-scroll" data-allow-scroll>
       {/* Header */}
       <div className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-10">
         <div className="p-4 flex items-center gap-4">
@@ -388,51 +363,31 @@ export default function ShiftDetailPage() {
       )}
 
       {/* Apply Button - Fixed at bottom */}
-      {shift.status === 'open' && !workerShiftStatus && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
-          {hasApplied ? (
-            <div className="w-full py-4 bg-green-500/20 border border-green-500/30 rounded-xl text-green-400 font-bold text-lg text-center flex items-center justify-center gap-2">
-              <CheckCircle className="w-6 h-6" />
-              Вы откликнулись на эту смену
-            </div>
-          ) : (
-            <button
-              onClick={handleApply}
-              disabled={applying}
-              className="w-full py-4 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-500/50 disabled:cursor-not-allowed rounded-xl text-white font-bold text-lg transition shadow-lg shadow-orange-500/30"
-            >
-              {applying ? 'Отправка...' : 'Откликнуться'}
-            </button>
-          )}
-        </div>
-      )}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10">
+        <button
+          onClick={handleApply}
+          disabled={applying}
+          className={`w-full py-4 rounded-xl text-white font-bold text-lg transition shadow-lg ${
+            applying
+              ? 'bg-orange-500/50 cursor-not-allowed'
+              : 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/30'
+          }`}
+        >
+          {applying ? 'Отправляю отклик...' : 'Откликнуться на смену'}
+        </button>
+      </div>
 
-      {/* Rating Button - For completed shifts */}
-      {shift.status === 'completed' && !workerShiftStatus && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
-          {userRating ? (
-            <div className="w-full py-4 bg-yellow-500/20 border border-yellow-500/30 rounded-xl text-yellow-400 font-bold text-lg text-center flex items-center justify-center gap-2">
-              <Star className="w-6 h-6 fill-yellow-400" />
-              Вы оценили на {userRating.rating} звезд
+      {/* Success Modal */}
+      {showSuccess && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#2A2A2A] border border-green-500/30 rounded-2xl p-8 max-w-sm">
+            <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
             </div>
-          ) : (
-            <button
-              onClick={() => router.push(`/shift/${shift.id}/rating`)}
-              className="w-full py-4 bg-yellow-500 hover:bg-yellow-600 rounded-xl text-white font-bold text-lg transition shadow-lg shadow-yellow-500/30 flex items-center justify-center gap-2"
-            >
-              <Star className="w-6 h-6" />
-              Оценить
-            </button>
-          )}
-        </div>
-      )}
-
-      {shift.status !== 'open' && !workerShiftStatus && shift.status !== 'completed' && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
-          <div className="w-full py-4 bg-gray-500/20 border border-gray-500/30 rounded-xl text-gray-400 font-bold text-lg text-center">
-            {shift.status === 'cancelled' && 'Смена отменена'}
-            {shift.status === 'in_progress' && 'Смена в процессе'}
-            {!['open', 'completed', 'cancelled', 'in_progress'].includes(shift.status || '') && 'Смена недоступна'}
+            <h3 className="text-xl font-bold text-white text-center mb-2">Отклик отправлен!</h3>
+            <p className="text-gray-400 text-center text-sm">Заказчик получит вашу заявку и свяжется с вами</p>
           </div>
         </div>
       )}

@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import { useState } from 'react';
 import { ArrowLeft, ExternalLink, FileText, Shield, Info, 
          Heart, Users, Award, TrendingUp, HandshakeIcon, Zap, DollarSign, Code } from 'lucide-react';

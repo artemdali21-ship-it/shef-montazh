@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { ArrowLeft, Settings, CheckCircle, Circle, User, Briefcase, Star, Shield } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react';
+import { ArrowLeft, Settings, CheckCircle, Circle, User, Briefcase, Star, Shield } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const userProfile = {
   id: 'SHF-0001',
@@ -26,48 +26,22 @@ const userProfile = {
     { id: 2, title: 'Установка окон', date: '24 января', price: 3500, status: 'completed' },
     { id: 3, title: 'Электромонтажные работы', date: '22 января', price: 4000, status: 'completed' },
   ],
-}
+};
 
 export default function WorkerProfile() {
-  const router = useRouter()
-  const [selectedSkills, setSelectedSkills] = useState(new Set())
-  const [isGosuslugiVerified, setIsGosuslugiVerified] = useState(false)
-  
-  // Mock data for stats
-  const [ratings, setRatings] = useState([
-    { id: '1', rating: 5, comment: 'Отличная работа!', date: '2026-01-20' },
-    { id: '2', rating: 5, comment: 'Профессионал', date: '2026-01-15' },
-    { id: '3', rating: 4, comment: 'Хорошо справился', date: '2026-01-10' },
-  ]);
-  
-  const [workHistory, setWorkHistory] = useState([
-    { id: '1', title: 'Монтаж стенда', date: '2026-01-20', client: 'Event Pro' },
-    { id: '2', title: 'Декорирование сцены', date: '2026-01-15', client: 'Art Studio' },
-    { id: '3', title: 'Монтаж освещения', date: '2026-01-10', client: 'Light Masters' },
-  ]);
-  
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const router = useRouter();
+  const [selectedSkills, setSelectedSkills] = useState(new Set());
+  const [isGosuslugiVerified, setIsGosuslugiVerified] = useState(false);
 
   const toggleSkill = (skillName) => {
-    const newSkills = new Set(selectedSkills)
+    const newSkills = new Set(selectedSkills);
     if (newSkills.has(skillName)) {
-      newSkills.delete(skillName)
+      newSkills.delete(skillName);
     } else {
-      newSkills.add(skillName)
+      newSkills.add(skillName);
     }
-    setSelectedSkills(newSkills)
-  }
-
-  // Calculate stats from ratings
-  const averageRating = ratings.length > 0 
-    ? (ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length).toFixed(1)
-    : '0.0'
-  
-  const completedShifts = workHistory.length
-  const reliability = completedShifts > 0 
-    ? Math.round((completedShifts / (completedShifts + 2)) * 100) // Mock calculation
-    : 0
+    setSelectedSkills(newSkills);
+  };
 
   const availableSkills = [
     'Монтаж',
@@ -77,279 +51,102 @@ export default function WorkerProfile() {
     'Сварщик',
     'Бутафор',
     'Разнорабочий'
-  ]
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center">
-        <div className="text-white text-lg">Загрузка профиля...</div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4">
-        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 max-w-md">
-          <p className="text-red-400 text-center mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="w-full py-3 bg-red-500/20 hover:bg-red-500/30 rounded-xl text-red-400 transition"
-          >
-            Попробовать снова
-          </button>
-        </div>
-      </div>
-    )
-  }
+  ];
 
   return (
-    <div className="w-full flex flex-col overflow-hidden">
-      {/* HEADER */}
-      <header
-        className="fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-5 z-10"
-        style={{
-          background: 'rgba(26, 26, 26, 0.95)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-        }}
-      >
-        <button
-          onClick={() => router.back()}
-          className="p-2 hover:bg-white/10 rounded-lg transition-all"
-        >
-          <ArrowLeft size={20} color="#FFFFFF" />
-        </button>
-
-        <h1 className="text-base font-bold text-white">Профиль</h1>
-
-        <button
-          onClick={() => console.log('Open settings')}
-          className="p-2 hover:bg-white/10 rounded-lg transition-all"
-        >
-          <Settings size={18} color="#FFFFFF" />
-        </button>
-      </header>
-
-      {/* CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto pt-16 pb-4 relative z-5">
-        {/* PROFILE HEADER SECTION - GLASSMORPHIC WITH RAINBOW SPLASH */}
-        <div
-          style={{
-            padding: '20px',
-            textAlign: 'center',
-            backgroundImage: 'url(/images/bg-main-splash.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            position: 'relative',
-            overflow: 'hidden',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-          }}
-        >
-          {/* Dark overlay for readability - NO BLUR */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.2)',
-              zIndex: 1,
-            }}
-          />
+    <div className="w-full flex flex-col bg-black text-white">
+      {/* Profile Header */}
+      <div className="p-5 text-center relative bg-cover bg-center border border-white/10" style={{ backgroundImage: 'url(/images/bg-main-splash.jpg)' }}>
+        <div className="absolute inset-0 bg-black/20 z-0" />
+        
+        <div className="relative z-10">
           {/* Avatar */}
-          <div
-            style={{
-              position: 'relative',
-              zIndex: 2,
-            }}
-          >
-            <div
-              style={{
-                position: 'relative',
-                width: '96px',
-                height: '96px',
-                borderRadius: '50%',
-                background: 'rgba(232, 93, 47, 0.2)',
-                border: '2px solid #E85D2F',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 16px',
-              }}
-            >
+          <div className="relative w-24 h-24 rounded-full bg-orange-500/20 border-2 border-orange-500 flex items-center justify-center mx-auto mb-4">
             <User size={48} color="white" strokeWidth={2} />
-            {/* Verification Badge */}
-            <div
-              style={{
-                position: 'absolute',
-                bottom: '-4px',
-                right: '-4px',
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                background: '#BFFF00',
-                border: '3px solid #F5F5F5',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <CheckCircle size={18} color="#1A1A1A" strokeWidth={2.5} />
+            <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-lime-300 border-4 border-white flex items-center justify-center">
+              <CheckCircle size={18} color="black" strokeWidth={2.5} />
             </div>
-            </div>
-            </div>
+          </div>
 
           {/* User Info */}
-          <h2 style={{ fontSize: '22px', fontWeight: 700, color: '#FFFFFF', marginBottom: '6px' }}>
-            Иван Петров
-          </h2>
-          <p style={{ fontSize: '13px', color: '#FFFFFF', opacity: 0.7 }}>
-            ID: SHF-0001
-          </p>
+          <h2 className="text-2xl font-bold text-white mb-1">Иван Петров</h2>
+          <p className="text-sm text-white/70">ID: SHF-0001</p>
 
-          {/* Stats Row */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '24px',
-              justifyContent: 'center',
-              marginTop: '20px',
-            }}
-          >
-            {[
-              { label: 'Смен', value: '127', icon: Briefcase },
-              { label: 'Рейтинг', value: '4.9', icon: Star },
-              { label: 'Надёжность', value: '98%', icon: Shield },
-            ].map((stat, idx) => {
-              const IconComponent = stat.icon
-              return (
-                <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                  <IconComponent size={20} color="#E85D2F" />
-                  <span style={{ fontSize: '20px', fontWeight: 800, color: '#FFFFFF' }}>
-                    {stat.value}
-                  </span>
-                  <span style={{ fontSize: '11px', color: '#FFFFFF', opacity: 0.7 }}>
-                    {stat.label}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* SKILLS SECTION */}
-        <div style={{ padding: '20px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#FFFFFF', marginBottom: '14px' }}>
-            Компетенции
-          </h3>
-
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-            {userProfile.skills.map((skill, idx) => {
-              const isSelected = selectedSkills.has(skill.name)
-              return (
-                <button
-                  key={idx}
-                  onClick={() => toggleSkill(skill.name)}
-                  style={{
-                    display: 'inline-flex',
-                    gap: '6px',
-                    alignItems: 'center',
-                    padding: '10px 16px',
-                    borderRadius: '10px',
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    background: isSelected ? 'rgba(191, 255, 0, 0.25)' : 'rgba(255, 255, 255, 0.05)',
-                    border: isSelected ? '1px solid #BFFF00' : '1px solid rgba(255, 255, 255, 0.15)',
-                    color: isSelected ? '#BFFF00' : '#FFFFFF',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = isSelected
-                      ? 'rgba(191, 255, 0, 0.3)'
-                      : 'rgba(255, 255, 255, 0.1)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = isSelected
-                      ? 'rgba(191, 255, 0, 0.25)'
-                      : 'rgba(255, 255, 255, 0.05)'
-                  }}
-                >
-                  {isSelected ? (
-                    <CheckCircle size={14} strokeWidth={2.5} color="#BFFF00" />
-                  ) : (
-                    <Circle size={14} strokeWidth={2} color="#FFFFFF" />
-                  )}
-                  <span>{skill.name}</span>
-                </button>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* RECENT SHIFTS SECTION */}
-        <div style={{ padding: '0 20px 20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#FFFFFF' }}>
-              Последние смены
-            </h3>
-            <button
-              onClick={() => console.log('View all shifts')}
-              style={{
-                background: 'none',
-                border: 'none',
-                fontSize: '13px',
-                fontWeight: 600,
-                color: '#E85D2F',
-                cursor: 'pointer',
-              }}
-            >
-              Все смены →
-            </button>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {userProfile.recentShifts.map((shift) => (
-              <div
-                key={shift.id}
-                style={{
-                  padding: '12px',
-                  borderRadius: '10px',
-                  background: 'rgba(42, 42, 42, 0.4)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                <div style={{ textAlign: 'left' }}>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>
-                    {shift.title}
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#FFFFFF', opacity: 0.6 }}>
-                    {shift.date}
-                  </div>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#E85D2F' }}>
-                    ₽{shift.price}
-                  </div>
-                </div>
-              </div>
-            ))}
+          {/* Stats */}
+          <div className="flex gap-6 justify-center mt-5">
+            <div className="flex flex-col items-center gap-1">
+              <Briefcase size={20} color="#E85D2F" />
+              <span className="text-xl font-bold text-white">127</span>
+              <span className="text-xs text-white/70">Смен</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <Star size={20} color="#E85D2F" />
+              <span className="text-xl font-bold text-white">4.9</span>
+              <span className="text-xs text-white/70">Рейтинг</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <Shield size={20} color="#E85D2F" />
+              <span className="text-xl font-bold text-white">98%</span>
+              <span className="text-xs text-white/70">Надёжность</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-        }
-      `}</style>
+      {/* Skills Section */}
+      <div className="p-5">
+        <h3 className="text-base font-bold text-white mb-4">Компетенции</h3>
+        <div className="flex flex-wrap gap-2">
+          {userProfile.skills.map((skill, idx) => {
+            const isSelected = selectedSkills.has(skill.name);
+            return (
+              <button
+                key={idx}
+                onClick={() => toggleSkill(skill.name)}
+                className={`inline-flex gap-1.5 items-center px-4 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                  isSelected
+                    ? 'bg-lime-300/25 border border-lime-300 text-lime-300'
+                    : 'bg-white/5 border border-white/15 text-white hover:bg-white/10'
+                }`}
+              >
+                {isSelected ? (
+                  <CheckCircle size={14} strokeWidth={2.5} color="#BFFF00" />
+                ) : (
+                  <Circle size={14} strokeWidth={2} />
+                )}
+                <span>{skill.name}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Recent Shifts Section */}
+      <div className="px-5 pb-5">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-base font-bold text-white">Последние смены</h3>
+          <button className="text-sm font-semibold text-orange-500 hover:text-orange-400">
+            Все смены →
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          {userProfile.recentShifts.map((shift) => (
+            <div
+              key={shift.id}
+              className="p-3 rounded-lg bg-neutral-900/40 border border-white/8 flex justify-between items-center"
+            >
+              <div className="text-left">
+                <div className="text-sm font-semibold text-white">{shift.title}</div>
+                <div className="text-xs text-white/60">{shift.date}</div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm font-bold text-orange-500">₽{shift.price}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
-  )
+  );
 }

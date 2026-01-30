@@ -1,4 +1,5 @@
-'use client';
+'use client'
+
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Bell, Share2 } from 'lucide-react';
 

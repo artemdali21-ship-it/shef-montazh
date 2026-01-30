@@ -51,7 +51,7 @@ export default function ApplicationConfirmationScreen() {
         onBack={() => router.back()}
       />
 
-      <div className="flex-1 overflow-y-auto px-4 pt-6 pb-24">
+      <div className="flex-1 overflow-y-scroll px-4 pt-6 pb-24" data-allow-scroll>
         {/* HELMET IMAGE */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0px' }}>
           <img

@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import ShefDashboardScreen from '@/components/ShefDashboardScreen';
 import ShefLayout from '@/components/layouts/ShefLayout';
