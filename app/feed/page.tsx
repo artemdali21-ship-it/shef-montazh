@@ -5,6 +5,7 @@ import { Search, MapPin, Calendar, DollarSign, Star } from 'lucide-react'
 import Link from 'next/link'
 import { getOpenShifts } from '@/lib/api/shifts'
 import { Shift } from '@/lib/supabase-types'
+import { LoadingScreen } from '@/components/ui/LoadingSpinner'
 
 export default function FeedPage() {
   const [shifts, setShifts] = useState<Shift[]>([])
@@ -50,40 +51,32 @@ export default function FeedPage() {
     return timeStr.slice(0, 5)
   }
 
+  if (loading) {
+    return <LoadingScreen message="Загрузка смен..." />
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-24">
-      <div className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-10">
+    <main className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-24">
+      <div className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-20">
         <div className="p-4">
-          <h1 className="text-2xl font-bold text-white mb-4">Лента смен</h1>
-          
+          <h1 className="text-h1 text-white mb-4">Лента смен</h1>
+
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
             <input
               type="text"
+              role="search"
+              aria-label="Поиск смен"
               placeholder="Поиск по названию, локации, категории..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500"
+              className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition-colors duration-200"
             />
           </div>
         </div>
       </div>
 
       <div className="p-4">
-        {loading && (
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4 animate-pulse"
-              >
-                <div className="h-6 bg-white/10 rounded w-3/4 mb-3"></div>
-                <div className="h-4 bg-white/10 rounded w-1/2 mb-2"></div>
-                <div className="h-4 bg-white/10 rounded w-2/3"></div>
-              </div>
-            ))}
-          </div>
-        )}
 
         {error && (
           <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4">
@@ -97,7 +90,7 @@ export default function FeedPage() {
           </div>
         )}
 
-        {!loading && !error && filteredShifts.length === 0 && (
+        {!error && filteredShifts.length === 0 && (
           <div className="text-center py-12">
             <div className="w-16 h-16 mx-auto mb-4 bg-white/5 rounded-full flex items-center justify-center">
               <Search className="w-8 h-8 text-gray-400" />
@@ -168,12 +161,12 @@ export default function FeedPage() {
           </div>
         )}
 
-        {!loading && !error && filteredShifts.length > 0 && (
+        {!error && filteredShifts.length > 0 && (
           <p className="text-center text-gray-500 text-sm mt-6">
             Показано смен: {filteredShifts.length}
           </p>
         )}
       </div>
-    </div>
+    </main>
   )
 }

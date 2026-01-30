@@ -16,22 +16,22 @@ export const CustomBadge: React.FC<CustomBadgeProps> = ({
   className = '',
 }) => {
   const variants = {
-    default: 'bg-white/10 text-white',
-    success: 'bg-[#BFFF00] text-black',
-    warning: 'bg-[#FFD60A] text-black',
-    danger: 'bg-red-500 text-white',
-    info: 'bg-[#E85D2F] text-white',
+    default: 'bg-white/10 text-white border border-white/10',
+    success: 'bg-[#BFFF00]/20 text-[#BFFF00] border border-[#BFFF00]/30',
+    warning: 'bg-[#FFD60A]/20 text-[#FFD60A] border border-[#FFD60A]/30',
+    danger: 'bg-red-500/20 text-red-400 border border-red-500/30',
+    info: 'bg-[#E85D2F]/20 text-[#E85D2F] border border-[#E85D2F]/30',
   }
 
   const sizes = {
-    sm: 'px-2 py-0.5 text-[10px]',
-    md: 'px-3 py-1 text-xs',
+    sm: 'px-2 py-1 text-xs min-h-[20px]',
+    md: 'px-3 py-1.5 text-sm min-h-[24px]',
   }
 
   return (
     <span
       className={`
-        inline-flex items-center rounded-full font-montserrat font-800 uppercase
+        inline-flex items-center rounded-full font-inter font-bold uppercase
         ${variants[variant]}
         ${sizes[size]}
         ${className}

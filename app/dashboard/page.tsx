@@ -9,6 +9,7 @@ import {
 import { getClientShifts, getClientStats } from '@/lib/api/shifts'
 import { getPendingApplicationsCount } from '@/lib/api/applications'
 import { ShiftStatus } from '@/components/shift/ShiftStatus'
+import { LoadingScreen } from '@/components/ui/LoadingSpinner'
 import type { Tables } from '@/lib/supabase-types'
 
 type Shift = Tables<'shifts'>
@@ -114,25 +115,18 @@ export default function ClientDashboardPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Загрузка панели...</p>
-        </div>
-      </div>
-    )
+    return <LoadingScreen message="Загрузка панели..." />
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-24">
+    <main className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-24">
       {/* Header */}
-      <div className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-10">
+      <header className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-20">
         <div className="p-4">
-          <h1 className="text-2xl font-bold text-white mb-1">Панель заказчика</h1>
-          <p className="text-sm text-gray-400">Управляйте своими сменами</p>
+          <h1 className="text-h1 text-white mb-1">Панель заказчика</h1>
+          <p className="text-body-small text-gray-400">Управляйте своими сменами</p>
         </div>
-      </div>
+      </header>
 
       <div className="p-4 space-y-6">
         {/* Stats Cards */}
@@ -230,12 +224,7 @@ export default function ClientDashboardPage() {
         </div>
 
         {/* Shifts Grid */}
-        {loadingApplicationsCounts ? (
-          <div className="text-center py-12">
-            <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-            <p className="text-gray-400 text-sm">Загрузка смен...</p>
-          </div>
-        ) : shifts.length === 0 ? (
+        {shifts.length === 0 ? (
           <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-12 text-center">
             <Briefcase className="w-16 h-16 text-gray-500 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-white mb-2">
@@ -349,6 +338,6 @@ export default function ClientDashboardPage() {
       >
         <Plus className="w-8 h-8 text-white" />
       </button>
-    </div>
+    </main>
   )
 }

@@ -154,7 +154,7 @@ export default function WorkerProfilePage() {
   if (error || !worker) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4">
-        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 max-w-md w-full">
+        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 max-w-md w-full" role="alert">
           <p className="text-red-400 text-center mb-4">{error || 'Профиль не найден'}</p>
           <button
             onClick={() => window.location.reload()}
@@ -168,30 +168,31 @@ export default function WorkerProfilePage() {
   }
 
   return (
-    <motion.div
+    <motion.main
       className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
     >
       {/* Header */}
-      <motion.div
-        className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-10"
+      <motion.header
+        className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-20"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
+        transition={{ duration: 0.3, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
       >
         <div className="p-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-white">Мой профиль</h1>
+          <h1 className="text-h2 text-white">Мой профиль</h1>
           <button
             onClick={() => router.push('/profile/edit')}
-            className="flex items-center gap-2 px-4 py-2 bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/30 rounded-xl text-orange-400 transition"
+            aria-label="Редактировать профиль"
+            className="flex items-center gap-2 px-4 min-h-[44px] bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/30 rounded-xl text-orange-400 transition-colors duration-200"
           >
-            <Edit className="w-4 h-4" />
+            <Edit className="w-4 h-4" aria-hidden="true" />
             <span className="text-sm font-medium">Редактировать</span>
           </button>
         </div>
-      </motion.div>
+      </motion.header>
 
       {/* Profile Header Card */}
       <div className="relative">
@@ -391,13 +392,14 @@ export default function WorkerProfilePage() {
         <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5">
           <button
             onClick={handleLogout}
-            className="w-full py-3 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 rounded-xl text-red-400 font-bold transition flex items-center justify-center gap-2"
+            aria-label="Выйти из аккаунта"
+            className="w-full min-h-[44px] py-3 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 rounded-xl text-red-400 font-bold transition-colors duration-200 flex items-center justify-center gap-2"
           >
-            <LogOut className="w-5 h-5" />
+            <LogOut className="w-5 h-5" aria-hidden="true" />
             Выйти из аккаунта
           </button>
         </div>
       </div>
-    </motion.div>
+    </motion.main>
   )
 }

@@ -26,19 +26,19 @@ export const CustomButton: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    'font-montserrat font-700 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2'
+    'font-inter font-bold rounded-xl transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] active:scale-95 flex items-center justify-center gap-2'
 
   const variants = {
-    primary: 'bg-[#E85D2F] hover:bg-[#D94D1F] text-white disabled:bg-[#E85D2F]/50',
-    secondary: 'bg-[#BFFF00] hover:bg-[#AAEE00] text-black disabled:bg-[#BFFF00]/50',
+    primary: 'bg-[#E85D2F] hover:bg-[#D94D1F] text-white disabled:bg-[#E85D2F]/50 shadow-md',
+    secondary: 'bg-[#BFFF00] hover:bg-[#AAEE00] text-black disabled:bg-[#BFFF00]/50 shadow-md',
     outline:
       'bg-transparent border-2 border-white/10 hover:border-[#E85D2F]/50 text-white disabled:opacity-50',
     ghost: 'bg-white/5 hover:bg-white/10 text-white disabled:opacity-50',
-    danger: 'bg-red-500 hover:bg-red-600 text-white disabled:bg-red-500/50',
+    danger: 'bg-red-500 hover:bg-red-600 text-white disabled:bg-red-500/50 shadow-md',
   }
 
   const sizes = {
-    sm: 'h-10 px-4 text-sm',
+    sm: 'h-11 px-4 text-sm',
     md: 'h-12 px-6 text-base',
     lg: 'h-14 px-8 text-lg',
   }

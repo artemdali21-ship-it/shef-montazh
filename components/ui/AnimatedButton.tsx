@@ -22,23 +22,23 @@ export function AnimatedButton({
   ...props
 }: AnimatedButtonProps) {
   const variantClasses = {
-    primary: 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/30',
-    secondary: 'bg-white/10 hover:bg-white/20 text-white border border-white/10',
+    primary: 'bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/30',
+    secondary: 'bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-sm',
     outline: 'bg-transparent hover:bg-white/5 text-white border border-white/20',
     ghost: 'bg-transparent hover:bg-white/5 text-white',
     danger: 'bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30',
   }
 
   const sizeClasses = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2.5',
-    lg: 'px-6 py-3 text-lg',
+    sm: 'h-11 px-4 text-sm',
+    md: 'h-12 px-6 text-base',
+    lg: 'h-14 px-8 text-lg',
   }
 
   return (
     <motion.button
       className={cn(
-        'rounded-xl font-bold transition-all duration-200 flex items-center justify-center gap-2',
+        'rounded-xl font-bold transition-all flex items-center justify-center gap-2',
         variantClasses[variant],
         sizeClasses[size],
         (disabled || loading) && 'opacity-50 cursor-not-allowed',
@@ -46,6 +46,10 @@ export function AnimatedButton({
       )}
       whileHover={!disabled && !loading ? { scale: 1.05 } : {}}
       whileTap={!disabled && !loading ? { scale: 0.95 } : {}}
+      transition={{
+        duration: 0.2,
+        ease: [0.4, 0, 0.2, 1]
+      }}
       disabled={disabled || loading}
       {...props}
     >

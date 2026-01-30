@@ -1,6 +1,7 @@
 'use client'
 
-import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Briefcase, FileText, User, LayoutDashboard, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -51,7 +52,9 @@ export function BottomNav({ userType: propsUserType }: BottomNavProps) {
   
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 max-w-[390px] mx-auto z-40"
+      role="navigation"
+      aria-label="Главное меню"
+      className="fixed bottom-0 left-0 right-0 max-w-full mx-auto z-30"
       style={{
         background: 'rgba(255, 255, 255, 0.1)',
         backdropFilter: 'blur(20px)',
@@ -60,35 +63,39 @@ export function BottomNav({ userType: propsUserType }: BottomNavProps) {
         padding: '8px 0 20px 0',
       }}
     >
-      <div className="flex items-center justify-around">
+      <ul className="flex items-center justify-around list-none m-0 p-0">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const active = isActive(tab.path);
 
           return (
-            <Link
-              key={tab.path}
-              href={tab.path}
-              className="flex flex-col items-center gap-2 py-2 px-4 rounded-lg transition-all"
-              style={{
-                background: active ? 'rgba(232, 93, 47, 0.2)' : 'transparent',
-              }}
-            >
-              <Icon
-                className="w-5 h-5"
-                strokeWidth={1.5}
-                style={{ color: active ? '#E85D2F' : 'rgba(255, 255, 255, 0.6)' }}
-              />
-              <span
-                className="text-xs font-medium font-montserrat"
-                style={{ color: active ? '#E85D2F' : 'rgba(255, 255, 255, 0.6)' }}
+            <li key={tab.path} className="flex-1 flex justify-center">
+              <Link
+                href={tab.path}
+                aria-label={tab.label}
+                aria-current={active ? 'page' : undefined}
+                className="flex flex-col items-center justify-center gap-1 min-h-[44px] min-w-[44px] px-4 rounded-lg transition-all duration-200"
+                style={{
+                  background: active ? 'rgba(232, 93, 47, 0.2)' : 'transparent',
+                }}
               >
-                {tab.label}
-              </span>
-            </Link>
+                <Icon
+                  className="w-6 h-6"
+                  strokeWidth={1.5}
+                  style={{ color: active ? '#E85D2F' : 'rgba(255, 255, 255, 0.6)' }}
+                  aria-hidden="true"
+                />
+                <span
+                  className="text-xs font-medium font-inter"
+                  style={{ color: active ? '#E85D2F' : 'rgba(255, 255, 255, 0.6)' }}
+                >
+                  {tab.label}
+                </span>
+              </Link>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </nav>
   );
 }

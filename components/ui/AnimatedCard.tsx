@@ -20,7 +20,7 @@ export function AnimatedCard({
   return (
     <motion.div
       className={cn(
-        'bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 transition-all duration-300',
+        'bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6',
         className
       )}
       initial={{ opacity: 0, y: 20 }}
@@ -28,11 +28,11 @@ export function AnimatedCard({
       transition={{
         duration: 0.3,
         delay,
-        ease: 'easeOut'
+        ease: [0.4, 0, 0.2, 1]
       }}
       whileHover={hover ? {
         y: -4,
-        boxShadow: '0 20px 25px -5px rgba(232, 93, 47, 0.2), 0 10px 10px -5px rgba(232, 93, 47, 0.1)'
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)'
       } : {}}
       {...props}
     >
@@ -62,7 +62,7 @@ export function AnimatedList({
           transition={{
             duration: 0.3,
             delay: index * stagger,
-            ease: 'easeOut'
+            ease: [0.4, 0, 0.2, 1]
           }}
         >
           {child}

@@ -1,20 +1,23 @@
 import React from "react"
 import type { Metadata } from 'next'
 import Script from 'next/script'
-import { Montserrat, Geist_Mono } from 'next/font/google'
+import { Inter, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import TelegramProvider from '@/components/providers/telegram-provider'
 import Background3D from '@/components/layouts/Background3D'
 import { Toaster } from '@/components/ui/Toaster'
 
-const _montserrat = Montserrat({ 
-  weight: ['400', '500', '600', '700', '800'], 
+const inter = Inter({
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin', 'cyrillic'],
-  variable: '--font-montserrat',
+  variable: '--font-inter',
   display: 'swap'
 })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: '--font-mono'
+})
 
 export const metadata: Metadata = {
   title: 'ШЕФ-МОНТАЖ — Маркетплейс монтажников',
@@ -79,7 +82,7 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body className={`${_montserrat.variable} ${_geistMono.variable} bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] text-white`}>
+      <body className={`${inter.variable} ${geistMono.variable} font-inter bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] text-white`}>
         <TelegramProvider>
           {children}
         </TelegramProvider>
