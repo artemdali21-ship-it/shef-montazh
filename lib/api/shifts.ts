@@ -1,4 +1,6 @@
 import { supabase } from '../supabase'
+import { ShiftStatus, ApplicationStatus, WorkerStatus } from '@/lib/types/status'
+import { canTransitionShift, canTransitionApplication, canTransitionWorker } from '@/lib/status/transitions'
 
 export interface Shift {
   id: string
@@ -16,7 +18,7 @@ export interface Shift {
   required_workers: number
   required_rating: number
   tools_required?: string[]
-  status: 'open' | 'in_progress' | 'completed' | 'cancelled'
+  status: ShiftStatus
   created_at: string
   updated_at: string
 }
@@ -477,5 +479,169 @@ export async function getShiftWithWorkers(shiftId: string) {
     }
   } catch (err) {
     return { data: null, error: err }
+  }
+}
+
+// ============ УПРАВЛЕНИЕ СТАТУСАМИ СМЕН ============
+
+/**
+ * Изменить статус смены с валидацией
+ */
+export async function updateShiftStatus(
+  shiftId: string,
+  newStatus: ShiftStatus
+) {
+  try {
+    // Получаем текущий статус
+    const { data: currentShift } = await supabase
+      .from('shifts')
+      .select('status')
+      .eq('id', shiftId)
+      .single();
+
+    if (!currentShift) {
+      return { data: null, error: new Error('Смена не найдена') };
+    }
+
+    const currentStatus = currentShift.status as ShiftStatus;
+
+    // Валидация перехода
+    if (!canTransitionShift(currentStatus, newStatus)) {
+      return {
+        data: null,
+        error: new Error(`Невозможен переход ${currentStatus} → ${newStatus}`)
+      };
+    }
+
+    // Обновляем статус
+    const { data, error } = await supabase
+      .from('shifts')
+      .update({
+        status: newStatus,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', shiftId)
+      .select()
+      .single();
+
+    return { data, error };
+  } catch (err) {
+    return { data: null, error: err };
+  }
+}
+
+/**
+ * Изменить статус отклика с валидацией
+ */
+export async function updateApplicationStatus(
+  applicationId: string,
+  newStatus: ApplicationStatus
+) {
+  try {
+    // Получаем текущий статус
+    const { data: currentApp } = await supabase
+      .from('applications')
+      .select('status')
+      .eq('id', applicationId)
+      .single();
+
+    if (!currentApp) {
+      return { data: null, error: new Error('Отклик не найден') };
+    }
+
+    const currentStatus = currentApp.status as ApplicationStatus;
+
+    // Валидация перехода
+    if (!canTransitionApplication(currentStatus, newStatus)) {
+      return {
+        data: null,
+        error: new Error(`Невозможен переход ${currentStatus} → ${newStatus}`)
+      };
+    }
+
+    // Обновляем статус
+    const { data, error } = await supabase
+      .from('applications')
+      .update({ status: newStatus })
+      .eq('id', applicationId)
+      .select()
+      .single();
+
+    return { data, error };
+  } catch (err) {
+    return { data: null, error: err };
+  }
+}
+
+/**
+ * Изменить статус работника на смене с валидацией
+ */
+export async function updateWorkerStatus(
+  shiftWorkerId: string,
+  newStatus: WorkerStatus
+) {
+  try {
+    // Получаем текущий статус
+    const { data: currentWorker } = await supabase
+      .from('shift_workers')
+      .select('worker_status')
+      .eq('id', shiftWorkerId)
+      .single();
+
+    if (!currentWorker) {
+      return { data: null, error: new Error('Работник не найден') };
+    }
+
+    const currentStatus = (currentWorker.worker_status || 'assigned') as WorkerStatus;
+
+    // Валидация перехода
+    if (!canTransitionWorker(currentStatus, newStatus)) {
+      return {
+        data: null,
+        error: new Error(`Невозможен переход ${currentStatus} → ${newStatus}`)
+      };
+    }
+
+    // Обновляем статус
+    const { data, error } = await supabase
+      .from('shift_workers')
+      .update({ worker_status: newStatus })
+      .eq('id', shiftWorkerId)
+      .select()
+      .single();
+
+    return { data, error };
+  } catch (err) {
+    return { data: null, error: err };
+  }
+}
+
+/**
+ * Получить статистику по статусам смен
+ */
+export async function getShiftStatusStats(clientId?: string) {
+  try {
+    let query = supabase
+      .from('shifts')
+      .select('status');
+
+    if (clientId) {
+      query = query.eq('client_id', clientId);
+    }
+
+    const { data, error } = await query;
+
+    if (error) return { data: null, error };
+
+    // Подсчитываем количество смен в каждом статусе
+    const stats: Record<string, number> = {};
+    data?.forEach((shift: any) => {
+      const status = shift.status;
+      stats[status] = (stats[status] || 0) + 1;
+    });
+
+    return { data: stats, error: null };
+  } catch (err) {
+    return { data: null, error: err };
   }
 }

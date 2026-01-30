@@ -8,9 +8,10 @@ import {
 } from 'lucide-react'
 import { getClientShifts, getClientStats } from '@/lib/api/shifts'
 import { getPendingApplicationsCount } from '@/lib/api/applications'
-import { ShiftStatus } from '@/components/shift/ShiftStatus'
+import { ShiftStatusBadge } from '@/components/status/StatusBadge'
 import { LoadingScreen } from '@/components/ui/LoadingSpinner'
 import type { Tables } from '@/lib/supabase-types'
+import type { ShiftStatus } from '@/lib/types/status'
 
 type Shift = Tables<'shifts'>
 type TabStatus = 'open' | 'in_progress' | 'completed'
@@ -264,8 +265,8 @@ export default function ClientDashboard() {
                       {shift.category}
                     </span>
                   </div>
-                  <ShiftStatus
-                    status={shift.status as 'open' | 'accepted' | 'on_way' | 'checked_in' | 'completed'}
+                  <ShiftStatusBadge
+                    status={shift.status as ShiftStatus}
                     size="sm"
                   />
                 </div>
