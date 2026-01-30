@@ -1,9 +1,13 @@
 'use client'
 
 import WorkerLayout from '@/components/layouts/WorkerLayout';
+import { EmptyShifts } from '@/components/shifts/EmptyShifts';
 import { Briefcase, Clock, MapPin, DollarSign } from 'lucide-react';
+import { useState } from 'react';
 
 export default function ShiftsPage() {
+  const [showFilters, setShowFilters] = useState(false);
+
   const myShifts = [
     {
       id: '1',
@@ -30,7 +34,14 @@ export default function ShiftsPage() {
           Мои смены
         </h1>
 
-        {myShifts.map((shift) => (
+        {myShifts.length === 0 ? (
+          <EmptyShifts
+            userType="worker"
+            onOpenFilters={() => setShowFilters(true)}
+          />
+        ) : (
+          <>
+            {myShifts.map((shift) => (
           <div
             key={shift.id}
             style={{
@@ -72,7 +83,9 @@ export default function ShiftsPage() {
               </div>
             </div>
           </div>
-        ))}
+            ))}
+          </>
+        )}
       </div>
     </WorkerLayout>
   );

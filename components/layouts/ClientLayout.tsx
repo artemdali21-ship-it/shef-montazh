@@ -1,23 +1,23 @@
 'use client'
 
-import { usePathname, useRouter } from 'next/navigation';
-import { Home, Search, Plus, MessageCircle, User } from 'lucide-react';
+import { useEffect, useState } from 'react'
+import { BottomNav } from '@/components/layout/BottomNav'
+import { supabase } from '@/lib/supabase'
 
 interface ClientLayoutProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
-  const pathname = usePathname();
-  const router = useRouter();
+  const [userId, setUserId] = useState<string | undefined>(undefined)
 
-  const tabs = [
-    { icon: Home, label: 'Смены', path: '/dashboard' },
-    { icon: Search, label: 'Поиск', path: '/search' },
-    { icon: Plus, label: 'Создать', path: '/create-shift' },
-    { icon: MessageCircle, label: 'Чат', path: '/messages' },
-    { icon: User, label: 'Профиль', path: '/profile' }
-  ];
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUserId(user?.id)
+    }
+    getUser()
+  }, [])
 
   return (
     <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col overflow-hidden">
@@ -26,43 +26,8 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
         {children}
       </div>
 
-      {/* TABBAR */}
-      <nav className="fixed bottom-0 left-0 right-0 flex-shrink-0 bg-black/40 backdrop-blur-2xl border-t border-white/10 h-20 z-50 max-w-screen-md mx-auto">
-        <div className="flex items-center justify-around h-full px-4 w-full">
-          {tabs.map(({ icon: Icon, label, path }) => {
-            const isActive = pathname === path;
-            return (
-              <button
-                key={path}
-                onClick={() => router.push(path)}
-                className="flex flex-col items-center gap-1 py-2 px-3 rounded-lg transition-all"
-                style={{
-                  background: isActive ? 'rgba(232, 93, 47, 0.15)' : 'transparent',
-                }}
-              >
-                <Icon
-                  size={24}
-                  strokeWidth={1.5}
-                  style={{
-                    color: isActive ? '#E85D2F' : 'rgba(255, 255, 255, 0.6)',
-                    transition: 'color 0.2s'
-                  }}
-                />
-                <span
-                  style={{
-                    fontSize: '11px',
-                    fontWeight: isActive ? 600 : 500,
-                    color: isActive ? '#E85D2F' : 'rgba(255, 255, 255, 0.6)',
-                    transition: 'color 0.2s'
-                  }}
-                >
-                  {label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </nav>
+      {/* BOTTOM NAVIGATION */}
+      <BottomNav userType="client" userId={userId} />
     </div>
-  );
+  )
 }
