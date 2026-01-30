@@ -9,7 +9,9 @@ import {
 import { getShiftById } from '@/lib/api/shifts'
 import { getUserById } from '@/lib/api/users'
 import { createApplication, checkExistingApplication, getPendingApplicationsCount } from '@/lib/api/applications'
+import { getWorkerShiftStatus } from '@/lib/api/shift-workers'
 import { ShiftStatus } from '@/components/shift/ShiftStatus'
+import CheckInButton from '@/components/shift/CheckInButton'
 import type { Tables } from '@/lib/supabase-types'
 
 type Shift = Tables<'shifts'>
@@ -27,6 +29,7 @@ export default function ShiftDetailPage() {
   const [applying, setApplying] = useState(false)
   const [hasApplied, setHasApplied] = useState(false)
   const [pendingApplicationsCount, setPendingApplicationsCount] = useState(0)
+  const [workerShiftStatus, setWorkerShiftStatus] = useState<'confirmed' | 'on_way' | 'checked_in' | 'checked_out' | null>(null)
 
   // Mock worker ID - in production, get from auth context
   const MOCK_WORKER_ID = 'worker-123'
@@ -68,6 +71,12 @@ export default function ShiftDetailPage() {
         if (shiftData.client_id === currentUserId) {
           const { count } = await getPendingApplicationsCount(shiftId)
           setPendingApplicationsCount(count || 0)
+        }
+
+        // Check if worker is assigned to this shift
+        const { data: workerStatus } = await getWorkerShiftStatus(shiftId, MOCK_WORKER_ID)
+        if (workerStatus) {
+          setWorkerShiftStatus(workerStatus.status as 'confirmed' | 'on_way' | 'checked_in' | 'checked_out')
         }
       } catch (err) {
         console.error('Error loading shift:', err)
@@ -354,8 +363,20 @@ export default function ShiftDetailPage() {
         )}
       </div>
 
+      {/* Check-In Button - For assigned workers */}
+      {workerShiftStatus && ['confirmed', 'on_way'].includes(workerShiftStatus) && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
+          <CheckInButton
+            shiftId={shift.id}
+            shiftDate={shift.date}
+            startTime={shift.start_time}
+            status={workerShiftStatus}
+          />
+        </div>
+      )}
+
       {/* Apply Button - Fixed at bottom */}
-      {shift.status === 'open' && (
+      {shift.status === 'open' && !workerShiftStatus && (
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
           {hasApplied ? (
             <div className="w-full py-4 bg-green-500/20 border border-green-500/30 rounded-xl text-green-400 font-bold text-lg text-center flex items-center justify-center gap-2">
