@@ -10,8 +10,10 @@ import { getShiftById } from '@/lib/api/shifts'
 import { getUserById } from '@/lib/api/users'
 import { createApplication, checkExistingApplication, getPendingApplicationsCount } from '@/lib/api/applications'
 import { getWorkerShiftStatus } from '@/lib/api/shift-workers'
+import { getRating } from '@/lib/api/ratings'
 import { ShiftStatus } from '@/components/shift/ShiftStatus'
 import CheckInButton from '@/components/shift/CheckInButton'
+import { Star } from 'lucide-react'
 import type { Tables } from '@/lib/supabase-types'
 
 type Shift = Tables<'shifts'>
@@ -30,6 +32,7 @@ export default function ShiftDetailPage() {
   const [hasApplied, setHasApplied] = useState(false)
   const [pendingApplicationsCount, setPendingApplicationsCount] = useState(0)
   const [workerShiftStatus, setWorkerShiftStatus] = useState<'confirmed' | 'on_way' | 'checked_in' | 'checked_out' | null>(null)
+  const [userRating, setUserRating] = useState<{ rating: number; to_user: any } | null>(null)
 
   // Mock worker ID - in production, get from auth context
   const MOCK_WORKER_ID = 'worker-123'
@@ -77,6 +80,15 @@ export default function ShiftDetailPage() {
         const { data: workerStatus } = await getWorkerShiftStatus(shiftId, MOCK_WORKER_ID)
         if (workerStatus) {
           setWorkerShiftStatus(workerStatus.status as 'confirmed' | 'on_way' | 'checked_in' | 'checked_out')
+        }
+
+        // Check if user has already rated this shift
+        if (shiftData.status === 'completed') {
+          const userIdToRate = shiftData.client_id === currentUserId ? MOCK_WORKER_ID : shiftData.client_id
+          const { data: ratingData } = await getRating(shiftId, currentUserId, userIdToRate || '')
+          if (ratingData) {
+            setUserRating(ratingData)
+          }
         }
       } catch (err) {
         console.error('Error loading shift:', err)
@@ -395,10 +407,29 @@ export default function ShiftDetailPage() {
         </div>
       )}
 
-      {shift.status !== 'open' && (
+      {/* Rating Button - For completed shifts */}
+      {shift.status === 'completed' && !workerShiftStatus && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
+          {userRating ? (
+            <div className="w-full py-4 bg-yellow-500/20 border border-yellow-500/30 rounded-xl text-yellow-400 font-bold text-lg text-center flex items-center justify-center gap-2">
+              <Star className="w-6 h-6 fill-yellow-400" />
+              Вы оценили на {userRating.rating} звезд
+            </div>
+          ) : (
+            <button
+              onClick={() => router.push(`/shift/${shift.id}/rating`)}
+              className="w-full py-4 bg-yellow-500 hover:bg-yellow-600 rounded-xl text-white font-bold text-lg transition shadow-lg shadow-yellow-500/30 flex items-center justify-center gap-2"
+            >
+              <Star className="w-6 h-6" />
+              Оценить
+            </button>
+          )}
+        </div>
+      )}
+
+      {shift.status !== 'open' && !workerShiftStatus && shift.status !== 'completed' && (
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
           <div className="w-full py-4 bg-gray-500/20 border border-gray-500/30 rounded-xl text-gray-400 font-bold text-lg text-center">
-            {shift.status === 'completed' && 'Смена завершена'}
             {shift.status === 'cancelled' && 'Смена отменена'}
             {shift.status === 'in_progress' && 'Смена в процессе'}
             {!['open', 'completed', 'cancelled', 'in_progress'].includes(shift.status || '') && 'Смена недоступна'}
