@@ -51,7 +51,7 @@ export default function ClientProfile({
       }
     }
 
-    loadProfileData();
+    loadClientData();
   }, [userId]);
 
   if (loading) {
