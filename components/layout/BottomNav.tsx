@@ -106,15 +106,15 @@ export function BottomNav({ userType, userId }: BottomNavProps) {
               onClick={() => router.push(item.href)}
               className="flex flex-col items-center justify-center gap-1 min-w-[64px] min-h-[44px] px-2 py-1 transition-colors duration-200"
             >
-              <div className="relative">
+              <div className="relative flex items-center justify-center w-6 h-6">
                 <Icon
                   className={`w-6 h-6 transition-colors duration-200 ${
                     active ? 'text-[#E85D2F]' : 'text-[#666666]'
                   }`}
                 />
                 {item.badge && item.badge > 0 && (
-                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
-                    <span className="text-[10px] font-bold text-white">
+                  <div className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 bg-red-500 rounded-full flex items-center justify-center">
+                    <span className="text-[10px] font-bold text-white leading-none">
                       {item.badge > 9 ? '9+' : item.badge}
                     </span>
                   </div>
