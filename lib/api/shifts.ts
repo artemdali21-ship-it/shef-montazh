@@ -425,3 +425,57 @@ export async function applyToShift(shiftId: string, workerId: string) {
     }
   }
 }
+
+// Get shef's active shifts (shifts where shef is managing)
+export async function getShefActiveShifts(shefId: string) {
+  // For now, shef manages all shifts created by their associated client
+  // In production, you'd have a shef_id field on shifts table
+  const { data, error } = await supabase
+    .from('shifts')
+    .select('*')
+    .in('status', ['open', 'in_progress'])
+    .order('date', { ascending: true })
+
+  return { data, error }
+}
+
+// Get shift with all workers and their statuses
+export async function getShiftWithWorkers(shiftId: string) {
+  try {
+    // Get shift
+    const { data: shift, error: shiftError } = await getShiftById(shiftId)
+    if (shiftError || !shift) {
+      return { data: null, error: shiftError }
+    }
+
+    // Get shift workers with user details
+    const { data: shiftWorkers, error: workersError } = await supabase
+      .from('shift_workers')
+      .select(`
+        *,
+        worker:users!shift_workers_worker_id_fkey(
+          id,
+          full_name,
+          avatar_url,
+          phone,
+          rating
+        )
+      `)
+      .eq('shift_id', shiftId)
+      .order('created_at', { ascending: false })
+
+    if (workersError) {
+      return { data: null, error: workersError }
+    }
+
+    return {
+      data: {
+        ...shift,
+        workers: shiftWorkers || [],
+      },
+      error: null,
+    }
+  } catch (err) {
+    return { data: null, error: err }
+  }
+}

@@ -194,3 +194,24 @@ export async function getClientCompletedShifts(clientId: string) {
     return { data: [], error: null }
   }
 }
+
+// Get worker profile with user data
+export async function getWorkerProfile(userId: string) {
+  const { data: user, error: userError } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+    .single()
+
+  if (userError) return { data: null, error: userError }
+
+  const { data: profile, error: profileError } = await supabase
+    .from('worker_profiles')
+    .select('*')
+    .eq('user_id', userId)
+    .single()
+
+  if (profileError) return { data: null, error: profileError }
+
+  return { data: { ...user, profile }, error: null }
+}
