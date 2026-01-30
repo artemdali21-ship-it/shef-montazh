@@ -32,6 +32,7 @@ export async function getAllShifts() {
     // Check if error is about table not found - various error formats
     if (error && (
       error.code === 'PGRST116' || 
+      error.code === 'PGRST205' ||
       error.message?.includes('Could not find the table') ||
       error.message?.includes('42P01')
     )) {
@@ -139,6 +140,7 @@ export async function getOpenShifts(filters?: {
     // Check if error is about table not found
     if (error && (
       error.code === 'PGRST116' || 
+      error.code === 'PGRST205' ||
       error.message?.includes('Could not find the table') ||
       error.message?.includes('42P01')
     )) {
@@ -169,6 +171,7 @@ export async function getShiftById(shiftId: string) {
     // Check if error is about table not found
     if (error && (
       error.code === 'PGRST116' || 
+      error.code === 'PGRST205' ||
       error.message?.includes('Could not find the table') ||
       error.message?.includes('42P01')
     )) {
@@ -253,6 +256,7 @@ export async function getClientShifts(clientId: string) {
     // Check if error is about table not found
     if (error && (
       error.code === 'PGRST116' || 
+      error.code === 'PGRST205' ||
       error.message?.includes('Could not find the table') ||
       error.message?.includes('42P01')
     )) {
