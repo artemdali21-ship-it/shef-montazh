@@ -57,12 +57,16 @@ export function DynamicLayout({ children }: DynamicLayoutProps) {
   const showNav = !isRootPage(pathname) && !NO_NAV_PAGES.some(page => pathname.startsWith(page))
 
   if (!mounted) {
-    return <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A]">{children}</div>
+    return (
+      <div className="w-full min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] overflow-y-auto">
+        {children}
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A]">
-      <div className={showNav ? 'pb-20' : ''}>
+    <div className="w-full min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A]">
+      <div className={showNav ? 'pb-24 min-h-screen' : 'min-h-screen'}>
         {children}
       </div>
       {showNav && <BottomNav userType={userType} userId={userId} />}

@@ -116,7 +116,7 @@ export default function WorkerProfile() {
   ];
 
   return (
-    <div className="w-full flex flex-col bg-black text-white">
+    <div className="w-full flex flex-col min-h-screen overflow-y-auto bg-black text-white">
       {/* Profile Header */}
       <div className="p-5 text-center relative bg-cover bg-center border border-white/10" style={{ backgroundImage: 'url(/images/bg-main-splash.jpg)' }}>
         <div className="absolute inset-0 bg-black/20 z-0" />

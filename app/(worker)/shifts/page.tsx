@@ -27,7 +27,7 @@ export default function ShiftsPage() {
   ];
 
   return (
-    <div className="p-5">
+    <div className="p-5 min-h-screen overflow-y-auto">
         <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', marginBottom: '20px' }}>
           Мои смены
         </h1>

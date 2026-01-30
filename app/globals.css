@@ -145,22 +145,26 @@
 /* Telegram Mini App Styling - MOBILE SCROLL FIX */
 html {
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 body {
   width: 100%;
-  min-height: 100%;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-user-select: text;
   user-select: text;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 #__next {
   width: 100%;
-  min-height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }

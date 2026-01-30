@@ -81,7 +81,7 @@ export default function ClientProfile({
   const totalPosted = activeShifts.length + completedShifts.length;
 
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col min-h-screen overflow-y-auto">
       {/* PROFILE INFO SECTION */}
       <div
         style={{
