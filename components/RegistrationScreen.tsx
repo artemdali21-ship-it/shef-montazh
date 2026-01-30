@@ -35,6 +35,7 @@ export default function RegistrationScreen() {
   const [userType, setUserType] = useState<'worker' | 'client' | 'shef' | null>(roleFromQuery || null)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [formData, setFormData] = useState({
     phone: '',
     email: '',
@@ -93,6 +94,10 @@ export default function RegistrationScreen() {
 
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Пароли не совпадают'
+    }
+
+    if (!acceptedTerms) {
+      newErrors.terms = 'Необходимо согласиться с условиями'
     }
 
     setErrors(newErrors)
@@ -252,45 +257,57 @@ export default function RegistrationScreen() {
                 {errors.confirmPassword && <p className="text-red-400 text-sm mt-2">{errors.confirmPassword}</p>}
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-4">
+                {/* Legal documents acceptance */}
+                <div className="space-y-2">
+                  <label className="flex items-start gap-3 text-sm cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={acceptedTerms}
+                      onChange={(e) => setAcceptedTerms(e.target.checked)}
+                      className="mt-1 w-4 h-4 accent-[#E85D2F] cursor-pointer"
+                    />
+                    <span className="text-gray-300 leading-relaxed">
+                      Я согласен с{' '}
+                      <Link
+                        href="/legal/terms"
+                        className="text-[#E85D2F] underline hover:no-underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        условиями использования
+                      </Link>
+                      {', '}
+                      <Link
+                        href="/legal/privacy"
+                        className="text-[#E85D2F] underline hover:no-underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        политикой конфиденциальности
+                      </Link>
+                      {' '}и{' '}
+                      <Link
+                        href="/legal/offer"
+                        className="text-[#E85D2F] underline hover:no-underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        договором оферты
+                      </Link>
+                    </span>
+                  </label>
+                  {errors.terms && <p className="text-red-400 text-sm">{errors.terms}</p>}
+                </div>
+
                 <button
                   onClick={handleSubmit}
-                  className="w-full p-4 rounded-xl bg-[#E85D2F] text-white font-bold hover:bg-[#E85D2F]/80"
+                  disabled={!acceptedTerms}
+                  className={`w-full p-4 rounded-xl font-bold transition-all ${
+                    acceptedTerms
+                      ? 'bg-[#E85D2F] text-white hover:bg-[#E85D2F]/80 active:scale-95'
+                      : 'bg-white/10 text-white/50 cursor-not-allowed'
+                  }`}
                 >
                   Продолжить
                 </button>
-
-                {/* Legal documents acceptance */}
-                <label className="flex items-start gap-3 mt-4 text-sm cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    required
-                    className="mt-1 w-4 h-4 accent-[#E85D2F]"
-                  />
-                  <span className="text-gray-300 leading-relaxed">
-                    Я согласен с{' '}
-                    <Link 
-                      href="/legal/terms"
-                      className="text-[#E85D2F] underline hover:no-underline"
-                    >
-                      условиями использования
-                    </Link>
-                    {', '}
-                    <Link 
-                      href="/legal/privacy"
-                      className="text-[#E85D2F] underline hover:no-underline"
-                    >
-                      политикой конфиденциальности
-                    </Link>
-                    {' '}и{' '}
-                    <Link 
-                      href="/legal/offer"
-                      className="text-[#E85D2F] underline hover:no-underline"
-                    >
-                      договором оферты
-                    </Link>
-                  </span>
-                </label>
               </div>
             </div>
           )}

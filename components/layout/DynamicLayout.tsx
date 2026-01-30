@@ -18,6 +18,7 @@ const NO_NAV_PAGES = [
   '/role-select',
   '/verify-phone',
   '/profile-setup',
+  '/worker-categories',
   '/auth/login',
   '/auth/register',
 ]
