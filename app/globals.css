@@ -515,3 +515,101 @@ html {
 .safe-area-pb {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+/* ==================== INTERACTIVE ANIMATIONS ==================== */
+
+/* Smooth transitions для всех интерактивных элементов */
+button, a, [role="button"] {
+  transition: all 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Анимация нажатия кнопок */
+button:active, [role="button"]:active {
+  transform: scale(0.95);
+}
+
+/* Hover эффекты для карточек */
+.card-hover {
+  transition: all 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* Fade in анимация */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 300ms ease-out;
+}
+
+/* Slide up для модалок */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Success pulse */
+@keyframes successPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.animate-success {
+  animation: successPulse 500ms ease-out;
+}
+
+/* Utility classes */
+.transition-all {
+  transition: all 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.duration-200 {
+  transition-duration: 200ms;
+}
+
+.active\:scale-95:active {
+  transform: scale(0.95);
+}
+
+.hover\:shadow-lg:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}

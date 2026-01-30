@@ -183,7 +183,7 @@ export default function ClientDashboard() {
         {/* Quick Action - Create Shift */}
         <button
           onClick={() => router.push('/shifts/create')}
-          className="w-full py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-2xl text-white font-bold text-lg transition shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
+          className="w-full py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-2xl text-white font-bold text-lg transition-all duration-200 active:scale-95 hover:shadow-lg shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
         >
           <Plus className="w-6 h-6" />
           Создать смену
@@ -240,7 +240,7 @@ export default function ClientDashboard() {
             {activeTab === 'open' && (
               <button
                 onClick={() => router.push('/shifts/create')}
-                className="px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-xl text-white font-semibold transition shadow-lg shadow-orange-500/30"
+                className="px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-xl text-white font-semibold transition-all duration-200 active:scale-95 hover:shadow-lg shadow-lg shadow-orange-500/30"
               >
                 Создать смену
               </button>
@@ -251,7 +251,7 @@ export default function ClientDashboard() {
             {shifts.map((shift) => (
               <div
                 key={shift.id}
-                className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5 hover:bg-white/10 transition cursor-pointer"
+                className="card-hover animate-fade-in bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5 hover:bg-white/10 transition cursor-pointer"
                 onClick={() => router.push(`/shift/${shift.id}`)}
               >
                 {/* Header */}
@@ -334,7 +334,7 @@ export default function ClientDashboard() {
       {/* Floating Action Button - positioned above BottomNav */}
       <button
         onClick={() => router.push('/shifts/create')}
-        className="fixed bottom-28 right-6 w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-full shadow-2xl shadow-orange-500/50 flex items-center justify-center transition-transform hover:scale-110 z-40"
+        className="fixed bottom-28 right-6 w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-full shadow-2xl shadow-orange-500/50 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 z-40"
       >
         <Plus className="w-8 h-8 text-white" />
       </button>

@@ -385,7 +385,7 @@ export default function WorkerShiftDetailPage() {
         <div className="fixed bottom-20 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto z-40">
           <button
             onClick={() => router.push(`/shift/${shiftId}/checkin`)}
-            className="w-full min-h-[56px] py-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 rounded-xl text-white font-bold text-lg transition shadow-lg shadow-green-500/30 flex items-center justify-center gap-2"
+            className="w-full min-h-[56px] py-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 rounded-xl text-white font-bold text-lg transition-all duration-200 active:scale-95 hover:shadow-lg shadow-lg shadow-green-500/30 flex items-center justify-center gap-2"
           >
             <CheckCircle className="w-6 h-6" />
             Я вышел на объект
@@ -413,7 +413,7 @@ export default function WorkerShiftDetailPage() {
             <button
               onClick={handleApply}
               disabled={applying}
-              className="w-full min-h-[44px] py-4 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-500/50 disabled:cursor-not-allowed rounded-xl text-white font-bold text-lg transition shadow-lg shadow-orange-500/30"
+              className="w-full min-h-[44px] py-4 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-500/50 disabled:cursor-not-allowed rounded-xl text-white font-bold text-lg transition-all duration-200 active:scale-95 hover:shadow-lg shadow-lg shadow-orange-500/30"
             >
               {applying ? 'Отправка...' : 'Откликнуться на смену'}
             </button>

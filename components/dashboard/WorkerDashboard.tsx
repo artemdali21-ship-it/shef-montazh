@@ -117,7 +117,7 @@ export default function WorkerDashboard() {
               <p className="text-gray-400 mb-6">Найдите смены в разделе "Смены"</p>
               <button
                 onClick={() => router.push('/shifts')}
-                className="px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-xl text-white font-semibold transition shadow-lg shadow-orange-500/30"
+                className="px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-xl text-white font-semibold transition-all duration-200 active:scale-95 hover:shadow-lg shadow-orange-500/30"
               >
                 Найти смены
               </button>
@@ -128,7 +128,7 @@ export default function WorkerDashboard() {
                 <div
                   key={shift.id}
                   onClick={() => router.push(`/shift/${shift.id}`)}
-                  className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4 hover:bg-white/10 transition cursor-pointer"
+                  className="card-hover animate-fade-in bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4 hover:bg-white/10 transition cursor-pointer"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="text-white font-semibold text-lg">{shift.title}</h3>
@@ -165,7 +165,7 @@ export default function WorkerDashboard() {
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => router.push('/shifts')}
-              className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4 hover:bg-white/10 transition text-left"
+              className="card-hover bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4 hover:bg-white/10 transition text-left"
             >
               <Briefcase className="w-8 h-8 text-orange-400 mb-2" />
               <p className="text-white font-semibold">Найти смены</p>
@@ -173,7 +173,7 @@ export default function WorkerDashboard() {
             </button>
             <button
               onClick={() => router.push('/profile')}
-              className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4 hover:bg-white/10 transition text-left"
+              className="card-hover bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4 hover:bg-white/10 transition text-left"
             >
               <Star className="w-8 h-8 text-yellow-400 mb-2" />
               <p className="text-white font-semibold">Мой профиль</p>
