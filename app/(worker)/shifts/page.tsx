@@ -1,8 +1,7 @@
 'use client'
 
-import WorkerLayout from '@/components/layouts/WorkerLayout';
 import { EmptyShifts } from '@/components/shifts/EmptyShifts';
-import { Briefcase, Clock, MapPin, DollarSign } from 'lucide-react';
+import { Clock, MapPin, DollarSign } from 'lucide-react';
 import { useState } from 'react';
 
 export default function ShiftsPage() {
@@ -28,8 +27,7 @@ export default function ShiftsPage() {
   ];
 
   return (
-    <WorkerLayout>
-      <div style={{ padding: '20px' }} data-allow-scroll className="overflow-y-scroll">
+    <div className="p-5">
         <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', marginBottom: '20px' }}>
           Мои смены
         </h1>
@@ -86,7 +84,6 @@ export default function ShiftsPage() {
             ))}
           </>
         )}
-      </div>
-    </WorkerLayout>
+    </div>
   );
 }

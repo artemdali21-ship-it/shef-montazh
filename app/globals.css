@@ -510,3 +510,8 @@ html {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* Safe area for iOS */
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom);
+}
