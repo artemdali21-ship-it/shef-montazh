@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Mail, Lock, User, Briefcase, Building, HardHat, AlertCircle, CheckCircle } from 'lucide-react'
+import { Mail, Lock, User, Briefcase, Building, HardHat, AlertCircle, CheckCircle, Check, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 type Role = 'worker' | 'client' | 'shef'
@@ -31,6 +31,14 @@ const roles = [
 
 export default function RegisterPage() {
   const router = useRouter()
+
+  // Form refs for auto-focus
+  const fullNameRef = useRef<HTMLInputElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
+  const phoneRef = useRef<HTMLInputElement>(null)
+  const passwordRef = useRef<HTMLInputElement>(null)
+  const confirmPasswordRef = useRef<HTMLInputElement>(null)
+
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -40,6 +48,63 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+
+  // Password validation states
+  const [passwordsMatch, setPasswordsMatch] = useState<boolean | null>(null)
+  const [passwordStrength, setPasswordStrength] = useState<'weak' | 'medium' | 'strong' | null>(null)
+
+  // Auto-focus and scroll to field on mobile
+  const scrollToField = (ref: React.RefObject<HTMLInputElement>) => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      ref.current.focus()
+    }
+  }
+
+  // Check password match in real-time
+  useEffect(() => {
+    if (confirmPassword.length > 0) {
+      setPasswordsMatch(password === confirmPassword)
+    } else {
+      setPasswordsMatch(null)
+    }
+  }, [password, confirmPassword])
+
+  // Check password strength
+  useEffect(() => {
+    if (password.length === 0) {
+      setPasswordStrength(null)
+      return
+    }
+
+    let strength: 'weak' | 'medium' | 'strong' = 'weak'
+
+    if (password.length >= 8) {
+      strength = 'medium'
+    }
+
+    if (password.length >= 12 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password)) {
+      strength = 'strong'
+    }
+
+    setPasswordStrength(strength)
+  }, [password])
+
+  // Space key handler for mobile UX
+  const handleKeyDown = (e: React.KeyboardEvent, nextRef?: React.RefObject<HTMLInputElement>) => {
+    if (e.key === ' ' && e.currentTarget instanceof HTMLInputElement) {
+      const input = e.currentTarget
+      const value = input.value.trim()
+
+      // If field is empty or only has spaces, prevent space and move to next
+      if (value.length === 0 || input.selectionStart === input.value.length) {
+        e.preventDefault()
+        if (nextRef) {
+          scrollToField(nextRef)
+        }
+      }
+    }
+  }
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -125,6 +190,24 @@ export default function RegisterPage() {
     }
   }
 
+  const getPasswordStrengthColor = () => {
+    switch (passwordStrength) {
+      case 'weak': return 'bg-red-500'
+      case 'medium': return 'bg-yellow-500'
+      case 'strong': return 'bg-green-500'
+      default: return 'bg-gray-500'
+    }
+  }
+
+  const getPasswordStrengthWidth = () => {
+    switch (passwordStrength) {
+      case 'weak': return '33%'
+      case 'medium': return '66%'
+      case 'strong': return '100%'
+      default: return '0%'
+    }
+  }
+
   if (success) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4">
@@ -178,7 +261,11 @@ export default function RegisterPage() {
                     <button
                       key={role.value}
                       type="button"
-                      onClick={() => setSelectedRole(role.value)}
+                      onClick={() => {
+                        setSelectedRole(role.value)
+                        // Auto-focus to next field after role selection
+                        setTimeout(() => scrollToField(fullNameRef), 100)
+                      }}
                       className={`p-3 rounded-xl border transition ${
                         selectedRole === role.value
                           ? 'bg-orange-500/20 border-orange-500/50 text-orange-400'
@@ -204,10 +291,13 @@ export default function RegisterPage() {
               <div className="relative">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
+                  ref={fullNameRef}
                   id="fullName"
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(e, emailRef)}
+                  onFocus={() => scrollToField(fullNameRef)}
                   placeholder="Иван Петров"
                   className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
                   disabled={loading}
@@ -223,10 +313,13 @@ export default function RegisterPage() {
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
+                  ref={emailRef}
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(e, phoneRef)}
+                  onFocus={() => scrollToField(emailRef)}
                   placeholder="example@email.com"
                   className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
                   disabled={loading}
@@ -242,10 +335,13 @@ export default function RegisterPage() {
               <div className="relative">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
+                  ref={phoneRef}
                   id="phone"
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(e, passwordRef)}
+                  onFocus={() => scrollToField(phoneRef)}
                   placeholder="+7 (999) 123-45-67"
                   className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
                   disabled={loading}
@@ -261,15 +357,41 @@ export default function RegisterPage() {
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
+                  ref={passwordRef}
                   id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => scrollToField(passwordRef)}
                   placeholder="••••••••"
                   className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
                   disabled={loading}
                 />
               </div>
+
+              {/* Password Strength Indicator */}
+              {password.length > 0 && (
+                <div className="mt-2">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-gray-400">Надёжность пароля:</span>
+                    <span className={`text-xs font-medium ${
+                      passwordStrength === 'weak' ? 'text-red-400' :
+                      passwordStrength === 'medium' ? 'text-yellow-400' :
+                      'text-green-400'
+                    }`}>
+                      {passwordStrength === 'weak' && 'Слабый'}
+                      {passwordStrength === 'medium' && 'Средний'}
+                      {passwordStrength === 'strong' && 'Сильный'}
+                    </span>
+                  </div>
+                  <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full transition-all duration-300 ${getPasswordStrengthColor()}`}
+                      style={{ width: getPasswordStrengthWidth() }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Confirm Password */}
@@ -280,21 +402,55 @@ export default function RegisterPage() {
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
+                  ref={confirmPasswordRef}
                   id="confirmPassword"
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  onFocus={() => scrollToField(confirmPasswordRef)}
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
+                  className={`w-full pl-12 pr-4 py-3 bg-white/5 border rounded-xl text-white placeholder-gray-500 focus:outline-none transition ${
+                    passwordsMatch === null
+                      ? 'border-white/10 focus:border-orange-500'
+                      : passwordsMatch
+                      ? 'border-green-500 focus:border-green-500'
+                      : 'border-red-500 focus:border-red-500'
+                  }`}
                   disabled={loading}
                 />
+                {/* Password Match Icon */}
+                {passwordsMatch !== null && (
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    {passwordsMatch ? (
+                      <Check className="w-5 h-5 text-green-400" />
+                    ) : (
+                      <X className="w-5 h-5 text-red-400" />
+                    )}
+                  </div>
+                )}
               </div>
+
+              {/* Password Mismatch Error */}
+              {passwordsMatch === false && confirmPassword.length > 0 && (
+                <p className="mt-2 text-sm text-red-400 flex items-center gap-1">
+                  <X className="w-4 h-4" />
+                  Пароли не совпадают
+                </p>
+              )}
+
+              {/* Password Match Success */}
+              {passwordsMatch === true && (
+                <p className="mt-2 text-sm text-green-400 flex items-center gap-1">
+                  <Check className="w-4 h-4" />
+                  Пароли совпадают
+                </p>
+              )}
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || passwordsMatch === false}
               className="w-full py-3 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-500/50 disabled:cursor-not-allowed rounded-xl text-white font-bold transition shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
             >
               {loading ? (
