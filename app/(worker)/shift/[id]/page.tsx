@@ -371,9 +371,9 @@ export default function WorkerShiftDetailPage() {
         </div>
       </div>
 
-      {/* Action Buttons - Fixed at bottom */}
+      {/* Action Buttons - Fixed at bottom above BottomNav */}
       {workerStatus === 'checked_in' && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
+        <div className="fixed bottom-20 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto z-40">
           <div className="w-full min-h-[44px] py-4 bg-green-500/20 border border-green-500/30 rounded-xl text-green-400 font-bold text-lg text-center flex items-center justify-center gap-2">
             <CheckCircle className="w-6 h-6" />
             Вы отметились на смене
@@ -382,7 +382,7 @@ export default function WorkerShiftDetailPage() {
       )}
 
       {workerStatus === 'accepted' && canCheckIn && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
+        <div className="fixed bottom-20 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto z-40">
           <button
             onClick={() => router.push(`/shift/${shiftId}/checkin`)}
             className="w-full min-h-[56px] py-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 rounded-xl text-white font-bold text-lg transition shadow-lg shadow-green-500/30 flex items-center justify-center gap-2"
@@ -394,7 +394,7 @@ export default function WorkerShiftDetailPage() {
       )}
 
       {workerStatus === 'accepted' && !canCheckIn && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
+        <div className="fixed bottom-20 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto z-40">
           <div className="w-full min-h-[44px] py-4 bg-yellow-500/20 border border-yellow-500/30 rounded-xl text-yellow-400 font-bold text-base text-center flex flex-col gap-1">
             <span>Check-in будет доступен за 30 минут до начала</span>
             <span className="text-sm font-normal">Смена начинается: {formatTime(shift.start_time)}</span>
@@ -403,7 +403,7 @@ export default function WorkerShiftDetailPage() {
       )}
 
       {shift.status === 'open' && !workerStatus && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
+        <div className="fixed bottom-20 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto z-40">
           {hasApplied ? (
             <div className="w-full min-h-[44px] py-4 bg-green-500/20 border border-green-500/30 rounded-xl text-green-400 font-bold text-lg text-center flex items-center justify-center gap-2">
               <CheckCircle className="w-6 h-6" />
@@ -422,7 +422,7 @@ export default function WorkerShiftDetailPage() {
       )}
 
       {shift.status !== 'open' && !workerStatus && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
+        <div className="fixed bottom-20 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto z-40">
           <div className="w-full min-h-[44px] py-4 bg-gray-500/20 border border-gray-500/30 rounded-xl text-gray-400 font-bold text-lg text-center">
             Смена закрыта
           </div>

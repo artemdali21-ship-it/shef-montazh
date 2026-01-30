@@ -164,8 +164,8 @@ export default function ProfileSetupPage() {
         </motion.div>
       )}
 
-      {/* Submit Button - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto z-20">
+      {/* Submit Button - Fixed at bottom above BottomNav */}
+      <div className="fixed bottom-20 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto z-40">
         <button
           onClick={handleSubmit}
           disabled={selectedCategories.length === 0 || submitting}

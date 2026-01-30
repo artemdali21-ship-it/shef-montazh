@@ -350,9 +350,9 @@ export default function ShiftDetailPage() {
         )}
       </div>
 
-      {/* Check-In Button - For assigned workers */}
+      {/* Check-In Button - For assigned workers (above BottomNav) */}
       {workerShiftStatus && ['confirmed', 'on_way'].includes(workerShiftStatus) && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto">
+        <div className="fixed bottom-20 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 max-w-screen-md mx-auto z-40">
           <CheckInButton
             shiftId={shift.id}
             shiftDate={shift.date}
@@ -362,8 +362,8 @@ export default function ShiftDetailPage() {
         </div>
       )}
 
-      {/* Apply Button - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10">
+      {/* Apply Button - Fixed at bottom above BottomNav */}
+      <div className="fixed bottom-20 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10 z-40">
         <button
           onClick={handleApply}
           disabled={applying}

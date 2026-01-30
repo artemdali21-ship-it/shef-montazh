@@ -331,10 +331,10 @@ export default function ClientDashboard() {
         )}
       </div>
 
-      {/* Floating Action Button */}
+      {/* Floating Action Button - positioned above BottomNav */}
       <button
         onClick={() => router.push('/shifts/create')}
-        className="fixed bottom-24 right-6 w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-full shadow-2xl shadow-orange-500/50 flex items-center justify-center transition-transform hover:scale-110 z-40"
+        className="fixed bottom-28 right-6 w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-full shadow-2xl shadow-orange-500/50 flex items-center justify-center transition-transform hover:scale-110 z-40"
       >
         <Plus className="w-8 h-8 text-white" />
       </button>

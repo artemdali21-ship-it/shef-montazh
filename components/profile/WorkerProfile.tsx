@@ -1,37 +1,99 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Settings, CheckCircle, Circle, User, Briefcase, Star, Shield } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
-const userProfile = {
-  id: 'SHF-0001',
-  name: 'Иван Петров',
-  rating: 4.9,
+interface UserProfile {
+  id: string;
+  name: string;
+  rating: number;
   stats: {
-    shiftsCompleted: 127,
-    rating: 4.9,
-    reliability: 98,
-  },
-  skills: [
-    { name: 'Сварка', level: 'advanced' },
-    { name: 'Электрика', level: 'intermediate' },
-    { name: 'Слесарь', level: 'advanced' },
-    { name: 'Кровельщик', level: 'intermediate' },
-    { name: 'Маляр', level: 'beginner' },
-    { name: 'Монтаж', level: 'advanced' },
-  ],
-  recentShifts: [
-    { id: 1, title: 'Демонтаж дверей', date: '25 января', price: 2500, status: 'completed' },
-    { id: 2, title: 'Установка окон', date: '24 января', price: 3500, status: 'completed' },
-    { id: 3, title: 'Электромонтажные работы', date: '22 января', price: 4000, status: 'completed' },
-  ],
-};
+    shiftsCompleted: number;
+    rating: number;
+    reliability: number;
+  };
+  skills: Array<{ name: string; level: string }>;
+  recentShifts: Array<{ id: number; title: string; date: string; price: number; status: string }>;
+}
 
 export default function WorkerProfile() {
   const router = useRouter();
   const [selectedSkills, setSelectedSkills] = useState(new Set());
   const [isGosuslugiVerified, setIsGosuslugiVerified] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfile>({
+    id: 'SHF-0001',
+    name: 'Загрузка...',
+    rating: 4.9,
+    stats: {
+      shiftsCompleted: 127,
+      rating: 4.9,
+      reliability: 98,
+    },
+    skills: [
+      { name: 'Сварка', level: 'advanced' },
+      { name: 'Электрика', level: 'intermediate' },
+      { name: 'Слесарь', level: 'advanced' },
+      { name: 'Кровельщик', level: 'intermediate' },
+      { name: 'Маляр', level: 'beginner' },
+      { name: 'Монтаж', level: 'advanced' },
+    ],
+    recentShifts: [
+      { id: 1, title: 'Демонтаж дверей', date: '25 января', price: 2500, status: 'completed' },
+      { id: 2, title: 'Установка окон', date: '24 января', price: 3500, status: 'completed' },
+      { id: 3, title: 'Электромонтажные работы', date: '22 января', price: 4000, status: 'completed' },
+    ],
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadUserProfile() {
+      try {
+        // Get current user from Supabase auth
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (user) {
+          // Try to get full_name from user metadata or profiles table
+          let userName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Пользователь';
+
+          // Try to fetch from worker_profiles table
+          const { data: profileData } = await supabase
+            .from('worker_profiles')
+            .select('full_name, rating')
+            .eq('user_id', user.id)
+            .single();
+
+          if (profileData?.full_name) {
+            userName = profileData.full_name;
+          }
+
+          setUserProfile(prev => ({
+            ...prev,
+            id: user.id.slice(0, 8).toUpperCase(),
+            name: userName,
+            rating: profileData?.rating || 4.9,
+          }));
+        } else {
+          // Fallback to mock data if no user
+          setUserProfile(prev => ({
+            ...prev,
+            name: 'Иван Петров'
+          }));
+        }
+      } catch (error) {
+        console.error('Error loading user profile:', error);
+        setUserProfile(prev => ({
+          ...prev,
+          name: 'Иван Петров'
+        }));
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadUserProfile();
+  }, []);
 
   const toggleSkill = (skillName) => {
     const newSkills = new Set(selectedSkills);
@@ -69,8 +131,8 @@ export default function WorkerProfile() {
           </div>
 
           {/* User Info */}
-          <h2 className="text-2xl font-bold text-white mb-1">Иван Петров</h2>
-          <p className="text-sm text-white/70">ID: SHF-0001</p>
+          <h2 className="text-2xl font-bold text-white mb-1">{userProfile.name}</h2>
+          <p className="text-sm text-white/70">ID: {userProfile.id}</p>
 
           {/* Stats */}
           <div className="flex gap-6 justify-center mt-5">
