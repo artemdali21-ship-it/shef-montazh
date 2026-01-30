@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Search, MapPin, Calendar, DollarSign, Star } from 'lucide-react'
 import Link from 'next/link'
-import { getAllShifts } from '@/lib/api/shifts'
+import { getOpenShifts } from '@/lib/api/shifts'
 import { Shift } from '@/lib/supabase-types'
 
 export default function FeedPage() {
@@ -17,10 +17,10 @@ export default function FeedPage() {
       try {
         setLoading(true)
         setError(null)
-        
-        const data = await getAllShifts()
-        const openShifts = data.filter((shift: Shift) => shift.status === 'open')
-        setShifts(openShifts)
+
+        const { data, error } = await getOpenShifts()
+        if (error) throw error
+        setShifts(data || [])
       } catch (err) {
         console.error('Error loading shifts:', err)
         setError('Не удалось загрузить смены. Попробуйте позже.')
