@@ -1,194 +1,116 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Briefcase,
   Clock,
   CheckCircle,
-  Settings,
   Plus,
   ArrowRight,
   MessageCircle,
   Star,
-  LogOut,
-} from 'lucide-react'
-import { StarRating } from '../rating/StarRating'
-import { getClientProfile, getClientActiveShifts, getClientCompletedShifts } from '@/lib/api/profiles'
-import { supabase } from '@/lib/supabase'
-import toast from 'react-hot-toast'
-
-interface ClientProfileProps {
-  userId?: string
-  companyName?: string
-  companyId?: string
-  isPremium?: boolean
-}
+} from 'lucide-react';
+import { getClientActiveShifts, getClientCompletedShifts } from '@/lib/api/profiles';
 
 
 export default function ClientProfile({
-  userId,
-  companyName,
-  companyId,
+  userId = 'CL-47821',
+  companyName = 'ООО Экспо Сервис',
+  companyId = 'SHEF-12345',
   isPremium = true,
-}: ClientProfileProps) {
+}: {
+  userId?: string;
+  companyName?: string;
+  companyId?: string;
+  isPremium?: boolean;
+}) {
   const router = useRouter();
-
-  // STATE
-  const [currentUser, setCurrentUser] = useState<any>(null)
-  const [totalPosted, setTotalPosted] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeShifts, setActiveShifts] = useState<any[]>([]);
   const [completedShifts, setCompletedShifts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadClientData() {
       try {
-        setLoading(true)
-
-        // Get current user from auth
-        const { data: { user } } = await supabase.auth.getUser()
-
-        if (!user) {
-          router.push('/auth/login')
-          return
-        }
-
-        // Get user profile from users table
-        const { data: userData } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', user.id)
-          .single()
-
-        if (userData) {
-          setCurrentUser(userData)
-        }
-
-        // Get client profile data
-        const { data: profileData } = await getClientProfile(user.id)
-        if (profileData) {
-          setTotalPosted(profileData.shifts_published || 0)
-        }
-
-        // Get active shifts
-        const { data: activeData } = await getClientActiveShifts(user.id)
-        if (activeData) {
-          setActiveShifts(activeData)
-        }
-
-        // Get completed shifts
-        const { data: completedData } = await getClientCompletedShifts(user.id)
-        if (completedData) {
-          setCompletedShifts(completedData)
-        }
+        setLoading(true);
+        setError(null);
+        
+        const { data: activeData } = await getClientActiveShifts(userId);
+        const { data: completedData } = await getClientCompletedShifts(userId);
+        
+        setActiveShifts(activeData || []);
+        setCompletedShifts(completedData || []);
+        
       } catch (err) {
-        console.error('Error loading client profile:', err)
+        console.error('Error loading client profile:', err);
+        setError('Не удалось загрузить профиль');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    loadClientData()
-  }, [router])
-
-  const handleLogout = async () => {
-    try {
-      toast.loading('Выход из системы...')
-      await supabase.auth.signOut()
-      toast.dismiss()
-      toast.success('Вы вышли из системы')
-      router.push('/auth/login')
-    } catch (err) {
-      toast.dismiss()
-      toast.error('Ошибка при выходе')
-      console.error('Logout error:', err)
-    }
-  }
+    loadProfileData();
+  }, [userId]);
 
   if (loading) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Загрузка профиля...</p>
-        </div>
+      <div className="flex items-center justify-center p-8">
+        <div className="text-white text-lg">Загрузка профиля...</div>
       </div>
-    )
+    );
   }
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center p-4">
+        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 max-w-md">
+          <p className="text-red-400 text-center mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full py-3 bg-red-500/20 hover:bg-red-500/30 rounded-xl text-red-400 transition"
+          >
+            Попробовать снова
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const totalPosted = activeShifts.length + completedShifts.length;
+
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
-      {/* HEADER SECTION */}
-      <header
-        className="pt-6 px-4 pb-8 text-center flex-shrink-0"
+    <div className="w-full flex flex-col">
+      {/* PROFILE INFO SECTION */}
+      <div
         style={{
-          background: 'rgba(26, 26, 26, 0.5)',
+          background: 'rgba(0, 0, 0, 0.4)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          margin: '16px',
+          padding: '16px',
+          borderRadius: '12px',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        {/* Settings Icon */}
-        <button 
-          onClick={() => router.push('/settings')}
-          className="absolute top-6 right-4 p-2 hover:bg-white/10 rounded-lg transition-all"
-        >
-          <Settings size={24} className="text-white" />
-        </button>
-      </header>
-
-      {/* MAIN CONTENT */}
-      <div className="flex-1 overflow-y-auto w-full">
-        {/* PROFILE INFO GLASSMORPHIC SECTION WITH RAINBOW SPLASH */}
-        <div
-          style={{
-            background: 'rgba(0, 0, 0, 0.4)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            margin: '16px',
-            padding: '16px',
-            borderRadius: '12px',
-            position: 'relative',
-            overflow: 'hidden',
-            backgroundImage: 'url(/images/bg-main-splash.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          {/* Dark overlay for readability - NO BLUR */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.2)',
-              zIndex: 1,
-            }}
-          />
-
-          {/* Company Info Content */}
-          <div style={{ position: 'relative', zIndex: 2 }}>
-            <h2 style={{ color: '#FFFFFF', fontWeight: 700, marginBottom: '4px', fontSize: '16px' }}>
-              {currentUser?.full_name || companyName || 'ООО "Компания"'}
-            </h2>
-            <p style={{ color: '#FFFFFF', opacity: 0.7, fontSize: '12px' }}>
-              ID: {currentUser?.id?.slice(0, 8).toUpperCase() || companyId || 'CLIENT-001'}
-            </p>
-            {currentUser?.is_verified && (
-              <span style={{ color: '#BFFF00', fontSize: '11px', marginTop: '8px', display: 'inline-block' }}>
-                ✓ Проверен
-              </span>
-            )}
-          </div>
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <h2 style={{ color: '#FFFFFF', fontWeight: 700, marginBottom: '4px', fontSize: '16px' }}>
+            {companyName || 'ООО "Компания"'}
+          </h2>
+          <p style={{ color: '#FFFFFF', opacity: 0.7, fontSize: '12px' }}>
+            ID: {companyId || 'CLIENT-001'}
+          </p>
+          <span style={{ color: '#BFFF00', fontSize: '11px', marginTop: '8px', display: 'inline-block' }}>
+            {isPremium ? '✓ Проверен' : '○ Не проверен'}
+          </span>
         </div>
+      </div>
 
-        {/* STATS ROW */}
-        <div className="px-4 py-6 grid grid-cols-3 gap-3">
-          {/* Briefcase - Total Posted */}
+      {/* STATS ROW */}
+      <div className="px-4 py-6 grid grid-cols-3 gap-3">
         <div
           className="rounded-xl p-4 text-center"
           style={{
@@ -202,7 +124,6 @@ export default function ClientProfile({
           <div className="text-xs text-gray-400">Опубликовано</div>
         </div>
 
-        {/* Active Shifts */}
         <div
           className="rounded-xl p-4 text-center"
           style={{
@@ -216,7 +137,6 @@ export default function ClientProfile({
           <div className="text-xs text-gray-400">Активных</div>
         </div>
 
-        {/* Completed */}
         <div
           className="rounded-xl p-4 text-center"
           style={{
@@ -229,10 +149,10 @@ export default function ClientProfile({
           <div className="text-xl font-bold text-white">{completedShifts.length}</div>
           <div className="text-xs text-gray-400">Завершено</div>
         </div>
-        </div>
+      </div>
 
-        {/* RATING SECTION */}
-        <div className="px-4 py-6">
+      {/* RATING SECTION */}
+      <div className="px-4 py-6">
         <div
           className="rounded-2xl p-6 text-center"
           style={{
@@ -244,14 +164,20 @@ export default function ClientProfile({
           <div className="text-4xl font-bold text-white mb-2">4.7</div>
           <p className="text-gray-300 text-sm mb-3">Средняя оценка от исполнителей</p>
           <p className="text-gray-500 text-xs mb-4">(23 отзыва)</p>
-          <div className="flex justify-center">
-            <StarRating rating={4.7} size="lg" showNumber={false} />
-          </div>
+          <div className="flex justify-center gap-1">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                size={20}
+                className={i < 4 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-400'}
+              />
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* ACTIVE SHIFTS SECTION */}
-        <div className="px-4 py-6">
+      {/* ACTIVE SHIFTS SECTION */}
+      <div className="px-4 py-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold text-white">Активные смены</h2>
           <button className="text-[#E85D2F] text-sm font-semibold flex items-center gap-1 hover:text-[#FF8855]">
@@ -319,10 +245,10 @@ export default function ClientProfile({
             ))}
           </div>
         )}
-        </div>
+      </div>
 
-        {/* QUICK ACTIONS */}
-        <div className="px-4 py-6 space-y-3">
+      {/* QUICK ACTIONS */}
+      <div className="px-4 py-6 space-y-3">
         <button
           onClick={() => router.push('/create-shift')}
           className="w-full py-3 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all hover:shadow-lg"
@@ -345,10 +271,10 @@ export default function ClientProfile({
           <Star size={20} />
           Избранные исполнители
         </button>
-        </div>
+      </div>
 
-        {/* RECENT ACTIVITY */}
-        <div className="px-4 py-6">
+      {/* RECENT ACTIVITY */}
+      <div className="px-4 py-6">
         <h2 className="text-lg font-bold text-white mb-4">Последние завершённые</h2>
 
         {completedShifts.length === 0 ? (
@@ -403,24 +329,7 @@ export default function ClientProfile({
             ))}
           </div>
         )}
-        </div>
-
-        {/* LOGOUT SECTION */}
-        <div className="px-4 py-6 pb-24">
-          <button
-            onClick={handleLogout}
-            className="w-full py-3 rounded-xl font-bold text-red-400 flex items-center justify-center gap-2 transition-all"
-            style={{
-              background: 'rgba(239, 68, 68, 0.1)',
-              backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-            }}
-          >
-            <LogOut size={20} />
-            Выйти из аккаунта
-          </button>
-        </div>
       </div>
     </div>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import RatingReviewScreen from '@/components/RatingReviewScreen';
 

@@ -1,4 +1,5 @@
-'use client';
+'use client'
+
 import React, { useState, useMemo } from 'react';
 import { Phone, MessageCircle, X, Clock, AlertCircle } from 'lucide-react';
 import { ShiftStatus } from '../shift/ShiftStatus';

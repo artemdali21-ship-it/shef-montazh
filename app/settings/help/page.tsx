@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import { useState } from 'react';
 import { ArrowLeft, Search, ChevronDown, ChevronUp, MessageCircle, 
          Phone, Mail, ExternalLink, Book, Video, HelpCircle } from 'lucide-react';

@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -69,7 +69,7 @@ export default function CreateShiftScreen({ onClose, onSuccess }: CreateShiftScr
       </div>
 
       {/* CONTENT */}
-      <div className="flex-1 overflow-y-auto pt-20 pb-24 px-5">
+      <div className="flex-1 overflow-y-auto pt-20 pb-40 px-5">
         {step === 1 ? (
           <div className="space-y-6">
             {/* Title */}
@@ -131,25 +131,25 @@ export default function CreateShiftScreen({ onClose, onSuccess }: CreateShiftScr
             </div>
 
             {/* Time */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-sm font-semibold text-white mb-2">
+                <label className="block text-xs font-semibold text-white mb-2">
                   Начало
                 </label>
                 <input
                   type="time"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[#E85D2F] transition-colors"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-[#E85D2F] transition-colors"
                   value={formData.startTime}
                   onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-white mb-2">
+                <label className="block text-xs font-semibold text-white mb-2">
                   Конец
                 </label>
                 <input
                   type="time"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[#E85D2F] transition-colors"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-[#E85D2F] transition-colors"
                   value={formData.endTime}
                   onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
                 />
@@ -239,7 +239,7 @@ export default function CreateShiftScreen({ onClose, onSuccess }: CreateShiftScr
       </div>
 
       {/* BOTTOM CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#1A1A1A] border-t border-white/10 p-5 z-40">
+      <div className="fixed bottom-24 left-0 right-0 bg-[#1A1A1A] border-t border-white/10 p-5 z-50 rounded-t-2xl">
         <div className="flex gap-3">
           {step === 2 && (
             <button

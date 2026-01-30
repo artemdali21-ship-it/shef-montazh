@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -119,14 +119,12 @@ export default function ShefDashboardScreen() {
     <div
       style={{
         width: '100%',
-        minHeight: '100vh',
         backgroundImage: 'url(/images/bg-dashboard.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
         fontFamily: "'Montserrat', system-ui, -apple-system, sans-serif",
         position: 'relative',
-        overflowY: 'auto',
         overflowX: 'hidden',
       }}
     >
@@ -139,18 +137,13 @@ export default function ShefDashboardScreen() {
           bottom: 0,
           background: 'rgba(0, 0, 0, 0.3)',
           pointerEvents: 'none',
-          zIndex: 1,
+          zIndex: 0,
         }}
       />
-      <div style={{ position: 'relative', zIndex: 2 }}>
-        {/* HEADER */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        {/* HEADER - НЕ FIXED, ЧАСТЬ ПОТОКА */}
         <header
           style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 50,
             borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
             height: '80px',
             display: 'flex',
@@ -243,7 +236,7 @@ export default function ShefDashboardScreen() {
         </header>
 
         {/* CONTENT */}
-        <div style={{ paddingTop: '80px', paddingBottom: '120px', paddingLeft: '20px', paddingRight: '20px', overflowY: 'auto', maxHeight: 'calc(100vh - 80px)' }}>
+        <div style={{ paddingTop: '80px', paddingBottom: '120px', paddingLeft: '20px', paddingRight: '20px', width: '100%' }}>
           {/* ACTIVE SHIFT BANNER */}
           <div
             style={{

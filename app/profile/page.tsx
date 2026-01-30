@@ -1,11 +1,10 @@
-'use client';
+'use client'
 
 import { useEffect, useState } from 'react';
 import WorkerProfile from '@/components/profile/WorkerProfile';
 import ClientProfile from '@/components/profile/ClientProfile';
 import WorkerLayout from '@/components/layouts/WorkerLayout';
 import ClientLayout from '@/components/layouts/ClientLayout';
-import ShefLayout from '@/components/layouts/ShefLayout';
 import { getUserRole } from '@/lib/auth';
 
 export default function ProfilePage() {
@@ -13,13 +12,13 @@ export default function ProfilePage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setRole(getUserRole());
+    const userRole = getUserRole();
+    setRole(userRole);
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
-
-  const Layout = role === 'worker' ? WorkerLayout : role === 'client' ? ClientLayout : ShefLayout;
+  // Use WorkerLayout by default, then switch based on role
+  const Layout = role === 'client' ? ClientLayout : WorkerLayout;
 
   return (
     <Layout>

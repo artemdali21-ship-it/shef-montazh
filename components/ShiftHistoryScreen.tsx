@@ -1,4 +1,5 @@
-'use client';
+'use client'
+
 import { ArrowLeft, Calendar, Clock, MapPin, User, Building2, 
          CheckCircle, Star, Download, FileText, HelpCircle } from 'lucide-react';
 

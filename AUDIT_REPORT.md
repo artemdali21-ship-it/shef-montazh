@@ -275,7 +275,7 @@ Your MVP implementation is **structurally sound** and follows the specification 
 ## NAVIGATION FLOWS ✅
 
 ### Worker Journey
-```
+\`\`\`
 /register → /verify-phone → /profile-setup → /feed (TabBar)
   ↓ (Search tab) → ShiftCard → /job/[id] overlay
   ↓ "Откликнуться" → /applications (check status)
@@ -283,10 +283,10 @@ Your MVP implementation is **structurally sound** and follows the specification 
   ↓ /shift/[id]/checkin → check-in → shift ends
   ↓ "Подтвердить завершение" → RatingModal
   ↓ (wait for payment) → notification "Оплачено" ✓
-```
+\`\`\`
 
 ### Client Journey
-```
+\`\`\`
 /register → /verify-phone → /feed (TabBar) → "Создать смену"
   ↓ /create-shift overlay → publish shift
   ↓ (Search tab) → find workers → /worker/[id] overlay
@@ -297,7 +297,7 @@ Your MVP implementation is **structurally sound** and follows the specification 
   ↓ (worker confirms) → RatingModal → rate
   ↓ "Оплатить" → ЮKassa redirect
   ↓ (return to app) → "Оплачено" ✓
-```
+\`\`\`
 
 ---
 

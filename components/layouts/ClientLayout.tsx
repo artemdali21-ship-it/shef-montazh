@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { usePathname, useRouter } from 'next/navigation';
 import { Home, Search, Plus, MessageCircle, User } from 'lucide-react';
@@ -22,11 +22,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   return (
     <div className="h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col overflow-hidden">
       {/* CONTENT */}
-      <div
-        className="flex-1 overflow-y-scroll pb-24 w-full"
-        style={{ WebkitOverflowScrolling: 'touch' }}
-        data-allow-scroll
-      >
+      <div className="flex-1 overflow-y-scroll pb-24 w-full" data-allow-scroll>
         {children}
       </div>
 

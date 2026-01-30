@@ -43,10 +43,44 @@ export default function LoginScreen() {
       return
     }
 
-    setTimeout(() => {
-      router.push('/feed')
+    try {
+      // Call authentication API
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phone,
+          password,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        // Handle authentication error
+        if (response.status === 401) {
+          setError('Неверный пароль')
+        } else if (response.status === 404) {
+          setError('Пользователь не найден')
+        } else {
+          setError(data.message || 'Ошибка при входе')
+        }
+        setLoading(false)
+        return
+      }
+
+      // Success - redirect to feed
+      setTimeout(() => {
+        router.push('/feed')
+        setLoading(false)
+      }, 500)
+    } catch (err) {
+      console.error('[v0] Login error:', err)
+      setError('Ошибка подключения. Попробуйте позже.')
       setLoading(false)
-    }, 1500)
+    }
   }
 
   return (

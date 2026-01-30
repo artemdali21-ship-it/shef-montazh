@@ -1,4 +1,5 @@
-'use client';
+'use client'
+
 import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Home, Search, Plus, MessageSquare, User } from 'lucide-react';
