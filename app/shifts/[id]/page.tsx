@@ -95,7 +95,7 @@ export default function ShiftDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-32">
+    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-32 overflow-y-scroll" data-allow-scroll>
       {/* Header */}
       <div className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-10">
         <div className="p-4 flex items-center gap-4">
