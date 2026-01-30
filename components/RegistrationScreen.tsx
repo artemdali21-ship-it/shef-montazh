@@ -45,6 +45,9 @@ export default function RegistrationScreen() {
   })
   const [errors, setErrors] = useState<any>({})
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const phoneInputRef = useRef<HTMLInputElement>(null)
+  const emailInputRef = useRef<HTMLInputElement>(null)
+  const fullNameInputRef = useRef<HTMLInputElement>(null)
   const passwordInputRef = useRef<HTMLInputElement>(null)
   const confirmPasswordInputRef = useRef<HTMLInputElement>(null)
 
@@ -61,6 +64,21 @@ export default function RegistrationScreen() {
       setTimeout(() => {
         ref.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }, 100)
+    }
+  }
+
+  const handleEnterKey = (e: React.KeyboardEvent, nextRef: React.RefObject<HTMLInputElement> | null = null) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (nextRef && nextRef.current) {
+        nextRef.current.focus()
+        scrollToField(nextRef)
+      } else {
+        // Last field, try to submit
+        if (acceptedTerms) {
+          handleSubmit()
+        }
+      }
     }
   }
 
@@ -163,9 +181,11 @@ export default function RegistrationScreen() {
               <div className="space-y-4">
                 <div className="relative">
                   <input
+                    ref={phoneInputRef}
                     type="text"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    onKeyDown={(e) => handleEnterKey(e, emailInputRef)}
                     className={`w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border focus:outline-none text-white placeholder:text-white/40 font-500 transition-colors ${
                       errors.phone
                         ? 'border-red-500/50 focus:border-red-500'
@@ -179,9 +199,11 @@ export default function RegistrationScreen() {
                 
                 <div className="relative">
                   <input
+                    ref={emailInputRef}
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onKeyDown={(e) => handleEnterKey(e, fullNameInputRef)}
                     className={`w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border focus:outline-none text-white placeholder:text-white/40 font-500 transition-colors ${
                       errors.email
                         ? 'border-red-500/50 focus:border-red-500'
@@ -195,9 +217,11 @@ export default function RegistrationScreen() {
                 
                 <div className="relative">
                   <input
+                    ref={fullNameInputRef}
                     type="text"
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    onKeyDown={(e) => handleEnterKey(e, passwordInputRef)}
                     className={`w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border focus:outline-none text-white placeholder:text-white/40 font-500 transition-colors ${
                       errors.fullName
                         ? 'border-red-500/50 focus:border-red-500'
@@ -215,6 +239,7 @@ export default function RegistrationScreen() {
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     onFocus={() => scrollToField(passwordInputRef)}
+                    onKeyDown={(e) => handleEnterKey(e, confirmPasswordInputRef)}
                     className={`w-full pl-4 pr-12 py-4 rounded-xl bg-white/5 border focus:outline-none text-white placeholder:text-white/40 font-500 transition-colors ${
                       errors.password
                         ? 'border-red-500/50 focus:border-red-500'
@@ -239,6 +264,7 @@ export default function RegistrationScreen() {
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                     onFocus={() => scrollToField(confirmPasswordInputRef)}
+                    onKeyDown={(e) => handleEnterKey(e, null)}
                     className={`w-full pl-4 pr-12 py-4 rounded-xl bg-white/5 border focus:outline-none text-white placeholder:text-white/40 font-500 transition-colors ${
                       errors.confirmPassword
                         ? 'border-red-500/50 focus:border-red-500'
