@@ -3,22 +3,102 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, MapPin, Calendar, Clock, DollarSign, Users, Star, Briefcase } from 'lucide-react'
-import { getShiftById } from '@/lib/api/shifts'
+import { getShiftById, applyToShift } from '@/lib/api/shifts'
 
-interface Shift {
-  id: string
-  title: string
-  description: string | null
-  category: string
-  location_address: string
-  date: string
-  start_time: string
-  end_time: string
-  pay_amount: number
-  required_workers: number
-  required_rating: number
-  status: string
-}
+export default function ShiftDetailPage() {
+  const params = useParams()
+  const router = useRouter()
+  const shiftId = params.id as string
+
+  const [shift, setShift] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [applying, setApplying] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+
+  useEffect(() => {
+    async function loadShift() {
+      try {
+        const { data, error: shiftError } = await getShiftById(shiftId)
+        if (shiftError) {
+          setError(shiftError)
+          return
+        }
+        setShift(data)
+      } catch (err) {
+        console.error('Error loading shift:', err)
+        setError('Не удалось загрузить смену')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadShift()
+  }, [shiftId])
+
+  const handleApply = async () => {
+    try {
+      setApplying(true)
+      // Get worker ID from localStorage or context
+      const workerId = localStorage.getItem('workerId') || 'worker-' + Math.random().toString(36).substr(2, 9)
+      
+      const { data, error: applyError } = await applyToShift(shiftId, workerId)
+      
+      if (applyError) {
+        setError(applyError)
+        return
+      }
+
+      setShowSuccess(true)
+      // Close success modal after 3 seconds
+      setTimeout(() => {
+        setShowSuccess(false)
+        router.back()
+      }, 3000)
+    } catch (err) {
+      console.error('Error applying to shift:', err)
+      setError('Не удалось подать отклик')
+    } finally {
+      setApplying(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center">
+        <p className="text-white">Загрузка смены...</p>
+      </div>
+    )
+  }
+
+  if (error || !shift) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center">
+        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 max-w-md">
+          <p className="text-red-400 text-center mb-4">{error || 'Смена не найдена'}</p>
+          <button
+            onClick={() => router.back()}
+            className="w-full py-3 bg-red-500/20 hover:bg-red-500/30 rounded-xl text-red-400 transition"
+          >
+            Назад
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  function formatDate(dateStr: string) {
+    const date = new Date(dateStr)
+    return date.toLocaleDateString('ru-RU', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  }
+
+  function formatTime(timeStr: string) {
+    return timeStr
+  }
 
 export default function ShiftDetailPage() {
   const params = useParams()
@@ -201,12 +281,32 @@ export default function ShiftDetailPage() {
       {/* Apply Button - Fixed at bottom */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#2A2A2A]/95 backdrop-blur-xl border-t border-white/10">
         <button
-          onClick={() => alert('Функция отклика в разработке')}
-          className="w-full py-4 bg-orange-500 hover:bg-orange-600 rounded-xl text-white font-bold text-lg transition shadow-lg shadow-orange-500/30"
+          onClick={handleApply}
+          disabled={applying}
+          className={`w-full py-4 rounded-xl text-white font-bold text-lg transition shadow-lg ${
+            applying
+              ? 'bg-orange-500/50 cursor-not-allowed'
+              : 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/30'
+          }`}
         >
-          Откликнуться на смену
+          {applying ? 'Отправляю отклик...' : 'Откликнуться на смену'}
         </button>
       </div>
+
+      {/* Success Modal */}
+      {showSuccess && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#2A2A2A] border border-green-500/30 rounded-2xl p-8 max-w-sm">
+            <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-white text-center mb-2">Отклик отправлен!</h3>
+            <p className="text-gray-400 text-center text-sm">Заказчик получит вашу заявку и свяжется с вами</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

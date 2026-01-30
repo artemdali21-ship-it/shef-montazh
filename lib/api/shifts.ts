@@ -315,3 +315,31 @@ export async function cancelShift(shiftId: string) {
 export async function completeShift(shiftId: string) {
   return updateShift(shiftId, { status: 'completed' })
 }
+
+// Apply/Respond to a shift
+export async function applyToShift(shiftId: string, workerId: string) {
+  try {
+    const { data, error } = await supabase
+      .from('shift_applications')
+      .insert([
+        {
+          shift_id: shiftId,
+          worker_id: workerId,
+          status: 'pending',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+      ])
+      .select()
+
+    if (error) {
+      console.error('Error applying to shift:', error)
+      return { data: null, error: 'Не удалось подать отклик. Попробуйте позже.' }
+    }
+
+    return { data, error: null }
+  } catch (err) {
+    console.error('Error applying to shift (catch):', err)
+    return { data: null, error: 'Не удалось подать отклик. Попробуйте позже.' }
+  }
+}
