@@ -1,435 +1,300 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { X, Star } from 'lucide-react'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { X, Star, Loader2, CheckCircle } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
+import toast from 'react-hot-toast'
 
-export interface RatingModalProps {
+interface RatingModalProps {
   isOpen: boolean
   onClose: () => void
   shiftId: string
-  ratedUserId: string
-  ratedUserName: string
-  ratedUserRole: 'worker' | 'client'
-  onSubmit: (rating: number, comment: string) => Promise<void>
+  fromUserId: string
+  toUserId: string
+  toUserName: string
+  userType: 'worker' | 'client' // кто оценивает
 }
 
-export const RatingModal: React.FC<RatingModalProps> = ({
+export function RatingModal({
   isOpen,
   onClose,
   shiftId,
-  ratedUserId,
-  ratedUserName,
-  ratedUserRole,
-  onSubmit,
-}) => {
+  fromUserId,
+  toUserId,
+  toUserName,
+  userType,
+}: RatingModalProps) {
   const [rating, setRating] = useState(0)
   const [hoverRating, setHoverRating] = useState(0)
   const [comment, setComment] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showSuccess, setShowSuccess] = useState(false)
-  const maxChars = 200
-
-  useEffect(() => {
-    if (!isOpen) {
-      setRating(0)
-      setComment('')
-      setShowSuccess(false)
-    }
-  }, [isOpen])
+  const [submitting, setSubmitting] = useState(false)
+  const [success, setSuccess] = useState(false)
 
   const handleSubmit = async () => {
-    if (rating === 0) return
-    
-    setIsSubmitting(true)
+    if (rating === 0) {
+      toast.error('Пожалуйста, выберите оценку')
+      return
+    }
+
     try {
-      await onSubmit(rating, comment)
-      setShowSuccess(true)
-      
+      setSubmitting(true)
+
+      // 1. Check if rating already exists
+      const { data: existingRating } = await supabase
+        .from('ratings')
+        .select('id')
+        .eq('shift_id', shiftId)
+        .eq('from_user_id', fromUserId)
+        .eq('to_user_id', toUserId)
+        .single()
+
+      if (existingRating) {
+        toast.error('Вы уже оценили эту смену')
+        onClose()
+        return
+      }
+
+      // 2. Insert rating
+      const { error: insertError } = await supabase
+        .from('ratings')
+        .insert({
+          shift_id: shiftId,
+          from_user_id: fromUserId,
+          to_user_id: toUserId,
+          rating,
+          comment: comment.trim() || null,
+          created_at: new Date().toISOString(),
+        })
+
+      if (insertError) throw insertError
+
+      // 3. Get current user stats
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('rating, total_shifts, successful_shifts')
+        .eq('id', toUserId)
+        .single()
+
+      if (userError) throw userError
+
+      // 4. Calculate new rating
+      const currentRating = userData.rating || 0
+      const totalShifts = userData.total_shifts || 0
+      const successfulShifts = userData.successful_shifts || 0
+
+      // Calculate new average rating
+      const newRating = totalShifts === 0
+        ? rating
+        : (currentRating * totalShifts + rating) / (totalShifts + 1)
+
+      // 5. Update user stats
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({
+          rating: Number(newRating.toFixed(2)),
+          total_shifts: totalShifts + 1,
+          successful_shifts: successfulShifts + 1,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', toUserId)
+
+      if (updateError) throw updateError
+
+      // 6. Send notification to rated user
+      try {
+        await fetch('/api/notifications/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: toUserId,
+            type: 'rating_received',
+            data: {
+              messageName: userType === 'worker' ? 'Клиент' : 'Исполнитель',
+              rating,
+              messagePreview: comment.trim() || 'Без комментария',
+            },
+          }),
+        })
+      } catch (notifError) {
+        console.error('Failed to send notification:', notifError)
+      }
+
+      // Success!
+      setSuccess(true)
+      toast.success('Оценка отправлена!')
+
+      // Close modal after 2 seconds
       setTimeout(() => {
         onClose()
-        setShowSuccess(false)
-      }, 1500)
-    } catch (error) {
-      console.error('[v0] Rating submission error:', error)
+        // Reset state
+        setTimeout(() => {
+          setSuccess(false)
+          setRating(0)
+          setComment('')
+        }, 300)
+      }, 2000)
+
+    } catch (err: any) {
+      console.error('Error submitting rating:', err)
+      toast.error(err.message || 'Не удалось отправить оценку')
     } finally {
-      setIsSubmitting(false)
+      setSubmitting(false)
     }
   }
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && !isSubmitting && !showSuccess) {
-      onClose()
-    }
+  const handleStarClick = (value: number) => {
+    setRating(value)
   }
 
-  if (!isOpen) return null
+  const handleStarHover = (value: number) => {
+    setHoverRating(value)
+  }
+
+  const displayRating = hoverRating || rating
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0, 0, 0, 0.5)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        zIndex: 50,
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        animation: 'slideUp 0.3s cubic-bezier(0.32, 0.72, 0.3, 1)',
-      }}
-      onClick={handleBackdropClick}
-    >
-      {/* Modal Container */}
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '500px',
-          background: 'linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(20, 20, 24, 0.95) 100%)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-          borderLeft: '1px solid rgba(255, 255, 255, 0.08)',
-          borderRight: '1px solid rgba(255, 255, 255, 0.08)',
-          borderRadius: '24px 24px 0 0',
-          padding: '28px 24px',
-          boxShadow: '0 -10px 40px rgba(0, 0, 0, 0.4)',
-          animation: showSuccess ? 'none' : 'slideUp 0.3s cubic-bezier(0.32, 0.72, 0.3, 1)',
-        }}
-      >
-        {!showSuccess ? (
-          <>
-            {/* Header */}
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '28px',
-              }}
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+          />
+
+          {/* Modal */}
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              className="bg-[#2A2A2A] border border-white/10 rounded-2xl max-w-md w-full shadow-2xl"
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', duration: 0.3 }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <h2
-                style={{
-                  fontSize: '18px',
-                  fontWeight: 700,
-                  color: '#FFFFFF',
-                  fontFamily: "'Montserrat', sans-serif",
-                }}
-              >
-                Оцените работу {ratedUserName}
-              </h2>
-              <button
-                onClick={onClose}
-                disabled={isSubmitting}
-                style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.2s ease',
-                  opacity: isSubmitting ? 0.5 : 1,
-                }}
-                onMouseEnter={(e) => {
-                  if (!isSubmitting) {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'
-                }}
-              >
-                <X size={20} color="#FFFFFF" strokeWidth={2} />
-              </button>
-            </div>
-
-            {/* Star Rating */}
-            <div style={{ marginBottom: '28px' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '12px',
-                  justifyContent: 'center',
-                  marginBottom: '12px',
-                }}
-              >
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    onClick={() => setRating(star)}
-                    onMouseEnter={() => setHoverRating(star)}
-                    onMouseLeave={() => setHoverRating(0)}
-                    style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '12px',
-                      background:
-                        star <= (hoverRating || rating)
-                          ? 'rgba(232, 93, 47, 0.15)'
-                          : 'rgba(255, 255, 255, 0.05)',
-                      border:
-                        star <= (hoverRating || rating)
-                          ? '1.5px solid rgba(232, 93, 47, 0.5)'
-                          : '1px solid rgba(255, 255, 255, 0.1)',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Star
-                      size={28}
-                      fill={
-                        star <= (hoverRating || rating)
-                          ? '#E85D2F'
-                          : '#666'
-                      }
-                      color={
-                        star <= (hoverRating || rating)
-                          ? '#E85D2F'
-                          : '#666'
-                      }
-                      strokeWidth={1.5}
-                    />
-                  </button>
-                ))}
-              </div>
-
-              {rating > 0 && (
-                <p
-                  style={{
-                    textAlign: 'center',
-                    fontSize: '14px',
-                    fontWeight: 600,
-                    color: '#BFFF00',
-                    fontFamily: "'Montserrat', sans-serif",
-                    animation: 'fadeIn 0.2s ease',
-                  }}
-                >
-                  {rating} из 5
-                </p>
-              )}
-            </div>
-
-            {/* Comment Field */}
-            <div style={{ marginBottom: '24px' }}>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  color: '#FFFFFF',
-                  marginBottom: '8px',
-                  fontFamily: "'Montserrat', sans-serif",
-                }}
-              >
-                Ваш комментарий (необязательно)
-              </label>
-              <textarea
-                value={comment}
-                onChange={(e) => {
-                  if (e.target.value.length <= maxChars) {
-                    setComment(e.target.value)
-                  }
-                }}
-                placeholder="Расскажите о работе..."
-                style={{
-                  width: '100%',
-                  height: '100px',
-                  borderRadius: '12px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: '#FFFFFF',
-                  padding: '12px',
-                  fontFamily: "'Montserrat', sans-serif",
-                  fontSize: '14px',
-                  resize: 'none',
-                  outline: 'none',
-                  transition: 'all 0.2s ease',
-                }}
-                onFocus={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'
-                  e.currentTarget.style.borderColor = 'rgba(232, 93, 47, 0.4)'
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)'
-                }}
-              />
-              <div
-                style={{
-                  marginTop: '6px',
-                  fontSize: '12px',
-                  color: '#FFFFFF/60',
-                  fontFamily: "'Montserrat', sans-serif",
-                }}
-              >
-                {comment.length}/{maxChars}
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              onClick={handleSubmit}
-              disabled={rating === 0 || isSubmitting}
-              style={{
-                width: '100%',
-                height: '52px',
-                borderRadius: '12px',
-                background:
-                  rating === 0
-                    ? 'rgba(191, 255, 0, 0.1)'
-                    : 'linear-gradient(135deg, #BFFF00 0%, #99CC00 100%)',
-                border: 'none',
-                color: rating === 0 ? '#FFFFFF/40' : '#1A1A1A',
-                fontWeight: 700,
-                fontSize: '16px',
-                fontFamily: "'Montserrat', sans-serif",
-                cursor: rating === 0 || isSubmitting ? 'not-allowed' : 'pointer',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                opacity: isSubmitting ? 0.8 : 1,
-              }}
-              onMouseEnter={(e) => {
-                if (rating > 0 && !isSubmitting) {
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                  e.currentTarget.style.boxShadow =
-                    '0 8px 24px rgba(191, 255, 0, 0.3)'
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = 'none'
-              }}
-            >
-              {isSubmitting ? (
+              {!success ? (
                 <>
-                  <div
-                    style={{
-                      width: '16px',
-                      height: '16px',
-                      borderRadius: '50%',
-                      border: '2px solid rgba(26, 26, 26, 0.3)',
-                      borderTopColor: '#1A1A1A',
-                      animation: 'spin 0.8s linear infinite',
-                    }}
-                  />
-                  Отправка...
+                  {/* Header */}
+                  <div className="p-6 border-b border-white/10">
+                    <div className="flex items-center justify-between mb-2">
+                      <h2 className="text-h2 text-white">Оцените работу</h2>
+                      <button
+                        onClick={onClose}
+                        className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-xl flex items-center justify-center transition-colors duration-200"
+                        aria-label="Закрыть"
+                      >
+                        <X className="w-5 h-5 text-gray-400" />
+                      </button>
+                    </div>
+                    <p className="text-body-small text-gray-400">
+                      {userType === 'worker'
+                        ? `Как прошла работа с ${toUserName}?`
+                        : `Как работал ${toUserName}?`
+                      }
+                    </p>
+                  </div>
+
+                  {/* Stars */}
+                  <div className="p-6">
+                    <div className="flex justify-center gap-2 mb-6">
+                      {[1, 2, 3, 4, 5].map((value) => (
+                        <motion.button
+                          key={value}
+                          onClick={() => handleStarClick(value)}
+                          onMouseEnter={() => handleStarHover(value)}
+                          onMouseLeave={() => handleStarHover(0)}
+                          className="p-2 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-lg"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          disabled={submitting}
+                        >
+                          <Star
+                            className={`w-12 h-12 transition-all duration-200 ${
+                              value <= displayRating
+                                ? 'text-[#E85D2F] fill-[#E85D2F]'
+                                : 'text-gray-600'
+                            }`}
+                          />
+                        </motion.button>
+                      ))}
+                    </div>
+
+                    {/* Rating Text */}
+                    {rating > 0 && (
+                      <motion.p
+                        className="text-center text-body text-gray-300 mb-6"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                      >
+                        {rating === 5 && 'Отлично! 🎉'}
+                        {rating === 4 && 'Хорошо! 👍'}
+                        {rating === 3 && 'Нормально'}
+                        {rating === 2 && 'Не очень 😕'}
+                        {rating === 1 && 'Плохо 😞'}
+                      </motion.p>
+                    )}
+
+                    {/* Comment */}
+                    <div className="mb-6">
+                      <label className="block text-body-small text-gray-400 mb-2">
+                        Комментарий (необязательно)
+                      </label>
+                      <textarea
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value.slice(0, 200))}
+                        placeholder="Расскажите о своём опыте..."
+                        disabled={submitting}
+                        rows={4}
+                        maxLength={200}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition-colors duration-200 resize-none disabled:opacity-50"
+                      />
+                      <p className="text-caption text-gray-500 mt-2 text-right">
+                        {comment.length}/200
+                      </p>
+                    </div>
+
+                    {/* Submit Button */}
+                    <button
+                      onClick={handleSubmit}
+                      disabled={rating === 0 || submitting}
+                      className="w-full h-14 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-xl text-white font-bold text-body-large shadow-lg shadow-orange-500/30 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          Отправка...
+                        </>
+                      ) : (
+                        'Отправить оценку'
+                      )}
+                    </button>
+                  </div>
                 </>
               ) : (
-                'Отправить оценку'
+                /* Success State */
+                <div className="p-8 text-center">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: 'spring', duration: 0.5 }}
+                    className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4"
+                  >
+                    <CheckCircle className="w-12 h-12 text-green-400" />
+                  </motion.div>
+                  <h3 className="text-h2 text-white mb-2">Спасибо за оценку!</h3>
+                  <p className="text-body text-gray-400">
+                    Ваш отзыв помогает улучшить сервис
+                  </p>
+                </div>
               )}
-            </button>
-          </>
-        ) : (
-          /* Success State */
-          <div
-            style={{
-              textAlign: 'center',
-              padding: '40px 20px',
-              animation: 'fadeIn 0.3s ease',
-            }}
-          >
-            <div
-              style={{
-                width: '60px',
-                height: '60px',
-                borderRadius: '50%',
-                background: 'rgba(191, 255, 0, 0.2)',
-                border: '2px solid #BFFF00',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 16px',
-                animation: 'scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              }}
-            >
-              <svg
-                width="32"
-                height="32"
-                viewBox="0 0 32 32"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6 16L13 23L26 10"
-                  stroke="#BFFF00"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <h3
-              style={{
-                fontSize: '18px',
-                fontWeight: 700,
-                color: '#FFFFFF',
-                marginBottom: '8px',
-                fontFamily: "'Montserrat', sans-serif",
-              }}
-            >
-              Спасибо за оценку!
-            </h3>
-            <p
-              style={{
-                fontSize: '14px',
-                color: '#FFFFFF/70',
-                fontFamily: "'Montserrat', sans-serif",
-              }}
-            >
-              Ваше мнение помогает улучшить качество работ
-            </p>
+            </motion.div>
           </div>
-        )}
-      </div>
-
-      <style>{`
-        @keyframes slideUp {
-          from {
-            transform: translateY(100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes scaleIn {
-          from {
-            transform: scale(0.5);
-            opacity: 0;
-          }
-          to {
-            transform: scale(1);
-            opacity: 1;
-          }
-        }
-
-        @keyframes spin {
-          to {
-            transform: rotate(360deg);
-          }
-        }
-      `}</style>
-    </div>
+        </>
+      )}
+    </AnimatePresence>
   )
 }
