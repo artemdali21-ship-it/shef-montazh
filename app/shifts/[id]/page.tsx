@@ -19,21 +19,26 @@ export default function ShiftDetailPage() {
   useEffect(() => {
     async function loadShift() {
       try {
-        const { data, error: shiftError } = await getShiftById(shiftId)
-        if (shiftError) {
-          setError(shiftError)
-          return
-        }
+        setLoading(true)
+        setError(null)
+        
+        const { data, error: fetchError } = await getShiftById(shiftId)
+        
+        if (fetchError) throw fetchError
+        if (!data) throw new Error('Смена не найдена')
+        
         setShift(data)
       } catch (err) {
         console.error('Error loading shift:', err)
-        setError('Не удалось загрузить смену')
+        setError('Не удалось загрузить информацию о смене')
       } finally {
         setLoading(false)
       }
     }
 
-    loadShift()
+    if (shiftId) {
+      loadShift()
+    }
   }, [shiftId])
 
   const handleApply = async () => {
@@ -62,77 +67,6 @@ export default function ShiftDetailPage() {
       setApplying(false)
     }
   }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center">
-        <p className="text-white">Загрузка смены...</p>
-      </div>
-    )
-  }
-
-  if (error || !shift) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center">
-        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 max-w-md">
-          <p className="text-red-400 text-center mb-4">{error || 'Смена не найдена'}</p>
-          <button
-            onClick={() => router.back()}
-            className="w-full py-3 bg-red-500/20 hover:bg-red-500/30 rounded-xl text-red-400 transition"
-          >
-            Назад
-          </button>
-        </div>
-      </div>
-    )
-  }
-
-  function formatDate(dateStr: string) {
-    const date = new Date(dateStr)
-    return date.toLocaleDateString('ru-RU', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  }
-
-  function formatTime(timeStr: string) {
-    return timeStr
-  }
-
-export default function ShiftDetailPage() {
-  const params = useParams()
-  const router = useRouter()
-  const shiftId = params.id as string
-
-  const [shift, setShift] = useState<Shift | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    async function loadShift() {
-      try {
-        setLoading(true)
-        setError(null)
-        
-        const { data, error: fetchError } = await getShiftById(shiftId)
-        
-        if (fetchError) throw fetchError
-        if (!data) throw new Error('Смена не найдена')
-        
-        setShift(data)
-      } catch (err) {
-        console.error('Error loading shift:', err)
-        setError('Не удалось загрузить информацию о смене')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    if (shiftId) {
-      loadShift()
-    }
-  }, [shiftId])
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr)
