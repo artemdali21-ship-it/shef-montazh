@@ -240,7 +240,7 @@ export default function RatingReviewScreen() {
     >
       {/* RATING 3D ELEMENTS - HELMET AND CARABINER */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
-        <img src="/images/helmet333.png" className="absolute top-1/4 left-5 w-32 h-32" alt="" />
+        <img src="/images/helmet.png" className="absolute top-1/4 left-5 w-32 h-32" alt="" />
         <img src="/images/carabiner.png" className="absolute bottom-20 right-10 w-28 h-28" style={{animation: 'float 6s ease-in-out infinite 0.7s', transform: 'rotate(15deg)'}} alt="" />
       </div>
 
