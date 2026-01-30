@@ -17,9 +17,13 @@ const NO_NAV_PAGES = [
   '/onboarding',
   '/role-select',
   '/verify-phone',
+  '/profile-setup',
   '/auth/login',
   '/auth/register',
 ]
+
+// Special check for exact root path
+const isRootPage = (path: string) => path === '/'
 
 export function DynamicLayout({ children }: DynamicLayoutProps) {
   const pathname = usePathname()
@@ -50,7 +54,7 @@ export function DynamicLayout({ children }: DynamicLayoutProps) {
   }, [])
 
   // Check if current page should show navigation
-  const showNav = !NO_NAV_PAGES.some(page => pathname.startsWith(page))
+  const showNav = !isRootPage(pathname) && !NO_NAV_PAGES.some(page => pathname.startsWith(page))
 
   if (!mounted) {
     return <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A]">{children}</div>
