@@ -12,12 +12,13 @@ import {
   Star,
 } from 'lucide-react';
 import { getClientActiveShifts, getClientCompletedShifts } from '@/lib/api/profiles';
+import { supabase } from '@/lib/supabase';
 
 
 export default function ClientProfile({
-  userId = 'CL-47821',
-  companyName = 'ООО Экспо Сервис',
-  companyId = 'SHEF-12345',
+  userId: initialUserId = 'CL-47821',
+  companyName: initialCompanyName = 'ООО Экспо Сервис',
+  companyId: initialCompanyId = 'SHEF-12345',
   isPremium = true,
 }: {
   userId?: string;
@@ -30,19 +31,58 @@ export default function ClientProfile({
   const [error, setError] = useState<string | null>(null);
   const [activeShifts, setActiveShifts] = useState<any[]>([]);
   const [completedShifts, setCompletedShifts] = useState<any[]>([]);
+  const [userId, setUserId] = useState(initialUserId);
+  const [companyName, setCompanyName] = useState(initialCompanyName);
+  const [companyId, setCompanyId] = useState(initialCompanyId);
 
   useEffect(() => {
     async function loadClientData() {
       try {
         setLoading(true);
         setError(null);
-        
-        const { data: activeData } = await getClientActiveShifts(userId);
-        const { data: completedData } = await getClientCompletedShifts(userId);
-        
-        setActiveShifts(activeData || []);
-        setCompletedShifts(completedData || []);
-        
+
+        // Get current user from Supabase auth
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (user) {
+          // Try to get company name from user metadata or profiles table
+          let userCompanyName = user.user_metadata?.company_name ||
+                                user.user_metadata?.full_name ||
+                                user.email?.split('@')[0] ||
+                                'Компания';
+
+          // Try to fetch from client_profiles table
+          const { data: profileData } = await supabase
+            .from('client_profiles')
+            .select('company_name, company_id')
+            .eq('user_id', user.id)
+            .single();
+
+          if (profileData?.company_name) {
+            userCompanyName = profileData.company_name;
+          }
+
+          setUserId(user.id.slice(0, 8).toUpperCase());
+          setCompanyName(userCompanyName);
+          if (profileData?.company_id) {
+            setCompanyId(profileData.company_id);
+          }
+
+          // Load shifts for this user
+          const { data: activeData } = await getClientActiveShifts(user.id);
+          const { data: completedData } = await getClientCompletedShifts(user.id);
+
+          setActiveShifts(activeData || []);
+          setCompletedShifts(completedData || []);
+        } else {
+          // Fallback to initial props if no user
+          const { data: activeData } = await getClientActiveShifts(initialUserId);
+          const { data: completedData } = await getClientCompletedShifts(initialUserId);
+
+          setActiveShifts(activeData || []);
+          setCompletedShifts(completedData || []);
+        }
+
       } catch (err) {
         console.error('Error loading client profile:', err);
         setError('Не удалось загрузить профиль');
@@ -52,7 +92,7 @@ export default function ClientProfile({
     }
 
     loadClientData();
-  }, [userId]);
+  }, [initialUserId]);
 
   if (loading) {
     return (
