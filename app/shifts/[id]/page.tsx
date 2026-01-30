@@ -55,11 +55,10 @@ export default function ShiftDetailPage() {
       }
 
       setShowSuccess(true)
-      // Close success modal after 3 seconds
+      // Navigate to profile after 2 seconds
       setTimeout(() => {
-        setShowSuccess(false)
-        router.back()
-      }, 3000)
+        router.push('/profile')
+      }, 2000)
     } catch (err) {
       console.error('Error applying to shift:', err)
       setError('Не удалось подать отклик')
