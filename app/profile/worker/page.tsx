@@ -2,13 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 import {
   User, Star, Briefcase, TrendingUp, DollarSign, Calendar,
-  MapPin, Edit, Shield, CheckCircle, Award
+  MapPin, Edit, Shield, CheckCircle, Award, LogOut
 } from 'lucide-react'
 import { getWorkerProfile, getWorkerShiftHistory } from '@/lib/api/profiles'
 import { getWorkerTotalEarnings } from '@/lib/api/payments'
 import { ShiftStatus } from '@/components/shift/ShiftStatus'
+import { supabase } from '@/lib/supabase'
+import { LoadingScreen } from '@/components/ui/LoadingSpinner'
+import toast from 'react-hot-toast'
 import type { Tables } from '@/lib/supabase-types'
 
 type WorkerProfileData = {
@@ -48,9 +52,6 @@ type ShiftHistoryItem = {
 export default function WorkerProfilePage() {
   const router = useRouter()
 
-  // Mock user ID - in production, get from auth context
-  const MOCK_WORKER_ID = 'worker-123'
-
   const [worker, setWorker] = useState<WorkerProfileData | null>(null)
   const [shiftHistory, setShiftHistory] = useState<ShiftHistoryItem[]>([])
   const [totalEarnings, setTotalEarnings] = useState(0)
@@ -63,21 +64,29 @@ export default function WorkerProfilePage() {
         setLoading(true)
         setError(null)
 
+        // Get current user from auth
+        const { data: { user } } = await supabase.auth.getUser()
+
+        if (!user) {
+          router.push('/auth/login')
+          return
+        }
+
         // Load worker profile
-        const { data: workerData, error: workerError } = await getWorkerProfile(MOCK_WORKER_ID)
+        const { data: workerData, error: workerError } = await getWorkerProfile(user.id)
         if (workerError) throw workerError
         if (!workerData) throw new Error('Профиль не найден')
 
         setWorker(workerData as WorkerProfileData)
 
         // Load shift history (limit to 10)
-        const { data: historyData, error: historyError } = await getWorkerShiftHistory(MOCK_WORKER_ID)
+        const { data: historyData, error: historyError } = await getWorkerShiftHistory(user.id)
         if (!historyError && historyData) {
           setShiftHistory((historyData as ShiftHistoryItem[]).slice(0, 10))
         }
 
         // Load total earnings
-        const { total, error: earningsError } = await getWorkerTotalEarnings(MOCK_WORKER_ID)
+        const { total, error: earningsError } = await getWorkerTotalEarnings(user.id)
         if (!earningsError) {
           setTotalEarnings(total)
         }
@@ -90,7 +99,21 @@ export default function WorkerProfilePage() {
     }
 
     loadWorkerData()
-  }, [])
+  }, [router])
+
+  const handleLogout = async () => {
+    try {
+      toast.loading('Выход из системы...')
+      await supabase.auth.signOut()
+      toast.dismiss()
+      toast.success('Вы вышли из системы')
+      router.push('/auth/login')
+    } catch (err) {
+      toast.dismiss()
+      toast.error('Ошибка при выходе')
+      console.error('Logout error:', err)
+    }
+  }
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr)
@@ -125,14 +148,7 @@ export default function WorkerProfilePage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Загрузка профиля...</p>
-        </div>
-      </div>
-    )
+    return <LoadingScreen message="Загрузка профиля..." />
   }
 
   if (error || !worker) {
@@ -152,9 +168,19 @@ export default function WorkerProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-8">
+    <motion.div
+      className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-8"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
       {/* Header */}
-      <div className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-10">
+      <motion.div
+        className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-10"
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
         <div className="p-4 flex items-center justify-between">
           <h1 className="text-xl font-bold text-white">Мой профиль</h1>
           <button
@@ -360,7 +386,18 @@ export default function WorkerProfilePage() {
             <p className="text-sm text-gray-500">Начните работать и смены появятся здесь</p>
           </div>
         )}
+
+        {/* Logout Button */}
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5">
+          <button
+            onClick={handleLogout}
+            className="w-full py-3 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 rounded-xl text-red-400 font-bold transition flex items-center justify-center gap-2"
+          >
+            <LogOut className="w-5 h-5" />
+            Выйти из аккаунта
+          </button>
+        </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

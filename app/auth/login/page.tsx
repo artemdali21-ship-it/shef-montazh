@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { Mail, Lock, LogIn, AlertCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import toast from 'react-hot-toast'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -30,7 +32,16 @@ export default function LoginPage() {
         password,
       })
 
-      if (signInError) throw signInError
+      if (signInError) {
+        // Handle specific errors
+        if (signInError.message.includes('Invalid login credentials')) {
+          throw new Error('Неверный email или пароль')
+        }
+        if (signInError.message.includes('Email not confirmed')) {
+          throw new Error('Пожалуйста, подтвердите ваш email')
+        }
+        throw signInError
+      }
 
       if (data.user) {
         // Fetch user role from users table
@@ -40,7 +51,12 @@ export default function LoginPage() {
           .eq('id', data.user.id)
           .single()
 
-        if (userError) throw userError
+        if (userError) {
+          throw new Error('Не удалось загрузить профиль')
+        }
+
+        // Show success toast
+        toast.success('Вход выполнен успешно!')
 
         // Redirect based on role
         switch (userData.role) {
@@ -51,7 +67,7 @@ export default function LoginPage() {
             router.push('/dashboard')
             break
           case 'shef':
-            router.push('/shef-dashboard')
+            router.push('/shef/dashboard')
             break
           default:
             router.push('/')
@@ -59,7 +75,9 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       console.error('Login error:', err)
-      setError(err.message || 'Ошибка входа. Проверьте email и пароль.')
+      const errorMessage = err.message || 'Ошибка входа. Проверьте email и пароль.'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -67,15 +85,30 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+      <motion.div
+        className="w-full max-w-md"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+      >
         {/* Logo/Title */}
-        <div className="text-center mb-8">
+        <motion.div
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
           <h1 className="text-4xl font-bold text-white mb-2">Шеф-Монтаж</h1>
           <p className="text-gray-400">Войдите в свой аккаунт</p>
-        </div>
+        </motion.div>
 
         {/* Login Form */}
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8">
+        <motion.div
+          className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
           <form onSubmit={handleLogin} className="space-y-6">
             {/* Error Message */}
             {error && (
@@ -165,10 +198,15 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-gray-500 text-xs mt-8">
+        <motion.p
+          className="text-center text-gray-500 text-xs mt-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
+        >
           Входя в систему, вы соглашаетесь с условиями использования
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
     </div>
   )
 }

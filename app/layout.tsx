@@ -6,6 +6,7 @@ import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import TelegramProvider from '@/components/providers/telegram-provider'
 import Background3D from '@/components/layouts/Background3D'
+import { Toaster } from '@/components/ui/Toaster'
 
 const _montserrat = Montserrat({ 
   weight: ['400', '500', '600', '700', '800'], 
@@ -84,6 +85,7 @@ export default function RootLayout({
             {children}
           </TelegramProvider>
         </Background3D>
+        <Toaster />
         <Analytics />
       </body>
     </html>

@@ -11,9 +11,12 @@ import {
   ArrowRight,
   MessageCircle,
   Star,
+  LogOut,
 } from 'lucide-react'
 import { StarRating } from '../rating/StarRating'
 import { getClientProfile, getClientActiveShifts, getClientCompletedShifts } from '@/lib/api/profiles'
+import { supabase } from '@/lib/supabase'
+import toast from 'react-hot-toast'
 
 interface ClientProfileProps {
   userId?: string
@@ -24,24 +27,95 @@ interface ClientProfileProps {
 
 
 export default function ClientProfile({
-  userId = 'CL-47821',
-  companyName = 'ООО Экспо Сервис',
-  companyId = 'SHEF-12345',
+  userId,
+  companyName,
+  companyId,
   isPremium = true,
 }: ClientProfileProps) {
   const router = useRouter();
 
-  // STATE - mock data for now
-  const [totalPosted, setTotalPosted] = useState(12);
-  const [activeShifts, setActiveShifts] = useState([
-    { id: '1', title: 'Монтаж стенда', date: '2026-02-05', workers: 3, pay_amount: 8000 },
-    { id: '2', title: 'Декорирование сцены', date: '2026-02-08', workers: 2, pay_amount: 6000 },
-    { id: '3', title: 'Монтаж освещения', date: '2026-02-10', workers: 2, pay_amount: 12000 },
-  ]);
-  const [completedShifts, setCompletedShifts] = useState([
-    { id: '4', title: 'Завершенная смена 1', date: '2026-01-25', workers: 2, pay_amount: 5000 },
-    { id: '5', title: 'Завершенная смена 2', date: '2026-01-28', workers: 3, pay_amount: 7500 },
-  ]);
+  // STATE
+  const [currentUser, setCurrentUser] = useState<any>(null)
+  const [totalPosted, setTotalPosted] = useState(0);
+  const [activeShifts, setActiveShifts] = useState<any[]>([]);
+  const [completedShifts, setCompletedShifts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadClientData() {
+      try {
+        setLoading(true)
+
+        // Get current user from auth
+        const { data: { user } } = await supabase.auth.getUser()
+
+        if (!user) {
+          router.push('/auth/login')
+          return
+        }
+
+        // Get user profile from users table
+        const { data: userData } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+
+        if (userData) {
+          setCurrentUser(userData)
+        }
+
+        // Get client profile data
+        const { data: profileData } = await getClientProfile(user.id)
+        if (profileData) {
+          setTotalPosted(profileData.shifts_published || 0)
+        }
+
+        // Get active shifts
+        const { data: activeData } = await getClientActiveShifts(user.id)
+        if (activeData) {
+          setActiveShifts(activeData)
+        }
+
+        // Get completed shifts
+        const { data: completedData } = await getClientCompletedShifts(user.id)
+        if (completedData) {
+          setCompletedShifts(completedData)
+        }
+      } catch (err) {
+        console.error('Error loading client profile:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadClientData()
+  }, [router])
+
+  const handleLogout = async () => {
+    try {
+      toast.loading('Выход из системы...')
+      await supabase.auth.signOut()
+      toast.dismiss()
+      toast.success('Вы вышли из системы')
+      router.push('/auth/login')
+    } catch (err) {
+      toast.dismiss()
+      toast.error('Ошибка при выходе')
+      console.error('Logout error:', err)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Загрузка профиля...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
@@ -99,14 +173,16 @@ export default function ClientProfile({
           {/* Company Info Content */}
           <div style={{ position: 'relative', zIndex: 2 }}>
             <h2 style={{ color: '#FFFFFF', fontWeight: 700, marginBottom: '4px', fontSize: '16px' }}>
-              ООО "Компания"
+              {currentUser?.full_name || companyName || 'ООО "Компания"'}
             </h2>
             <p style={{ color: '#FFFFFF', opacity: 0.7, fontSize: '12px' }}>
-              ID: CLIENT-001
+              ID: {currentUser?.id?.slice(0, 8).toUpperCase() || companyId || 'CLIENT-001'}
             </p>
-            <span style={{ color: '#BFFF00', fontSize: '11px', marginTop: '8px', display: 'inline-block' }}>
-              ✓ Проверен
-            </span>
+            {currentUser?.is_verified && (
+              <span style={{ color: '#BFFF00', fontSize: '11px', marginTop: '8px', display: 'inline-block' }}>
+                ✓ Проверен
+              </span>
+            )}
           </div>
         </div>
 
@@ -215,7 +291,7 @@ export default function ClientProfile({
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
                     <h3 className="text-white font-semibold mb-1">{shift.title}</h3>
-                    <p className="text-gray-400 text-sm">{shift.location_address}</p>
+                    <p className="text-gray-400 text-sm">{shift.location_address || 'Адрес не указан'}</p>
                   </div>
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -236,7 +312,7 @@ export default function ClientProfile({
                     </span>
                   </div>
                   <span className="text-white font-bold">
-                    {shift.pay_amount.toLocaleString('ru-RU')} ₽
+                    {(shift.pay_amount || 0).toLocaleString('ru-RU')} ₽
                   </span>
                 </div>
               </div>
@@ -304,11 +380,11 @@ export default function ClientProfile({
                   <div className="flex-1">
                     <h3 className="text-white font-semibold mb-1">{shift.title}</h3>
                     <p className="text-gray-400 text-sm">
-                      {new Date(shift.created_at).toLocaleDateString('ru-RU', {
+                      {shift.created_at ? new Date(shift.created_at).toLocaleDateString('ru-RU', {
                         day: 'numeric',
                         month: 'long',
                         year: 'numeric'
-                      })}
+                      }) : shift.date || 'Дата не указана'}
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
@@ -318,15 +394,31 @@ export default function ClientProfile({
                 </div>
 
                 <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/10">
-                  <span className="text-sm text-gray-400">{shift.location_address}</span>
+                  <span className="text-sm text-gray-400">{shift.location_address || 'Адрес не указан'}</span>
                   <span className="text-white font-bold">
-                    {shift.pay_amount.toLocaleString('ru-RU')} ₽
+                    {(shift.pay_amount || 0).toLocaleString('ru-RU')} ₽
                   </span>
                 </div>
               </div>
             ))}
           </div>
         )}
+        </div>
+
+        {/* LOGOUT SECTION */}
+        <div className="px-4 py-6 pb-24">
+          <button
+            onClick={handleLogout}
+            className="w-full py-3 rounded-xl font-bold text-red-400 flex items-center justify-center gap-2 transition-all"
+            style={{
+              background: 'rgba(239, 68, 68, 0.1)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+            }}
+          >
+            <LogOut size={20} />
+            Выйти из аккаунта
+          </button>
         </div>
       </div>
     </div>

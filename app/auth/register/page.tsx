@@ -3,8 +3,10 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { Mail, Lock, User, Briefcase, Building, HardHat, AlertCircle, CheckCircle, Check, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import toast from 'react-hot-toast'
 
 type Role = 'worker' | 'client' | 'shef'
 
@@ -47,7 +49,6 @@ export default function RegisterPage() {
   const [selectedRole, setSelectedRole] = useState<Role>('worker')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
 
   // Password validation states
   const [passwordsMatch, setPasswordsMatch] = useState<boolean | null>(null)
@@ -142,7 +143,16 @@ export default function RegisterPage() {
         },
       })
 
-      if (signUpError) throw signUpError
+      if (signUpError) {
+        // Handle specific errors
+        if (signUpError.message.includes('already registered')) {
+          throw new Error('Этот email уже зарегистрирован')
+        }
+        if (signUpError.message.includes('Password')) {
+          throw new Error('Пароль слишком слабый. Используйте минимум 6 символов')
+        }
+        throw signUpError
+      }
 
       if (authData.user) {
         // Create user record in users table
@@ -159,7 +169,10 @@ export default function RegisterPage() {
           gosuslugi_verified: false,
         })
 
-        if (userError) throw userError
+        if (userError) {
+          console.error('User insert error:', userError)
+          throw new Error('Не удалось создать профиль')
+        }
 
         // Create role-specific profile
         if (selectedRole === 'worker') {
@@ -175,16 +188,29 @@ export default function RegisterPage() {
           })
         }
 
-        setSuccess(true)
+        // Show success toast
+        toast.success('Регистрация успешна! Добро пожаловать!')
 
-        // Redirect after 2 seconds
-        setTimeout(() => {
-          router.push('/auth/login')
-        }, 2000)
+        // Redirect immediately based on role
+        switch (selectedRole) {
+          case 'worker':
+            router.push('/feed')
+            break
+          case 'client':
+            router.push('/dashboard')
+            break
+          case 'shef':
+            router.push('/shef/dashboard')
+            break
+          default:
+            router.push('/')
+        }
       }
     } catch (err: any) {
       console.error('Registration error:', err)
-      setError(err.message || 'Ошибка регистрации. Попробуйте снова.')
+      const errorMessage = err.message || 'Ошибка регистрации. Попробуйте снова.'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -208,38 +234,32 @@ export default function RegisterPage() {
     }
   }
 
-  if (success) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <div className="bg-green-500/10 backdrop-blur-xl rounded-2xl border border-green-500/30 p-8 text-center">
-            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="w-8 h-8 text-green-400" />
-            </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Регистрация успешна!</h2>
-            <p className="text-gray-300 mb-4">
-              Проверьте вашу почту для подтверждения email.
-            </p>
-            <p className="text-sm text-gray-400">
-              Перенаправление на страницу входа...
-            </p>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4 py-12">
-      <div className="w-full max-w-md">
+      <motion.div
+        className="w-full max-w-md"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+      >
         {/* Logo/Title */}
-        <div className="text-center mb-8">
+        <motion.div
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
           <h1 className="text-4xl font-bold text-white mb-2">Шеф-Монтаж</h1>
           <p className="text-gray-400">Создайте новый аккаунт</p>
-        </div>
+        </motion.div>
 
         {/* Register Form */}
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8">
+        <motion.div
+          className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
           <form onSubmit={handleRegister} className="space-y-5">
             {/* Error Message */}
             {error && (
@@ -479,10 +499,15 @@ export default function RegisterPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-gray-500 text-xs mt-8">
+        <motion.p
+          className="text-center text-gray-500 text-xs mt-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
+        >
           Регистрируясь, вы соглашаетесь с условиями использования
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
     </div>
   )
 }
