@@ -1,145 +1,97 @@
-import { supabase } from '../supabase'
+import { createClient } from '@/lib/supabase-client'
+
+export interface Chat {
+  partner_id: string
+  partner_name: string
+  partner_avatar: string | null
+  last_message: string
+  last_message_time: string
+  unread_count: number
+}
 
 export interface Message {
   id: string
-  conversation_id: string
-  sender_id: string
+  from_user_id: string
+  to_user_id: string
   content: string
+  image_url: string | null
   is_read: boolean
   created_at: string
 }
 
-export interface Conversation {
-  id: string
-  participant_ids: string[]
-  last_message?: string
-  last_message_at?: string
-  unread_count?: number
-  created_at: string
+/**
+ * Get list of all chats for a user
+ */
+export async function getChats(userId: string): Promise<{ data: Chat[], error: any }> {
+  const supabase = createClient()
+
+  try {
+    const { data, error } = await supabase
+      .rpc('get_user_chats', { user_id: userId })
+
+    if (error) throw error
+
+    return { data: data || [], error: null }
+  } catch (error) {
+    console.error('Error fetching chats:', error)
+    return { data: [], error }
+  }
 }
 
-// Get all conversations for a user
-export async function getConversations(userId: string) {
-  const { data, error } = await supabase
-    .from('conversations')
-    .select(`
-      *,
-      messages:messages(
+/**
+ * Send a message
+ */
+export async function sendMessage(
+  fromUserId: string,
+  toUserId: string,
+  content: string,
+  imageUrl?: string
+): Promise<{ data: Message | null, error: any }> {
+  const supabase = createClient()
+
+  try {
+    const { data, error } = await supabase
+      .from('messages')
+      .insert({
+        from_user_id: fromUserId,
+        to_user_id: toUserId,
         content,
-        created_at,
-        is_read,
-        sender_id
-      )
-    `)
-    .contains('participant_ids', [userId])
-    .order('updated_at', { ascending: false })
+        image_url: imageUrl || null,
+      })
+      .select()
+      .single()
 
-  return { data, error }
-}
+    if (error) throw error
 
-// Get messages for a conversation
-export async function getMessages(conversationId: string) {
-  const { data, error } = await supabase
-    .from('messages')
-    .select(`
-      *,
-      sender:users!messages_sender_id_fkey(
-        id,
-        full_name,
-        avatar_url
-      )
-    `)
-    .eq('conversation_id', conversationId)
-    .order('created_at', { ascending: true })
-
-  return { data, error }
-}
-
-// Send a message
-export async function sendMessage(data: {
-  conversation_id: string
-  sender_id: string
-  content: string
-}) {
-  const { data: message, error } = await supabase
-    .from('messages')
-    .insert({
-      ...data,
-      is_read: false,
-      created_at: new Date().toISOString(),
-    })
-    .select()
-    .single()
-
-  // Update conversation's last message timestamp
-  if (!error) {
-    await supabase
-      .from('conversations')
-      .update({ updated_at: new Date().toISOString() })
-      .eq('id', data.conversation_id)
+    return { data, error: null }
+  } catch (error) {
+    console.error('Error sending message:', error)
+    return { data: null, error }
   }
-
-  return { data: message, error }
 }
 
-// Mark messages as read
-export async function markMessagesAsRead(conversationId: string, userId: string) {
-  const { error } = await supabase
-    .from('messages')
-    .update({ is_read: true })
-    .eq('conversation_id', conversationId)
-    .neq('sender_id', userId)
-    .eq('is_read', false)
+/**
+ * Mark messages as read
+ */
+export async function markMessagesAsRead(
+  userId: string,
+  partnerId: string
+): Promise<{ error: any }> {
+  const supabase = createClient()
 
-  return { error }
-}
+  try {
+    const { error } = await supabase
+      .from('messages')
+      .update({ is_read: true })
+      .eq('to_user_id', userId)
+      .eq('from_user_id', partnerId)
+      .eq('is_read', false)
 
-// Get or create conversation
-export async function getOrCreateConversation(user1Id: string, user2Id: string) {
-  // Try to find existing conversation
-  const { data: existing, error: searchError } = await supabase
-    .from('conversations')
-    .select('*')
-    .contains('participant_ids', [user1Id])
-    .contains('participant_ids', [user2Id])
-    .single()
+    if (error) throw error
 
-  if (existing) {
-    return { data: existing, error: null }
+    return { error: null }
+  } catch (error) {
+    console.error('Error marking messages as read:', error)
+    return { error }
   }
-
-  // Create new conversation
-  const { data: newConversation, error: createError } = await supabase
-    .from('conversations')
-    .insert({
-      participant_ids: [user1Id, user2Id],
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
-    .select()
-    .single()
-
-  return { data: newConversation, error: createError }
-}
-
-// Subscribe to new messages in a conversation
-export function subscribeToMessages(
-  conversationId: string,
-  callback: (message: Message) => void
-) {
-  return supabase
-    .channel(`messages:${conversationId}`)
-    .on(
-      'postgres_changes',
-      {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'messages',
-        filter: `conversation_id=eq.${conversationId}`,
-      },
-      (payload) => {
-        callback(payload.new as Message)
-      }
-    )
-    .subscribe()
 }
