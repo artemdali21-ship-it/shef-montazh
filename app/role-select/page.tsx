@@ -41,7 +41,7 @@ export default function RoleSelectScreen() {
   const handleSelectRole = (roleId: string) => {
     setSelectedRole(roleId)
     localStorage.setItem('userRole', roleId)
-    router.push(`/register?role=${roleId}`)
+    router.push(`/auth/register?role=${roleId}`)
   }
 
   return (
