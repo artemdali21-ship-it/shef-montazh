@@ -15,7 +15,6 @@ import {
 import PaymentCard from '@/components/payments/PaymentCard'
 import PaymentFilters from '@/components/payments/PaymentFilters'
 import PaymentStatusBadge from '@/components/payments/PaymentStatusBadge'
-import * as XLSX from 'xlsx'
 
 export default function ClientPaymentsPage() {
   const router = useRouter()
@@ -119,6 +118,9 @@ export default function ClientPaymentsPage() {
     if (!clientId) return
 
     try {
+      // Dynamic import of xlsx to avoid build errors
+      const XLSX = await import('xlsx')
+
       const { data } = await exportPaymentsData(clientId, 'client')
 
       const excelData = data.map(p => ({
@@ -138,6 +140,7 @@ export default function ClientPaymentsPage() {
       XLSX.writeFile(wb, `payments_${Date.now()}.xlsx`)
     } catch (error) {
       console.error('Error exporting to Excel:', error)
+      alert('Для экспорта в Excel необходимо установить пакет xlsx: npm install xlsx')
     }
   }
 
