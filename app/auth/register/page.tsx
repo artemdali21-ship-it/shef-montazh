@@ -91,18 +91,16 @@ export default function RegisterPage() {
     setPasswordStrength(strength)
   }, [password])
 
-  // Space key handler for mobile UX
+  // Enter key handler to move to next field
   const handleKeyDown = (e: React.KeyboardEvent, nextRef?: React.RefObject<HTMLInputElement>) => {
-    if (e.key === ' ' && e.currentTarget instanceof HTMLInputElement) {
-      const input = e.currentTarget
-      const value = input.value.trim()
-
-      // If field is empty or only has spaces, prevent space and move to next
-      if (value.length === 0 || input.selectionStart === input.value.length) {
-        e.preventDefault()
-        if (nextRef) {
-          scrollToField(nextRef)
-        }
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (nextRef && nextRef.current) {
+        nextRef.current.focus()
+        scrollToField(nextRef)
+      } else {
+        // Last field - submit form
+        handleRegister(e as any)
       }
     }
   }

@@ -121,24 +121,8 @@ export default function ClientProfile({
   const totalPosted = activeShifts.length + completedShifts.length;
 
   return (
-    <div
-      style={{
-        width: '100%',
-        height: '100dvh',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden'
-      }}
-    >
-      <div
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          minHeight: 0,
-          WebkitOverflowScrolling: 'touch',
-        }}
-      >
+    <div className="min-h-screen pb-24">
+      <div className="w-full">
       {/* PROFILE INFO SECTION */}
       <div
         style={{
@@ -386,7 +370,6 @@ export default function ClientProfile({
             ))}
           </div>
         )}
-      </div>
       </div>
     </div>
   )
