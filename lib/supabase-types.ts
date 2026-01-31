@@ -331,6 +331,7 @@ export type Database = {
       }
       shift_workers: {
         Row: {
+          check_in_address: string | null
           check_in_lat: number | null
           check_in_lng: number | null
           check_in_photo_url: string | null
@@ -343,6 +344,7 @@ export type Database = {
           worker_id: string | null
         }
         Insert: {
+          check_in_address?: string | null
           check_in_lat?: number | null
           check_in_lng?: number | null
           check_in_photo_url?: string | null
@@ -355,6 +357,7 @@ export type Database = {
           worker_id?: string | null
         }
         Update: {
+          check_in_address?: string | null
           check_in_lat?: number | null
           check_in_lng?: number | null
           check_in_photo_url?: string | null

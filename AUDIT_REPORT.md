@@ -1,408 +1,212 @@
-# ШЕФ-МОНТАЖ MVP ARCHITECTURE AUDIT REPORT
+# 🔍 AUDIT REPORT: Проверка готовности MVP фич
 
-**Date:** January 28, 2026  
-**Status:** ✅ APPROVED - Ready for integration  
-**Assessment:** Comprehensive MVP with all 6 blocks implemented correctly
-
----
-
-## EXECUTIVE SUMMARY
-
-Your MVP implementation is **structurally sound** and follows the specification closely. All critical components are present, the business model (reputation-based, no-escrow) is correctly implemented, and the navigation architecture (Instagram-style TabBar with overlays) is properly established.
-
-**Critical Findings:** 0 errors | 2 minor issues | All 6 blocks verified
+**Дата:** 2026-01-31  
+**Проект:** shef-montazh  
+**Версия:** main (commit: 43f3bd9)
 
 ---
 
-## ARCHITECTURE VERIFICATION ✅
+## 📊 ОБЩИЙ СТАТУС
 
-### TabBar Implementation
-✅ **VERIFIED** - BottomNav component correctly implemented:
-- Worker: 3 tabs (Смены, Заявки, Профиль)
-- Client: 3 tabs (Панель, Смены, Профиль)
-- Shef: 3 tabs (Панель, Смены, Профиль)
-- Glassmorphism styling with proper active states
-- Role-based tab routing
-- Fixed positioning at bottom
-
-### Navigation Architecture
-✅ **VERIFIED** - Proper separation of main tabs and detail overlays:
-- Main tabs: `/feed`, `/applications`, `/profile`, `/dashboard`, `/monitoring`, `/shift`
-- Detail overlays: `/job/[id]`, `/worker/[id]`, `/shift/[id]/checkin`, `/create-shift`, `/profile-setup`, `/settings/*`
-- No TabBar on overlay pages (as specified)
-- Back button returns to previous tab
+| Фича | Готовность | Статус | Критические проблемы |
+|------|------------|--------|---------------------|
+| #001 CHECK-IN | **85%** | 🟢 Работает | Нет API endpoint |
+| #002 РЕЙТИНГИ | **90%** | 🟢 Работает | Нет API endpoint |
+| #003 КАТЕГОРИИ | **50%** | 🔴 **НЕ РАБОТАЕТ** | **НЕ СОХРАНЯЕТСЯ В БД!** |
 
 ---
 
-## BLOCK 1: VERIFICATION & RATINGS ✅
+## #001 CHECK-IN СИСТЕМА: ✅ 85% ГОТОВО
 
-### Components Found
-✅ ProfileSetupScreen - Category selection for workers
-✅ GosuslugiButton - Blue gradient, shield icon, verified badge
-✅ StarRating - 1-5 stars, orange filled, gray empty, shows count
-✅ RatingModal - 5 tappable stars, 200-char comment, success animation
+### ЧТО РАБОТАЕТ:
 
-### Verification Details
-- **Categories:** 7 options visible (Монтажник, Декоратор, Электрик, etc.)
-- **Gosuslugi Button:** Green verified state, blue unverified state with shield
-- **Star Ratings:** Decimal support (e.g., 4.8), shows review count (e.g., "23 отзыва")
-- **Rating Modal:** Opens after shift completion, prevents closure without rating
+**Файлы:**
+- ✅ `app/(worker)/shift/[id]/checkin/page.tsx`
+- ✅ `components/shift/CheckInButton.tsx`
+- ✅ `lib/api/shift-workers.ts` - полный функционал
 
-### Integration Status
-✅ GosuslugiButton integrated in profile
-✅ StarRating used in ShiftCard and WorkerCard
-✅ RatingModal triggered from CompletionActions
-✅ Categories saved to worker_profiles (partial - see issue below)
+**Функции:**
+- ✅ Загрузка фото (валидация типа/размера, превью)
+- ✅ Геолокация (GPS + fallback на ручной адрес)
+- ✅ Загрузка в Supabase Storage
+- ✅ Сохранение в shift_workers (time, photo_url, lat, lng, status)
+- ✅ Временная валидация (за 30 мин до начала)
+- ✅ Telegram уведомление клиенту
+- ✅ Проверка повторного check-in
 
-### ⚠️ MINOR ISSUE #1: Profile Setup Categories
-**Issue:** ProfileSetupScreen reads avatar/bio but categories selection not visible in first 50 lines  
-**Impact:** Low - likely implemented below, needs verification  
-**Action:** Check lines 51+ in ProfileSetupScreen.tsx for category checkboxes
+### ПРОБЛЕМЫ:
 
----
+⚠️ `check_in_address` используется в коде, но **НЕТ в типах БД**
 
-## BLOCK 2: CHECK-IN CONTROL ✅
-
-### Components Found
-✅ ShiftStatus - 5 state badges (open, accepted, on_way, checked_in, completed)
-✅ ShiftCheckInScreen - Photo upload, GPS geotag, 30-min window
-✅ WorkerStatusList - Live monitoring with late warnings
-
-### Check-in Implementation
-- **Active Window:** 30 minutes before shift start (verified)
-- **Required:** Photo upload + GPS geolocation
-- **Status Flow:** open → accepted → on_way → checked_in → completed
-- **Client Monitoring:** Live tracking with worker photos, names, status
-- **Late Warnings:** Red alert for >20 min late, orange for minor delays
-
-### Integration Status
-✅ Check-in page at `/shift/[id]/checkin`
-✅ Status updates in real-time
-✅ Client sees WorkerStatusList on shift detail page
-✅ Late detection implemented
+❌ Отсутствуют:
+- API endpoint POST /api/shifts/[id]/checkin
+- Валидация расстояния от адреса смены
+- Retry механизм для загрузки фото
 
 ---
 
-## BLOCK 3: COMPLETION & RATING ✅
+## #002 РЕЙТИНГОВАЯ СИСТЕМА: ✅ 90% ГОТОВО
 
-### Components Found
-✅ CompletionActions - Client "Завершить" + Worker "Подтвердить" buttons
-✅ RatingModal - Bilateral rating system
-✅ ShiftStatus badges show completion state
+### ЧТО РАБОТАЕТ:
 
-### Completion Flow
-- **Client Action:** "Завершить смену" (orange button) when status = checked_in
-- **Worker Action:** "Подтвердить завершение" (green button) after client clicks
-- **Both Confirmed:** RatingModal opens automatically
-- **Rating:** 1-5 stars + optional comment (max 200 chars)
-- **Success:** Checkmark animation, returns to profile
+**Файлы:**
+- ✅ `app/shift/[id]/rating/page.tsx`
+- ✅ `components/rating/InteractiveStarRating.tsx`
+- ✅ `components/rating/RatingModal.tsx`
+- ✅ `lib/api/ratings.ts` - полный API
 
-### Integration Status
-✅ Buttons conditional on userRole and shiftStatus
-✅ Status flow: checked_in → awaiting_worker_confirm → awaiting_rating → completed
-✅ RatingModal prevents dismissal without rating
-✅ Rating calculated as AVG from ratings table
+**Функции:**
+- ✅ Форма 1-5 звёзд (интерактивная с hover)
+- ✅ Комментарий (макс 500 символов)
+- ✅ Цветовая индикация (красный/жёлтый/зелёный)
+- ✅ **АВТОПЕРЕСЧЁТ users.rating** после каждой оценки
+- ✅ Проверка возможности оценивать
+- ✅ Проверка повторной оценки
+- ✅ Telegram уведомление
+- ✅ Сохранение в таблицу ratings
 
----
+### ПРОБЛЕМЫ:
 
-## BLOCK 4: PAYMENTS ✅
-
-### Components Found
-✅ PaymentSection - Shows after completion + rating
-✅ PaymentStatus badges - 3 states (pending/paid/overdue)
-✅ Payment API route at `/api/payments/create`
-
-### Payment Details
-- **Breakdown:** Worker amount + 1,200₽ platform fee = total
-- **Button:** Green gradient "Оплатить [amount]₽"
-- **ЮKassa Integration:** Ready for API key setup
-- **Return Flow:** After payment, shows success state
-- **Status Badges:** 
-  - Orange Clock: Ожидает оплаты (pending)
-  - Green Checkmark: Оплачено (paid)
-  - Red Alert: Просрочено (overdue)
-
-### Integration Status
-✅ Payment section only for Client role
-✅ Only visible when status = 'completed' AND rating done
-✅ PaymentStatus on ShiftCard (bottom-right)
-✅ API route prepared for ЮKassa webhook
-✅ **NO balance/wallet display (correct)**
-✅ **NO pre-blocked funds (correct)**
+❌ Отсутствуют:
+- API endpoint POST /api/ratings/create
+- Детальные критерии (есть UI, но не сохраняется)
+- История изменения рейтинга
+- Система badges
 
 ---
 
-## BLOCK 5: SEARCH & FILTERS ✅
+## #003 КАТЕГОРИИ: 🔴 50% ГОТОВО (КРИТИЧНО!)
 
-### Components Found
-✅ ShiftSearch - For Worker/Shef roles
-✅ WorkerSearch - For Client role
-✅ Conditional rendering in `/search/page.tsx`
+### ЧТО РАБОТАЕТ:
 
-### Shift Search (Worker)
-- **Search Bar:** "Поиск по названию или адресу" (debounced 300ms)
-- **Filters:** Category (multi), Districts, Price range, Verified only
-- **Sort:** By date, price high/low
-- **Results:** ShiftCard grid
-- **Empty State:** "Смены не найдены" with reset button
+**Файлы:**
+- ✅ `app/worker-categories/page.tsx` - UI готов
+- ✅ `components/CategorySelect.tsx`
+- ✅ `lib/api/profile.ts` - API функции есть
 
-### Worker Search (Client)
-- **Search Bar:** "Поиск исполнителей по имени" (debounced 300ms)
-- **Filters:** Category (multi), Rating slider (1-5), Districts, Verified only, Favorites
-- **Sort:** By rating, experience, alphabetically
-- **Results:** WorkerCard grid with favorite toggle
-- **Empty State:** "Исполнители не найдены" with reset button
+**Функции:**
+- ✅ UI с 7 категориями (Монтажник, Декоратор, Электрик, Сварщик, Альпинист, Бутафор, Разнорабочий)
+- ✅ Множественный выбор
+- ✅ Красивый UI с визуальной обратной связью
+- ✅ Кнопка "Продолжить" (disabled если пусто)
 
-### Integration Status
-✅ Both embedded in Search tab with TabBar visible
-✅ Conditional by role: `getUserRole()`
-✅ Filters persist to localStorage
-✅ Real-time filtering with useMemo optimization
-✅ Responsive grid (1-3 columns)
+### 🔴 КРИТИЧЕСКАЯ ПРОБЛЕМА:
 
----
+**КАТЕГОРИИ НЕ СОХРАНЯЮТСЯ В БД!**
 
-## BLOCK 6: NOTIFICATIONS ✅
+```typescript
+// app/worker-categories/page.tsx строка 32
+localStorage.setItem('workerCategories', JSON.stringify(selected))
+router.push('/feed')
 
-### Components Found
-✅ `/app/settings/notifications/page.tsx` - Settings UI
-✅ `/lib/notifications.ts` - Core notification system
-✅ `/app/api/notifications/test/route.ts` - Test endpoint
-✅ `/app/api/notifications/send/route.ts` - Send endpoint
+// ❌ НЕТ вызова updateWorkerProfile()!
+// ❌ При перезагрузке категории теряются!
+```
 
-### Notification System
-- **9 Notification Types:**
-  - Shifts: newShifts, shiftApproved/newApplications, shiftReminders
-  - Payments: paymentReceived, paymentOverdue
-  - Communication: newMessages, ratingsReceived
-  - System: systemUpdates
+### ЧТО ОТСУТСТВУЕТ:
 
-- **Settings Page:**
-  - Organized by sections (Смены, Оплаты, Коммуникация, Система)
-  - Toggle switches with instant save
-  - "Отправить тестовое" button
-  - "Отключить все" / "Включить все" quick actions
-  - Info: "Уведомления через Telegram"
-
-- **Backend:**
-  - Telegram Bot API integration
-  - Settings respect (checks before sending)
-  - Retry logic with exponential backoff
-  - Logs to notifications table
-  - Rate limiting built-in
-
-### Integration Status
-✅ Role-based notification filters
-✅ Telegram Bot setup ready (needs TELEGRAM_BOT_TOKEN env var)
-✅ Test notification functionality works
-✅ Error handling + success feedback
-✅ Async sending (non-blocking)
+❌ **Сохранение в worker_profiles.categories**  
+❌ Загрузка сохранённых категорий при открытии  
+❌ Фильтры по категориям в поиске  
+❌ Badges категорий в профиле  
+❌ API endpoint
 
 ---
 
-## ROLE-BASED FEATURES ✅
+## 🚨 КРИТИЧЕСКИЕ ИСПРАВЛЕНИЯ
 
-### Worker Profile
-✅ Avatar, name, rating with verified badge
-✅ Specializations (category badges)
-✅ Госуслуги button
-✅ Stats: completed shifts, total earnings
-✅ Recent shifts history
-❌ **CORRECT:** NO balance/wallet
-❌ **CORRECT:** NO company info
+### Приоритет 1 (СДЕЛАТЬ СРОЧНО):
 
-### Client Profile
-✅ Company logo, name, rating
-✅ Stats: published, active, completed shifts
-✅ Active shifts list
-✅ "Создать смену" button
-✅ "Избранные исполнители" section (in favorites)
-❌ **CORRECT:** NO balance/wallet
-❌ **CORRECT:** NO competencies
-❌ **CORRECT:** NO personal earnings stats
+#### 1. Исправить сохранение категорий:
 
-### Shef Role
-✅ Can view shifts (like Worker)
-✅ Dashboard with team management options
-✅ Hybrid worker/team permissions
+```typescript
+// app/worker-categories/page.tsx
 
----
+const handleContinue = async () => {
+  if (selected.length === 0) {
+    alert('Выберите хотя бы одну специализацию')
+    return
+  }
 
-## DESIGN SYSTEM ✅
+  try {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Не авторизован')
 
-### Colors (3-5 colors total)
-✅ Primary: #E85D2F (orange) - buttons, active states
-✅ Secondary: #BFFF00 (green) - success, active badges
-✅ Background: dark gradient
-✅ Text: white primary, gray secondary
-✅ Error: #DC2626 (red), Warning: #F59E0B (orange)
+    // ДОБАВИТЬ: Сохранение в БД
+    const { error } = await supabase
+      .from('worker_profiles')
+      .upsert({
+        user_id: user.id,
+        categories: selected,
+        updated_at: new Date().toISOString()
+      })
 
-### Components
-✅ Glassmorphism: bg-white/10, backdrop-blur-xl, border-white/20
-✅ Cards: rounded-xl, shadow-lg
-✅ Buttons: gradient, hover effects
-✅ Icons: lucide-react, consistent sizing
-✅ Badges: pill-shaped, role-specific colors
+    if (error) throw error
 
-### Typography
-✅ Font: Montserrat (montserrat class)
-✅ Headings: bold, white, tracking-wider
-✅ Body: regular, white/gray
-✅ Consistent sizing across components
+    localStorage.setItem('workerCategories', JSON.stringify(selected))
+    router.push('/feed')
 
----
+  } catch (error) {
+    console.error('Error:', error)
+    alert('Ошибка сохранения')
+  }
+}
+```
 
-## DATABASE SCHEMA VERIFICATION
+#### 2. Добавить поле check_in_address:
 
-### Tables Required (per audit spec)
-- ✅ users
-- ✅ worker_profiles
-- ✅ client_profiles
-- ✅ shifts
-- ✅ applications
-- ✅ shift_workers
-- ✅ ratings
-- ✅ payments
-- ✅ favorites
-- ✅ blocked_users
-- ✅ notifications
-- ✅ user_notification_settings
+```sql
+ALTER TABLE shift_workers
+ADD COLUMN check_in_address TEXT;
+```
 
-**Status:** Schema structure appears complete. **Action:** Verify schema via Supabase dashboard for all columns and RLS policies.
+```typescript
+// lib/supabase-types.ts
+export type ShiftWorkers = {
+  // ...existing fields
+  check_in_address: string | null  // ДОБАВИТЬ
+}
+```
 
 ---
 
-## NAVIGATION FLOWS ✅
+## 🌐 API ENDPOINTS
 
-### Worker Journey
-\`\`\`
-/register → /verify-phone → /profile-setup → /feed (TabBar)
-  ↓ (Search tab) → ShiftCard → /job/[id] overlay
-  ↓ "Откликнуться" → /applications (check status)
-  ↓ (approval notification) → shift day
-  ↓ /shift/[id]/checkin → check-in → shift ends
-  ↓ "Подтвердить завершение" → RatingModal
-  ↓ (wait for payment) → notification "Оплачено" ✓
-\`\`\`
+### Существующие ✅:
+- GET /api/profiles/worker
+- GET /api/profiles/client
+- GET /api/shifts/[id]
+- POST /api/shifts/create
+- POST /api/applications/create
+- POST /api/notifications/send
 
-### Client Journey
-\`\`\`
-/register → /verify-phone → /feed (TabBar) → "Создать смену"
-  ↓ /create-shift overlay → publish shift
-  ↓ (Search tab) → find workers → /worker/[id] overlay
-  ↓ "Пригласить" → /applications (view responses)
-  ↓ (approve worker) → shift day
-  ↓ /job/[id] → monitoring (WorkerStatusList)
-  ↓ (worker checks in) → "Завершить смену"
-  ↓ (worker confirms) → RatingModal → rate
-  ↓ "Оплатить" → ЮKassa redirect
-  ↓ (return to app) → "Оплачено" ✓
-\`\`\`
+### Отсутствующие ❌:
+- POST /api/ratings/create
+- POST /api/shifts/[id]/checkin
+- PUT /api/profiles/worker/categories
 
 ---
 
-## CRITICAL ERROR CHECKS ❌ NONE
+## ✅ ИТОГОВЫЙ ВЕРДИКТ
 
-✅ **No escrow/wallet features** - Reputation-based trust only
-✅ **TabBar visible on main tabs** - Persistent, role-based
-✅ **TabBar hidden on overlays** - Detail pages don't show nav
-✅ **No pre-blocked funds** - Payment after completion
-✅ **No balance display** - Only in payment breakdowns
-✅ **Role-based UI differs** - Worker ≠ Client profiles
-✅ **No Госуслуги on Client** - Worker verification only
-✅ **No competencies on Client** - Worker specializations only
-✅ **Verification checks present** - GosuslugiButton, verified badge
-✅ **Rating calculations** - AVG from ratings table
-✅ **Notification triggers** - Events mapped to types
+**Общая готовность:** 🟡 **75%**
 
----
+**MVP готов к запуску:** ⚠️ **ДА, но с 2 критическими исправлениями**
 
-## ⚠️ MINOR ISSUES FOUND
+**Что работает:**
+- ✅ CHECK-IN система (85%)
+- ✅ Рейтинговая система (90%)
 
-### Issue #1: ProfileSetupScreen Categories
-**Status:** ⚠️ Minor  
-**Location:** `/components/ProfileSetupScreen.tsx` line 51+  
-**Description:** Category selection UI not visible in first 50 lines (likely below)  
-**Impact:** Low - feature likely implemented, needs visual confirmation  
-**Recommendation:** Verify multi-select checkboxes for 7 categories are present
+**Что НЕ работает:**
+- 🔴 Сохранение категорий в БД
 
-### Issue #2: Search Page Role Detection
-**Status:** ⚠️ Minor  
-**Location:** `/app/search/page.tsx`  
-**Description:** Uses `getUserRole()` from auth - verify function returns correct role  
-**Impact:** Low - routing depends on this function  
-**Recommendation:** Test role switching to ensure correct search component loads
+**Необходимо исправить перед запуском:**
+1. Добавить сохранение категорий в worker_profiles
+2. Добавить check_in_address в типы БД
+
+**Время на исправление:** ~2 часа
 
 ---
 
-## VERIFICATION CHECKLIST
-
-### MVP Completeness
-- ✅ All 6 blocks implemented (verification, check-in, completion, payments, search, notifications)
-- ✅ All critical features present
-- ✅ No escrow model (reputation-based trust)
-- ✅ Role-based UI differences
-- ✅ Proper navigation architecture
-- ✅ Database schema complete
-- ✅ Notification system functional
-- ✅ Payment flow correct (post-shift)
-- ✅ Check-in control working
-- ✅ Rating system bilateral
-- ✅ Search/filters by role
-- ✅ Design system consistent
-
-### Technical Stack
-- ✅ Next.js 14 (App Router)
-- ✅ TypeScript (strict mode)
-- ✅ Supabase integration
-- ✅ Tailwind CSS
-- ✅ lucide-react icons
-- ✅ Telegram WebApp API ready
-- ✅ ЮKassa API route prepared
-- ✅ Госуслуги button component
-
----
-
-## NEXT STEPS: INTEGRATION ROADMAP
-
-### Phase 1: Backend Setup (1 week)
-1. Verify Supabase schema and RLS policies
-2. Configure Telegram Bot API (set TELEGRAM_BOT_TOKEN)
-3. Set up ЮKassa webhook endpoint
-4. Initialize Госуслуги OAuth configuration
-
-### Phase 2: API Integration (1 week)
-1. Connect notification endpoints to event triggers
-2. Implement payment webhook handler
-3. Set up job scheduling for shift reminders
-4. Test all payment flows with test ЮKassa account
-
-### Phase 3: User Testing (2 weeks)
-1. Worker flow: search → apply → check-in → rating → payment
-2. Client flow: create → manage → monitor → rate → pay
-3. Edge cases: late arrivals, cancellations, disputes
-4. Performance testing: 100+ concurrent shifts
-
-### Phase 4: Launch Preparation (1 week)
-1. Security audit (SQL injection, XSS, CORS)
-2. Telegram Mini App deployment
-3. Monitor logs and error tracking
-4. Create user documentation
-
----
-
-## AUDIT RESULT
-
-## ✅ APPROVED - READY FOR INTEGRATION
-
-**Summary:** Your MVP implementation is **production-ready** for backend integration. All 6 blocks are correctly implemented, the business model is sound, and the architecture supports the Instagram-style personal cabinet navigation pattern as specified.
-
-**Confidence Level:** 95%  
-**Next Action:** Begin Phase 1 backend setup (Supabase verification)
-
-**Reviewer:** v0 AI Architect  
-**Date:** January 28, 2026
-
----
-
-**End of Audit Report**
+**Автор:** Claude Code  
+**Дата:** 2026-01-31 02:30

@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronLeft, Wrench, Paintbrush, Zap, Flame, Mountain, Package, HardHat } from 'lucide-react'
+import { createClient } from '@/lib/supabase-client'
 
 const categories = [
   { id: 'montazhnik', name: 'Монтажник', icon: Wrench },
@@ -17,6 +18,38 @@ const categories = [
 export default function WorkerCategoriesPage() {
   const router = useRouter()
   const [selected, setSelected] = useState<string[]>([])
+  const [loading, setLoading] = useState(false)
+  const supabase = createClient()
+
+  // Load existing categories on mount
+  useEffect(() => {
+    loadExistingCategories()
+  }, [])
+
+  const loadExistingCategories = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      const { data: profile } = await supabase
+        .from('worker_profiles')
+        .select('categories')
+        .eq('user_id', user.id)
+        .single()
+
+      if (profile?.categories) {
+        setSelected(profile.categories)
+      } else {
+        // Fallback to localStorage for backwards compatibility
+        const saved = localStorage.getItem('workerCategories')
+        if (saved) {
+          setSelected(JSON.parse(saved))
+        }
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error)
+    }
+  }
 
   const toggleCategory = (id: string) => {
     setSelected(prev =>
@@ -24,13 +57,44 @@ export default function WorkerCategoriesPage() {
     )
   }
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (selected.length === 0) {
       alert('Выберите хотя бы одну специализацию')
       return
     }
-    localStorage.setItem('workerCategories', JSON.stringify(selected))
-    router.push('/feed')
+
+    try {
+      setLoading(true)
+
+      // Get authenticated user
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        throw new Error('Не авторизован')
+      }
+
+      // Save to database
+      const { error } = await supabase
+        .from('worker_profiles')
+        .upsert({
+          user_id: user.id,
+          categories: selected,
+        }, {
+          onConflict: 'user_id'
+        })
+
+      if (error) throw error
+
+      // Save to localStorage for backwards compatibility
+      localStorage.setItem('workerCategories', JSON.stringify(selected))
+
+      // Navigate to feed
+      router.push('/feed')
+    } catch (error) {
+      console.error('Error saving categories:', error)
+      alert('Ошибка сохранения. Попробуйте еще раз.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -229,18 +293,27 @@ export default function WorkerCategoriesPage() {
         <div className="max-w-2xl mx-auto">
           <button
             onClick={handleContinue}
-            disabled={selected.length === 0}
+            disabled={selected.length === 0 || loading}
             className={`w-full h-14 rounded-xl font-700 text-white transition-all flex items-center justify-center gap-3 ${
-              selected.length === 0
+              selected.length === 0 || loading
                 ? 'bg-white/10 text-white/50 cursor-not-allowed'
                 : 'bg-gradient-to-r from-[#E85D2F] to-[#C44A20] hover:from-[#D94D1F] hover:to-[#B33A18] active:scale-95 shadow-lg'
             }`}
           >
-            <span>Продолжить</span>
-            {selected.length > 0 && (
-              <span className="text-xs bg-white/20 px-2.5 py-1 rounded-lg">
-                {selected.length} выб.
-              </span>
+            {loading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Сохранение...</span>
+              </>
+            ) : (
+              <>
+                <span>Продолжить</span>
+                {selected.length > 0 && (
+                  <span className="text-xs bg-white/20 px-2.5 py-1 rounded-lg">
+                    {selected.length} выб.
+                  </span>
+                )}
+              </>
             )}
           </button>
         </div>
