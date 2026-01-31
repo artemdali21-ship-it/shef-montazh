@@ -210,6 +210,7 @@ export default function WorkerProfile() {
           ))}
         </div>
       </div>
+      </div>
     </div>
   );
 }
