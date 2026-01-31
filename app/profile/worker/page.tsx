@@ -8,7 +8,7 @@ import {
   MapPin, Edit, Shield, CheckCircle, Award, LogOut
 } from 'lucide-react'
 import { getWorkerProfile, getWorkerShiftHistory } from '@/lib/api/profiles'
-import { getWorkerTotalEarnings } from '@/lib/api/payments'
+import { getWorkerPaymentsSummary } from '@/lib/api/payments'
 import { ShiftStatus } from '@/components/shift/ShiftStatus'
 import { supabase } from '@/lib/supabase'
 import { LoadingScreen } from '@/components/ui/LoadingSpinner'
@@ -86,10 +86,8 @@ export default function WorkerProfilePage() {
         }
 
         // Load total earnings
-        const { total, error: earningsError } = await getWorkerTotalEarnings(user.id)
-        if (!earningsError) {
-          setTotalEarnings(total)
-        }
+        const summary = await getWorkerPaymentsSummary(user.id)
+        setTotalEarnings(summary.totalReceived || 0)
       } catch (err) {
         console.error('Error loading worker profile:', err)
         setError('Не удалось загрузить профиль')

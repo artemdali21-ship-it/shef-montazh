@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sendTestNotification } from '@/lib/notifications'
+import { notify } from '@/lib/notifications'
 
 export async function POST(request: NextRequest) {
   try {
-    // In a real app, get user_id from authenticated session
     const { userId } = await request.json()
 
     if (!userId) {
@@ -13,23 +12,33 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('[v0] Sending test notification for user:', userId)
+    console.log('[Test] Sending test notification for user:', userId)
 
-    const success = await sendTestNotification(userId)
+    // Send a test notification
+    const result = await notify({
+      userId,
+      type: 'new_shift',
+      title: 'Тестовое уведомление',
+      message: 'Это тестовое уведомление для проверки работы системы',
+      data: {
+        shiftId: 'test-shift-id',
+        shiftTitle: 'Тестовая смена'
+      }
+    })
 
-    if (success) {
+    if (result.success) {
       return NextResponse.json(
         { message: 'Test notification sent successfully' },
         { status: 200 }
       )
     } else {
       return NextResponse.json(
-        { error: 'Failed to send test notification' },
+        { error: 'Failed to send test notification', details: result.error },
         { status: 500 }
       )
     }
   } catch (error) {
-    console.error('[v0] Test notification error:', error)
+    console.error('[Test] Notification error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
