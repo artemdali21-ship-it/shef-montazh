@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Star, Shield, Briefcase, Users, Heart } from 'lucide-react'
+import { Star, Shield, Briefcase, Users, Heart, DollarSign, UserPlus } from 'lucide-react'
 import { WorkerSearchResult } from '@/lib/api/worker-search'
 import Image from 'next/image'
 
@@ -9,6 +9,7 @@ interface WorkerGridProps {
   workers: WorkerSearchResult[]
   loading?: boolean
   onFavoriteToggle?: (workerId: string) => void
+  onInvite?: (workerId: string) => void
   favoriteIds?: Set<string>
 }
 
@@ -16,6 +17,7 @@ export default function WorkerGrid({
   workers,
   loading,
   onFavoriteToggle,
+  onInvite,
   favoriteIds = new Set()
 }: WorkerGridProps) {
   const router = useRouter()
@@ -73,20 +75,6 @@ export default function WorkerGrid({
             onClick={() => router.push(`/worker/${worker.id}`)}
             className="card-hover animate-fade-in bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5 hover:bg-white/10 transition cursor-pointer relative"
           >
-            {/* Favorite Button */}
-            {onFavoriteToggle && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onFavoriteToggle(worker.id)
-                }}
-                className="absolute top-4 right-4 w-9 h-9 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition z-10"
-              >
-                <Heart
-                  className={`w-5 h-5 ${isFavorite ? 'fill-pink-500 text-pink-500' : 'text-gray-400'}`}
-                />
-              </button>
-            )}
 
             {/* Header */}
             <div className="flex items-start gap-3 mb-4">
@@ -197,16 +185,50 @@ export default function WorkerGrid({
               </div>
             )}
 
-            {/* Footer */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                router.push(`/worker/${worker.id}`)
-              }}
-              className="w-full py-2 bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/30 rounded-lg text-orange-400 text-sm font-semibold transition"
-            >
-              Посмотреть профиль
-            </button>
+            {/* Price */}
+            {worker.price_per_shift && (
+              <div className="flex items-center gap-2 mb-3 py-2 px-3 bg-green-500/10 rounded-lg border border-green-500/20">
+                <DollarSign className="w-4 h-4 text-green-400" />
+                <span className="text-green-400 font-bold text-base">
+                  {worker.price_per_shift.toLocaleString('ru-RU')} ₽
+                </span>
+                <span className="text-green-400/60 text-xs ml-auto">за смену</span>
+              </div>
+            )}
+
+            {/* Footer Buttons */}
+            <div className="grid grid-cols-2 gap-2">
+              {onFavoriteToggle && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onFavoriteToggle(worker.id)
+                  }}
+                  className={`py-2 px-3 rounded-lg text-sm font-semibold transition flex items-center justify-center gap-1.5 ${
+                    isFavorite
+                      ? 'bg-yellow-500/20 border border-yellow-500/30 text-yellow-400'
+                      : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'
+                  }`}
+                >
+                  <Star className={`w-4 h-4 ${isFavorite ? 'fill-yellow-400' : ''}`} />
+                  <span className="hidden sm:inline">
+                    {isFavorite ? 'В избранном' : 'В избранное'}
+                  </span>
+                </button>
+              )}
+              {onInvite && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onInvite(worker.id)
+                  }}
+                  className="py-2 px-3 bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/30 rounded-lg text-orange-400 text-sm font-semibold transition flex items-center justify-center gap-1.5"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  Пригласить
+                </button>
+              )}
+            </div>
           </div>
         )
       })}

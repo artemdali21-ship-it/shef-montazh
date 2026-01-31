@@ -137,6 +137,14 @@ export default function ClientSearchPage() {
     }
   }
 
+  const handleInvite = (workerId: string) => {
+    // TODO: Implement invite modal or navigate to shift selection
+    console.log('Invite worker:', workerId)
+    // For now, just navigate to worker profile
+    // In production, this would open a modal to select which shift to invite them to
+    alert('Функция приглашения будет реализована в следующей версии')
+  }
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-24">
       {/* Header */}
@@ -174,6 +182,7 @@ export default function ClientSearchPage() {
           workers={workers}
           loading={loading}
           onFavoriteToggle={handleFavoriteToggle}
+          onInvite={handleInvite}
           favoriteIds={favoriteIds}
         />
 

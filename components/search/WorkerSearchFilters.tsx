@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ChevronDown, ChevronUp, X, SlidersHorizontal, Shield, Heart } from 'lucide-react'
-import { CATEGORIES } from '@/lib/api/search'
+import { CATEGORIES, DISTRICTS } from '@/lib/api/search'
 import { WorkerSearchFilters, EXPERIENCE_LEVELS } from '@/lib/api/worker-search'
 
 interface WorkerSearchFiltersProps {
@@ -26,6 +26,7 @@ export default function WorkerSearchFilters({ filters, onFiltersChange, onReset 
     filters.categories?.length || 0,
     filters.minRating ? 1 : 0,
     filters.minExperience ? 1 : 0,
+    filters.district ? 1 : 0,
     filters.verifiedOnly ? 1 : 0,
     filters.favoritesOnly ? 1 : 0,
   ].reduce((a, b) => a + b, 0)
@@ -116,6 +117,25 @@ export default function WorkerSearchFilters({ filters, onFiltersChange, onReset 
             </select>
           </div>
 
+          {/* District */}
+          <div>
+            <label className="block text-sm font-semibold text-white mb-2">
+              Район
+            </label>
+            <select
+              value={filters.district || ''}
+              onChange={(e) => onFiltersChange({ ...filters, district: e.target.value })}
+              className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              <option value="">Все районы</option>
+              {DISTRICTS.map(district => (
+                <option key={district} value={district}>
+                  {district}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Quick Filters */}
           <div className="space-y-3">
             <label className="block text-sm font-semibold text-white mb-2">
@@ -161,6 +181,7 @@ export default function WorkerSearchFilters({ filters, onFiltersChange, onReset 
             >
               <option value="rating">По рейтингу</option>
               <option value="experience">По опыту</option>
+              <option value="price">По цене</option>
               <option value="alphabetical">По алфавиту</option>
             </select>
           </div>

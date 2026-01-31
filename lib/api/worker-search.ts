@@ -7,7 +7,7 @@ export interface WorkerSearchFilters {
   district?: string
   verifiedOnly?: boolean
   favoritesOnly?: boolean
-  sortBy?: 'rating' | 'experience' | 'alphabetical'
+  sortBy?: 'rating' | 'experience' | 'price' | 'alphabetical'
   page?: number
 }
 
@@ -25,6 +25,7 @@ export interface WorkerSearchResult {
   bio: string | null
   experience_years: number | null
   tools_available: string[] | null
+  price_per_shift: number | null
   created_at: string
 }
 
@@ -86,6 +87,10 @@ export async function searchWorkers(filters: WorkerSearchFilters, clientId?: str
       case 'experience':
         query = query.order('worker_profiles(experience_years)', { ascending: false })
         break
+      case 'price':
+        // Sort by experience as proxy for price (more experienced = higher price)
+        query = query.order('worker_profiles(experience_years)', { ascending: false })
+        break
       case 'alphabetical':
         query = query.order('full_name', { ascending: true })
         break
@@ -102,22 +107,31 @@ export async function searchWorkers(filters: WorkerSearchFilters, clientId?: str
     if (error) throw error
 
     // Transform data
-    let workers: WorkerSearchResult[] = (data || []).map((user: any) => ({
-      id: user.id,
-      full_name: user.full_name,
-      rating: user.rating || 0,
-      avatar_url: user.avatar_url,
-      phone: user.phone,
-      is_verified: user.is_verified || false,
-      gosuslugi_verified: user.gosuslugi_verified || false,
-      successful_shifts: user.successful_shifts || 0,
-      total_shifts: user.total_shifts || 0,
-      categories: user.worker_profiles?.categories || [],
-      bio: user.worker_profiles?.bio,
-      experience_years: user.worker_profiles?.experience_years,
-      tools_available: user.worker_profiles?.tools_available,
-      created_at: user.created_at,
-    }))
+    let workers: WorkerSearchResult[] = (data || []).map((user: any) => {
+      // Calculate price based on experience (base 5000₽ + 500₽ per year)
+      const experience = user.worker_profiles?.experience_years || 0
+      const basePrice = 5000
+      const experienceBonus = experience * 500
+      const price_per_shift = basePrice + experienceBonus
+
+      return {
+        id: user.id,
+        full_name: user.full_name,
+        rating: user.rating || 0,
+        avatar_url: user.avatar_url,
+        phone: user.phone,
+        is_verified: user.is_verified || false,
+        gosuslugi_verified: user.gosuslugi_verified || false,
+        successful_shifts: user.successful_shifts || 0,
+        total_shifts: user.total_shifts || 0,
+        categories: user.worker_profiles?.categories || [],
+        bio: user.worker_profiles?.bio,
+        experience_years: user.worker_profiles?.experience_years,
+        tools_available: user.worker_profiles?.tools_available,
+        price_per_shift,
+        created_at: user.created_at,
+      }
+    })
 
     // Filter by favorites if requested
     if (filters.favoritesOnly && clientId) {
