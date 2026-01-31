@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation'
 import { Star, Shield, Briefcase, Users, Heart, DollarSign, UserPlus } from 'lucide-react'
 import { WorkerSearchResult } from '@/lib/api/worker-search'
+import FavoriteButton from '@/components/user/FavoriteButton'
+import BlockButton from '@/components/user/BlockButton'
 import Image from 'next/image'
 
 interface WorkerGridProps {
@@ -11,6 +13,7 @@ interface WorkerGridProps {
   onFavoriteToggle?: (workerId: string) => void
   onInvite?: (workerId: string) => void
   favoriteIds?: Set<string>
+  userId?: string | null
 }
 
 export default function WorkerGrid({
@@ -18,7 +21,8 @@ export default function WorkerGrid({
   loading,
   onFavoriteToggle,
   onInvite,
-  favoriteIds = new Set()
+  favoriteIds = new Set(),
+  userId = null
 }: WorkerGridProps) {
   const router = useRouter()
 
@@ -197,36 +201,39 @@ export default function WorkerGrid({
             )}
 
             {/* Footer Buttons */}
-            <div className="grid grid-cols-2 gap-2">
-              {onFavoriteToggle && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onFavoriteToggle(worker.id)
-                  }}
-                  className={`py-2 px-3 rounded-lg text-sm font-semibold transition flex items-center justify-center gap-1.5 ${
-                    isFavorite
-                      ? 'bg-yellow-500/20 border border-yellow-500/30 text-yellow-400'
-                      : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'
-                  }`}
-                >
-                  <Star className={`w-4 h-4 ${isFavorite ? 'fill-yellow-400' : ''}`} />
-                  <span className="hidden sm:inline">
-                    {isFavorite ? 'В избранном' : 'В избранное'}
-                  </span>
-                </button>
-              )}
-              {onInvite && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onInvite(worker.id)
-                  }}
-                  className="py-2 px-3 bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/30 rounded-lg text-orange-400 text-sm font-semibold transition flex items-center justify-center gap-1.5"
-                >
-                  <UserPlus className="w-4 h-4" />
-                  Пригласить
-                </button>
+            <div className="grid grid-cols-3 gap-2">
+              {userId && (
+                <>
+                  <FavoriteButton
+                    userId={userId}
+                    targetUserId={worker.id}
+                    isFavorite={isFavorite}
+                    onToggle={(isFav) => {
+                      if (onFavoriteToggle) onFavoriteToggle(worker.id)
+                    }}
+                    variant="full"
+                    size="sm"
+                  />
+                  {onInvite && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onInvite(worker.id)
+                      }}
+                      className="py-2 px-3 bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/30 rounded-lg text-orange-400 text-sm font-semibold transition flex items-center justify-center gap-1.5"
+                    >
+                      <UserPlus className="w-4 h-4" />
+                      <span className="hidden sm:inline">Пригласить</span>
+                    </button>
+                  )}
+                  <BlockButton
+                    userId={userId}
+                    targetUserId={worker.id}
+                    targetUserName={worker.full_name}
+                    variant="icon"
+                    size="sm"
+                  />
+                </>
               )}
             </div>
           </div>

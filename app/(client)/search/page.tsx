@@ -184,6 +184,7 @@ export default function ClientSearchPage() {
           onFavoriteToggle={handleFavoriteToggle}
           onInvite={handleInvite}
           favoriteIds={favoriteIds}
+          userId={clientId}
         />
 
         {/* Pagination */}
