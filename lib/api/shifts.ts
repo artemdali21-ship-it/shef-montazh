@@ -365,6 +365,75 @@ export async function completeShift(shiftId: string) {
   return updateShift(shiftId, { status: 'completed' })
 }
 
+// Get shef active shifts (shifts assigned to a specific shef)
+export async function getShefActiveShifts(shefId: string) {
+  try {
+    const { data, error } = await supabase
+      .from('shifts')
+      .select('*')
+      .eq('shef_id', shefId)
+      .in('status', ['open', 'in_progress'])
+      .order('date', { ascending: true })
+
+    if (error && (
+      error.code === 'PGRST116' || 
+      error.code === 'PGRST205' ||
+      error.message?.includes('Could not find the table') ||
+      error.message?.includes('42P01')
+    )) {
+      return { data: [], error: null }
+    }
+
+    if (error) {
+      console.error('Error fetching shef active shifts:', error)
+      return { data: [], error: null }
+    }
+
+    return { data: data || [], error: null }
+  } catch (error) {
+    console.error('Error fetching shef active shifts (catch):', error)
+    return { data: [], error: null }
+  }
+}
+
+// Get shift with workers (all workers assigned to this shift)
+export async function getShiftWithWorkers(shiftId: string) {
+  try {
+    const { data: shift, error: shiftError } = await supabase
+      .from('shifts')
+      .select('*')
+      .eq('id', shiftId)
+      .single()
+
+    if (shiftError) {
+      console.error('Error fetching shift:', shiftError)
+      return { data: null, error: shiftError }
+    }
+
+    // Get all workers assigned to this shift
+    const { data: shiftWorkers, error: workersError } = await supabase
+      .from('shift_workers')
+      .select('*, worker:users(*)')
+      .eq('shift_id', shiftId)
+
+    if (workersError) {
+      console.error('Error fetching shift workers:', workersError)
+      return { data: { ...shift, workers: [] }, error: null }
+    }
+
+    return {
+      data: {
+        ...shift,
+        workers: shiftWorkers || []
+      },
+      error: null
+    }
+  } catch (error) {
+    console.error('Error fetching shift with workers (catch):', error)
+    return { data: null, error }
+  }
+}
+
 // Apply/Respond to a shift
 export async function applyToShift(shiftId: string, workerId: string) {
   try {

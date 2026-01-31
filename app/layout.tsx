@@ -5,7 +5,6 @@ import { Montserrat, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import TelegramProvider from '@/components/providers/telegram-provider'
-import Background3D from '@/components/layouts/Background3D'
 import { Toaster } from '@/components/ui/Toaster'
 
 const _montserrat = Montserrat({ 
@@ -83,6 +82,7 @@ export default function RootLayout({
         <TelegramProvider>
           {children}
         </TelegramProvider>
+        <Toaster />
         <Analytics />
       </body>
     </html>
