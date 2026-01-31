@@ -161,6 +161,7 @@ export default function RegisterPage() {
           full_name: fullName,
           phone: phone,
           email: email,
+          user_type: selectedRole,
           role: selectedRole,
           rating: 0,
           total_shifts: 0,
@@ -178,13 +179,10 @@ export default function RegisterPage() {
         if (selectedRole === 'worker') {
           await supabase.from('worker_profiles').insert({
             user_id: authData.user.id,
-            status: 'active',
-            experience_years: 0,
           })
         } else if (selectedRole === 'client') {
           await supabase.from('client_profiles').insert({
             user_id: authData.user.id,
-            shifts_published: 0,
           })
         }
 
