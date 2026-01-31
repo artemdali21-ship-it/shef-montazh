@@ -1,45 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
-import {
-  sendTelegramNotification,
-  NotificationType,
-} from '@/lib/notifications'
+import { notify } from '@/lib/notifications'
+import { NotificationPayload } from '@/lib/types/notifications'
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId, type, data } = await request.json()
+    const payload: NotificationPayload = await request.json()
 
-    if (!userId || !type) {
+    // Validate payload
+    if (!payload.type || !payload.userId || !payload.title || !payload.body) {
       return NextResponse.json(
-        { error: 'User ID and notification type required' },
+        { error: 'Missing required fields: type, userId, title, body' },
         { status: 400 }
       )
     }
 
-    // Validate notification type
-    if (!Object.values(NotificationType).includes(type)) {
-      return NextResponse.json(
-        { error: 'Invalid notification type' },
-        { status: 400 }
-      )
-    }
+    // Send notification
+    const result = await notify(payload)
 
-    console.log('[v0] Sending notification:', type, 'for user:', userId)
-
-    const success = await sendTelegramNotification(userId, type, data || {})
-
-    if (success) {
-      return NextResponse.json(
-        { message: 'Notification sent successfully' },
-        { status: 200 }
-      )
+    if (result.success) {
+      return NextResponse.json({ success: true })
     } else {
       return NextResponse.json(
-        { error: 'Failed to send notification' },
+        { error: result.error || 'Failed to send notification' },
         { status: 500 }
       )
     }
   } catch (error) {
-    console.error('[v0] Notification error:', error)
+    console.error('Error in /api/notifications/send:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
