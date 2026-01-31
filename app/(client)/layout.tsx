@@ -5,7 +5,7 @@ import { BottomNav } from '@/components/layout/BottomNav'
 import { supabase } from '@/lib/supabase'
 import BotActivationBanner from '@/components/notifications/BotActivationBanner'
 
-export default function WorkerLayout({
+export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode
@@ -24,11 +24,7 @@ export default function WorkerLayout({
     <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-24">
       <BotActivationBanner />
       {children}
-      <BottomNav userType="worker" userId={userId} />
-      {/* DEBUG: Layout is loaded */}
-      <div className="fixed top-0 right-0 bg-green-500 text-white px-2 py-1 text-xs z-50">
-        Layout OK
-      </div>
+      <BottomNav userType="client" userId={userId} />
     </div>
   )
 }
