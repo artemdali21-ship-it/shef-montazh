@@ -1,6 +1,8 @@
 import TwoFactorSetup from '@/components/admin/TwoFactorSetup'
 import BackupManager from '@/components/admin/BackupManager'
 
+export const dynamic = 'force-dynamic'
+
 export default function AdminSettingsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8">
