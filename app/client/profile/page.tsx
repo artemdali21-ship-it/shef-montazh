@@ -171,7 +171,7 @@ export default function ClientProfilePage() {
           </button>
 
           <button
-            onClick={() => router.push('/payments')}
+            onClick={() => router.push('/client/payments')}
             className="w-full flex items-center justify-between p-3 bg-white/5 hover:bg-white/10 rounded-xl transition"
           >
             <span className="text-white font-medium">История платежей</span>

@@ -109,7 +109,7 @@ export function BottomNav({ userType, userId }: BottomNavProps) {
                 hapticLight();
                 router.push(item.href);
               }}
-              className="flex flex-col items-center justify-center gap-1 min-w-[64px] min-h-[44px] px-2 py-1 transition-colors duration-200"
+              className="flex flex-col items-center justify-center gap-0.5 min-w-[64px] px-2 py-2 transition-colors duration-200"
             >
               <div className="relative flex items-center justify-center w-6 h-6">
                 <Icon

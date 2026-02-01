@@ -227,14 +227,14 @@ export default function CreateShiftScreen({ onClose, onSuccess }: CreateShiftScr
             </div>
 
             {/* Time */}
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-white mb-2">
                   Начало
                 </label>
                 <input
                   type="time"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-[#E85D2F] transition-colors"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-2 py-2.5 text-sm text-white focus:border-[#E85D2F] transition-colors"
                   value={formData.startTime}
                   onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
                 />
@@ -245,7 +245,7 @@ export default function CreateShiftScreen({ onClose, onSuccess }: CreateShiftScr
                 </label>
                 <input
                   type="time"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-[#E85D2F] transition-colors"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-2 py-2.5 text-sm text-white focus:border-[#E85D2F] transition-colors"
                   value={formData.endTime}
                   onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
                 />

@@ -48,8 +48,8 @@ export default function CategorySelector({ selectedCategories, onChange }: Categ
               key={category.id}
               onClick={() => toggleCategory(category.id)}
               className={`
-                relative flex items-center gap-3 p-3 rounded-xl
-                border transition-all
+                relative flex items-center gap-2 p-3 rounded-xl
+                border transition-all min-h-[60px]
                 ${isSelected
                   ? 'bg-lime-300/25 border-lime-300'
                   : 'bg-white/5 border-white/10 hover:bg-white/10'
@@ -60,13 +60,13 @@ export default function CategorySelector({ selectedCategories, onChange }: Categ
                 <img
                   src={category.icon}
                   alt={category.label}
-                  className="w-8 h-8 object-contain"
+                  className="w-7 h-7 object-contain flex-shrink-0"
                   style={{ filter: isSelected ? 'brightness(1.2)' : 'brightness(0.9)' }}
                 />
               ) : (
-                <span className="text-2xl">{category.icon}</span>
+                <span className="text-xl flex-shrink-0">{category.icon}</span>
               )}
-              <span className={`text-sm font-medium ${isSelected ? 'text-lime-300' : 'text-white'}`}>
+              <span className={`text-xs font-medium leading-tight text-left ${isSelected ? 'text-lime-300' : 'text-white'}`}>
                 {category.label}
               </span>
 
