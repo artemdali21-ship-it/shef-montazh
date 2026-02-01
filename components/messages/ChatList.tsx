@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Search, MessageSquare } from 'lucide-react'
 import ChatPreview from './ChatPreview'
+import EmptyState from '@/components/ui/EmptyState'
 import type { Chat } from '@/lib/api/messages'
 
 interface ChatListProps {
@@ -55,19 +56,14 @@ export default function ChatList({ chats, loading }: ChatListProps) {
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto">
         {filteredChats.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 px-6">
-            <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
-              <MessageSquare className="w-10 h-10 text-gray-500" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2">
-              {searchQuery ? 'Ничего не найдено' : 'Нет сообщений'}
-            </h3>
-            <p className="text-gray-400 text-center">
-              {searchQuery
-                ? 'Попробуйте изменить запрос'
-                : 'Здесь появятся ваши чаты'}
-            </p>
-          </div>
+          <EmptyState
+            icon={MessageSquare}
+            title={searchQuery ? 'Ничего не найдено' : 'Нет сообщений'}
+            description={searchQuery
+              ? 'Попробуйте изменить запрос'
+              : 'Здесь появятся ваши чаты'}
+            variant="compact"
+          />
         ) : (
           <div>
             {filteredChats.map((chat) => (

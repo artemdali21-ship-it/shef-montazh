@@ -57,7 +57,7 @@ export default function MessagesListScreen({ onSelectChat }: { onSelectChat: (ch
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] relative">
+    <div className="min-h-screen bg-dashboard relative">
       {/* DECORATIVE ELEMENTS */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 z-0">
         <img src="/images/chain.png" className="absolute top-20 left-10 w-20 h-20" alt="" />

@@ -56,8 +56,8 @@ export default function FeedPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-24">
-      <div className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-20">
+    <main className="min-h-screen bg-dashboard pb-24">
+      <div className="sticky top-0 bg-white/10 backdrop-blur-xl border-b border-white/20 z-20">
         <div className="p-4">
           <h1 className="text-h1 text-white mb-4">Лента смен</h1>
 

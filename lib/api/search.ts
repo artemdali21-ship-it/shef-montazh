@@ -32,7 +32,7 @@ export interface ShiftSearchResult {
 const ITEMS_PER_PAGE = 20
 
 export async function searchShifts(filters: ShiftSearchFilters) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const page = filters.page || 1
   const offset = (page - 1) * ITEMS_PER_PAGE
 

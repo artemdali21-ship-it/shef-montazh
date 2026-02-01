@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { Home, Search, MessageCircle, User, Plus } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
+import { hapticLight } from '@/lib/haptic'
 
 interface NavItem {
   icon: React.ComponentType<{ className?: string }>
@@ -65,17 +66,17 @@ export function BottomNav({ userType, userId }: BottomNavProps) {
   }, [userId])
 
   const workerNavItems: NavItem[] = [
-    { icon: Home, label: 'Главная', href: '/dashboard' },
-    { icon: Search, label: 'Смены', href: '/shifts' },
-    { icon: MessageCircle, label: 'Сообщения', href: '/messages', badge: unreadCount },
-    { icon: User, label: 'Профиль', href: '/profile' },
+    { icon: Home, label: 'Главная', href: '/worker/shifts' },
+    { icon: Search, label: 'Поиск', href: '/worker/search' },
+    { icon: MessageCircle, label: 'Сообщения', href: '/worker/messages', badge: unreadCount },
+    { icon: User, label: 'Профиль', href: '/worker/profile' },
   ]
 
   const clientNavItems: NavItem[] = [
-    { icon: Home, label: 'Главная', href: '/dashboard' },
-    { icon: Plus, label: 'Создать', href: '/shifts/create' },
-    { icon: MessageCircle, label: 'Сообщения', href: '/messages', badge: unreadCount },
-    { icon: User, label: 'Профиль', href: '/profile' },
+    { icon: Home, label: 'Главная', href: '/client/shifts' },
+    { icon: Plus, label: 'Создать', href: '/create-shift' },
+    { icon: MessageCircle, label: 'Сообщения', href: '/client/messages', badge: unreadCount },
+    { icon: User, label: 'Профиль', href: '/client/profile' },
   ]
 
   const navItems = userType === 'worker' ? workerNavItems : clientNavItems
@@ -89,8 +90,9 @@ export function BottomNav({ userType, userId }: BottomNavProps) {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 bg-[#2A2A2A] backdrop-blur-xl border-t-2 border-[#E85D2F]"
+      className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl border-t-2 border-white/30"
       style={{
+        background: 'rgba(255, 255, 255, 0.25)',
         height: '64px',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       }}
@@ -103,13 +105,16 @@ export function BottomNav({ userType, userId }: BottomNavProps) {
           return (
             <button
               key={item.href}
-              onClick={() => router.push(item.href)}
+              onClick={() => {
+                hapticLight();
+                router.push(item.href);
+              }}
               className="flex flex-col items-center justify-center gap-1 min-w-[64px] min-h-[44px] px-2 py-1 transition-colors duration-200"
             >
               <div className="relative flex items-center justify-center w-6 h-6">
                 <Icon
                   className={`w-6 h-6 transition-colors duration-200 ${
-                    active ? 'text-[#E85D2F]' : 'text-[#666666]'
+                    active ? 'text-[#E85D2F]' : 'text-white'
                   }`}
                 />
                 {item.badge && item.badge > 0 && (
@@ -122,7 +127,7 @@ export function BottomNav({ userType, userId }: BottomNavProps) {
               </div>
               <span
                 className={`text-[12px] font-medium transition-colors duration-200 ${
-                  active ? 'text-[#E85D2F]' : 'text-[#666666]'
+                  active ? 'text-[#E85D2F]' : 'text-white'
                 }`}
               >
                 {item.label}

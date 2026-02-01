@@ -83,7 +83,7 @@ export default function Background3D({ children }: { children: React.ReactNode }
   return (
     <div className="relative min-h-screen">
       {/* Background Gradient */}
-      <div className="fixed inset-0 bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] -z-10" />
+      <div className="fixed inset-0 bg-dashboard -z-10" />
 
       {/* Floating 3D Elements */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">

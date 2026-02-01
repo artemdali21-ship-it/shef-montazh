@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'
 import { Mail, Lock, LogIn, AlertCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
+import { Logo } from '@/components/ui/Logo'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -61,10 +62,10 @@ export default function LoginPage() {
         // Redirect based on role
         switch (userData.role) {
           case 'worker':
-            router.push('/feed')
+            router.push('/worker/shifts')
             break
           case 'client':
-            router.push('/dashboard')
+            router.push('/client/shifts')
             break
           case 'shef':
             router.push('/shef/dashboard')
@@ -84,7 +85,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-dashboard flex items-center justify-center p-4">
       <motion.div
         className="w-full max-w-md"
         initial={{ opacity: 0, y: 20 }}
@@ -98,7 +99,9 @@ export default function LoginPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
-          <h1 className="text-4xl font-bold text-white mb-2">Шеф-Монтаж</h1>
+          <div className="flex items-center justify-center mb-4">
+            <Logo size="lg" showText={true} />
+          </div>
           <p className="text-gray-400">Войдите в свой аккаунт</p>
         </motion.div>
 

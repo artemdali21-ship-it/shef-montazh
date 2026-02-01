@@ -6,9 +6,12 @@ import {
   Briefcase, Calendar, MapPin, DollarSign, TrendingUp, Star,
   Clock, CheckCircle
 } from 'lucide-react'
+import { OnboardingTour } from '@/components/OnboardingTour'
+import { useOnboarding } from '@/hooks/useOnboarding'
 
 export default function WorkerDashboard() {
   const router = useRouter()
+  const { showTour, completeTour, skipTour } = useOnboarding('worker')
 
   const stats = {
     activeShifts: 2,
@@ -39,9 +42,19 @@ export default function WorkerDashboard() {
   ]
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A]">
-      {/* Header */}
-      <header className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-20">
+    <>
+      {/* Onboarding Tour */}
+      {showTour && (
+        <OnboardingTour
+          role="worker"
+          onComplete={completeTour}
+          onSkip={skipTour}
+        />
+      )}
+
+      <main className="min-h-screen bg-dashboard">
+        {/* Header */}
+        <header className="sticky top-0 bg-white/10 backdrop-blur-xl border-b border-white/20 z-20">
         <div className="p-4">
           <h1 className="text-h1 text-white mb-1">Мой дашборд</h1>
           <p className="text-body-small text-gray-400">Ваши смены и статистика</p>
@@ -74,7 +87,7 @@ export default function WorkerDashboard() {
           </div>
 
           {/* Total Earned */}
-          <div className="bg-blue-500/10 backdrop-blur-xl rounded-2xl border border-blue-500/20 p-4">
+          <div data-tour="balance" className="bg-blue-500/10 backdrop-blur-xl rounded-2xl border border-blue-500/20 p-4">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
                 <TrendingUp className="w-4 h-4 text-blue-400" />
@@ -99,7 +112,7 @@ export default function WorkerDashboard() {
         </div>
 
         {/* Upcoming Shifts Section */}
-        <div>
+        <div data-tour="shifts-list">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-white">Ближайшие смены</h2>
             <button
@@ -164,6 +177,7 @@ export default function WorkerDashboard() {
           <h2 className="text-xl font-bold text-white mb-4">Быстрые действия</h2>
           <div className="grid grid-cols-2 gap-3">
             <button
+              data-tour="apply-button"
               onClick={() => router.push('/shifts')}
               className="card-hover bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4 hover:bg-white/10 transition text-left"
             >
@@ -172,6 +186,7 @@ export default function WorkerDashboard() {
               <p className="text-xs text-gray-400 mt-1">Доступные вакансии</p>
             </button>
             <button
+              data-tour="worker-profile"
               onClick={() => router.push('/profile')}
               className="card-hover bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4 hover:bg-white/10 transition text-left"
             >
@@ -183,5 +198,6 @@ export default function WorkerDashboard() {
         </div>
       </div>
     </main>
+    </>
   )
 }

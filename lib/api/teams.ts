@@ -1,238 +1,265 @@
-import { supabase } from '../supabase'
+import { createClient } from '@/lib/supabase-client'
 
 export interface Team {
   id: string
   shef_id: string
   name: string
-  worker_ids: string[]
+  description: string | null
   created_at: string
   updated_at: string
 }
 
-export interface TeamWithWorkers extends Team {
-  workers: Array<{
-    id: string
-    full_name: string
-    avatar_url: string | null
-    rating: number
-    total_shifts: number
-  }>
+export interface TeamMember {
+  id: string
+  team_id: string
+  worker_id: string
+  added_at: string
 }
 
-// Get shef's teams
+export interface TeamWithMembers extends Team {
+  team_members: {
+    worker: {
+      id: string
+      full_name: string
+      avatar_url: string | null
+      rating?: number
+    }
+  }[]
+}
+
+/**
+ * Get all teams for a shef
+ */
 export async function getShefTeams(shefId: string) {
-  const { data, error } = await supabase
-    .from('teams')
-    .select('*')
-    .eq('shef_id', shefId)
-    .order('created_at', { ascending: false })
+  const supabase = await createClient()
 
-  if (error) return { data: null, error }
-
-  // Fetch worker details for each team
-  if (data && data.length > 0) {
-    const teamsWithWorkers = await Promise.all(
-      data.map(async (team) => {
-        if (!team.worker_ids || team.worker_ids.length === 0) {
-          return { ...team, workers: [] }
-        }
-
-        const { data: workers } = await supabase
-          .from('users')
-          .select('id, full_name, avatar_url, rating, total_shifts')
-          .in('id', team.worker_ids)
-
-        return {
-          ...team,
-          workers: workers || [],
-        }
-      })
-    )
-
-    return { data: teamsWithWorkers, error: null }
-  }
-
-  return { data: [], error: null }
-}
-
-// Create new team
-export async function createTeam(
-  shefId: string,
-  name: string,
-  workerIds: string[] = []
-) {
-  const { data, error } = await supabase
-    .from('teams')
-    .insert({
-      shef_id: shefId,
-      name,
-      worker_ids: workerIds,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
-    .select()
-    .single()
-
-  return { data, error }
-}
-
-// Add worker to team
-export async function addWorkerToTeam(teamId: string, workerId: string) {
-  // Get current team
-  const { data: team, error: fetchError } = await supabase
-    .from('teams')
-    .select('worker_ids')
-    .eq('id', teamId)
-    .single()
-
-  if (fetchError) return { data: null, error: fetchError }
-
-  const currentWorkerIds = team?.worker_ids || []
-
-  // Check if worker already in team
-  if (currentWorkerIds.includes(workerId)) {
-    return { data: null, error: new Error('Worker already in team') }
-  }
-
-  // Add worker
-  const { data, error } = await supabase
-    .from('teams')
-    .update({
-      worker_ids: [...currentWorkerIds, workerId],
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', teamId)
-    .select()
-    .single()
-
-  return { data, error }
-}
-
-// Remove worker from team
-export async function removeWorkerFromTeam(teamId: string, workerId: string) {
-  // Get current team
-  const { data: team, error: fetchError } = await supabase
-    .from('teams')
-    .select('worker_ids')
-    .eq('id', teamId)
-    .single()
-
-  if (fetchError) return { data: null, error: fetchError }
-
-  const currentWorkerIds = team?.worker_ids || []
-
-  // Remove worker
-  const { data, error } = await supabase
-    .from('teams')
-    .update({
-      worker_ids: currentWorkerIds.filter((id: string) => id !== workerId),
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', teamId)
-    .select()
-    .single()
-
-  return { data, error }
-}
-
-// Get team statistics
-export async function getTeamStats(teamId: string) {
   try {
-    // Get team
-    const { data: team, error: teamError } = await supabase
+    const { data, error } = await supabase
       .from('teams')
-      .select('worker_ids')
+      .select(`
+        *,
+        team_members (
+          worker:users (
+            id,
+            full_name,
+            avatar_url,
+            worker_profiles (
+              rating
+            )
+          )
+        )
+      `)
+      .eq('shef_id', shefId)
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+
+    return { data: data || [], error: null }
+  } catch (err) {
+    console.error('Error getting teams:', err)
+    return { data: [], error: err as Error }
+  }
+}
+
+/**
+ * Get team by ID with members
+ */
+export async function getTeamById(teamId: string) {
+  const supabase = await createClient()
+
+  try {
+    const { data, error } = await supabase
+      .from('teams')
+      .select(`
+        *,
+        team_members (
+          *,
+          worker:users (
+            id,
+            full_name,
+            avatar_url,
+            phone,
+            worker_profiles (
+              rating,
+              categories
+            )
+          )
+        )
+      `)
       .eq('id', teamId)
       .single()
 
-    if (teamError || !team) {
-      return { data: null, error: teamError }
-    }
+    if (error) throw error
 
-    const workerIds = team.worker_ids || []
-
-    if (workerIds.length === 0) {
-      return {
-        data: {
-          totalShifts: 0,
-          completedShifts: 0,
-          averageRating: 0,
-        },
-        error: null,
-      }
-    }
-
-    // Get shifts where ALL team members were assigned
-    const { data: shifts } = await supabase
-      .from('shift_workers')
-      .select('shift_id, status')
-      .in('worker_id', workerIds)
-
-    if (!shifts) {
-      return {
-        data: {
-          totalShifts: 0,
-          completedShifts: 0,
-          averageRating: 0,
-        },
-        error: null,
-      }
-    }
-
-    // Count shifts where all workers participated
-    const shiftCounts: Record<string, number> = {}
-    shifts.forEach((sw: any) => {
-      shiftCounts[sw.shift_id] = (shiftCounts[sw.shift_id] || 0) + 1
-    })
-
-    const completeTeamShifts = Object.values(shiftCounts).filter(
-      (count) => count === workerIds.length
-    ).length
-
-    // Calculate average team rating
-    const { data: workers } = await supabase
-      .from('users')
-      .select('rating')
-      .in('id', workerIds)
-
-    const avgRating = workers
-      ? workers.reduce((sum: number, w: any) => sum + (w.rating || 0), 0) / workers.length
-      : 0
-
-    return {
-      data: {
-        totalShifts: completeTeamShifts,
-        completedShifts: completeTeamShifts,
-        averageRating: parseFloat(avgRating.toFixed(1)),
-      },
-      error: null,
-    }
+    return { data, error: null }
   } catch (err) {
-    return { data: null, error: err }
+    console.error('Error getting team:', err)
+    return { data: null, error: err as Error }
   }
 }
 
-// Update team
-export async function updateTeam(
-  teamId: string,
-  updates: { name?: string; worker_ids?: string[] }
-) {
-  const { data, error } = await supabase
-    .from('teams')
-    .update({
-      ...updates,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', teamId)
-    .select()
-    .single()
+/**
+ * Create a new team
+ */
+export async function createTeam(shefId: string, name: string, description?: string) {
+  const supabase = await createClient()
 
-  return { data, error }
+  try {
+    const { data, error } = await supabase
+      .from('teams')
+      .insert({
+        shef_id: shefId,
+        name,
+        description: description || null
+      })
+      .select()
+      .single()
+
+    if (error) throw error
+
+    return { data, error: null }
+  } catch (err) {
+    console.error('Error creating team:', err)
+    return { data: null, error: err as Error }
+  }
 }
 
-// Delete team
-export async function deleteTeam(teamId: string) {
-  const { error } = await supabase.from('teams').delete().eq('id', teamId)
+/**
+ * Update team
+ */
+export async function updateTeam(teamId: string, updates: Partial<Pick<Team, 'name' | 'description'>>) {
+  const supabase = await createClient()
 
-  return { error }
+  try {
+    const { data, error } = await supabase
+      .from('teams')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', teamId)
+      .select()
+      .single()
+
+    if (error) throw error
+
+    return { data, error: null }
+  } catch (err) {
+    console.error('Error updating team:', err)
+    return { data: null, error: err as Error }
+  }
+}
+
+/**
+ * Delete team
+ */
+export async function deleteTeam(teamId: string) {
+  const supabase = await createClient()
+
+  try {
+    const { error } = await supabase
+      .from('teams')
+      .delete()
+      .eq('id', teamId)
+
+    if (error) throw error
+
+    return { error: null }
+  } catch (err) {
+    console.error('Error deleting team:', err)
+    return { error: err as Error }
+  }
+}
+
+/**
+ * Add member to team
+ */
+export async function addTeamMember(teamId: string, workerId: string) {
+  const supabase = await createClient()
+
+  try {
+    const { data, error } = await supabase
+      .from('team_members')
+      .insert({
+        team_id: teamId,
+        worker_id: workerId
+      })
+      .select()
+      .single()
+
+    if (error) throw error
+
+    return { data, error: null }
+  } catch (err) {
+    console.error('Error adding team member:', err)
+    return { data: null, error: err as Error }
+  }
+}
+
+/**
+ * Remove member from team
+ */
+export async function removeTeamMember(memberId: string) {
+  const supabase = await createClient()
+
+  try {
+    const { error } = await supabase
+      .from('team_members')
+      .delete()
+      .eq('id', memberId)
+
+    if (error) throw error
+
+    return { error: null }
+  } catch (err) {
+    console.error('Error removing team member:', err)
+    return { error: err as Error }
+  }
+}
+
+/**
+ * Get team members
+ */
+export async function getTeamMembers(teamId: string) {
+  const supabase = await createClient()
+
+  try {
+    const { data, error } = await supabase
+      .from('team_members')
+      .select(`
+        *,
+        worker:users (
+          id,
+          full_name,
+          avatar_url,
+          phone,
+          worker_profiles (
+            rating,
+            categories
+          )
+        )
+      `)
+      .eq('team_id', teamId)
+      .order('added_at', { ascending: false })
+
+    if (error) throw error
+
+    return { data: data || [], error: null }
+  } catch (err) {
+    console.error('Error getting team members:', err)
+    return { data: [], error: err as Error }
+  }
+}
+
+/**
+ * Get team statistics for Shef dashboard
+ */
+export async function getTeamStats(shefId: string) {
+  // TODO: Implement team statistics
+  return {
+    totalTeams: 0,
+    totalMembers: 0,
+    activeMembers: 0,
+    averageRating: 0
+  }
 }

@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { ChevronDown, ChevronUp, X, SlidersHorizontal, Shield, Heart } from 'lucide-react'
-import { CATEGORIES, DISTRICTS } from '@/lib/api/search'
+import { CATEGORIES } from '@/lib/constants/categories'
+import { DISTRICTS } from '@/lib/api/search'
 import { WorkerSearchFilters, EXPERIENCE_LEVELS } from '@/lib/api/worker-search'
 
 interface WorkerSearchFiltersProps {
@@ -63,19 +64,25 @@ export default function WorkerSearchFilters({ filters, onFiltersChange, onReset 
               Специализация
             </label>
             <div className="grid grid-cols-2 gap-2">
-              {CATEGORIES.map(category => (
-                <button
-                  key={category.id}
-                  onClick={() => handleCategoryToggle(category.id)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-                    filters.categories?.includes(category.id)
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-white/5 text-gray-300 hover:bg-white/10'
-                  }`}
-                >
-                  {category.name}
-                </button>
-              ))}
+              {CATEGORIES.map(category => {
+                const Icon = category.icon
+                const isSelected = filters.categories?.includes(category.id)
+
+                return (
+                  <button
+                    key={category.id}
+                    onClick={() => handleCategoryToggle(category.id)}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2 border ${
+                      isSelected
+                        ? `${category.bgColor} ${category.color} ${category.borderColor}`
+                        : 'bg-white/5 text-gray-300 hover:bg-white/10 border-white/10'
+                    }`}
+                  >
+                    <Icon size={16} />
+                    {category.name}
+                  </button>
+                )
+              })}
             </div>
           </div>
 

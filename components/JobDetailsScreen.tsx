@@ -7,7 +7,7 @@ import { Header } from './Header'
 import { CompletionActions } from './shift/CompletionActions'
 import { RatingModal } from './rating/RatingModal'
 import { PaymentSection } from './PaymentSection'
-import { WorkerStatusList } from './monitoring/WorkerStatusList'
+import WorkerStatusList from './monitoring/WorkerStatusList'
 
 const JobDetailsScreen = () => {
   const router = useRouter()

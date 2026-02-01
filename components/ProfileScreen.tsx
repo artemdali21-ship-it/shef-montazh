@@ -265,11 +265,9 @@ export default function ProfileScreen() {
           {/* PROFILE HERO SECTION */}
           <div
             style={{
-              backgroundImage: 'url(/images/holographic-bg.jpg)',
+              backgroundImage: 'url(/images/bg-main-splash.jpg)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
               borderRadius: '0 0 24px 24px',
               padding: '32px 20px 28px 20px',
               marginBottom: '20px',
@@ -287,10 +285,19 @@ export default function ProfileScreen() {
               style={{
                 position: 'absolute',
                 inset: 0,
-                background: 'rgba(0, 0, 0, 0.55)',
+                background: 'rgba(0, 0, 0, 0.2)',
                 zIndex: 1,
               }}
             />
+
+            {/* Helmet in top right */}
+            <div style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 20 }}>
+              <img
+                src="/images/helmet.png"
+                alt=""
+                style={{ width: '64px', height: '64px', objectFit: 'contain', filter: 'none' }}
+              />
+            </div>
             {/* Avatar */}
             <div
               style={{

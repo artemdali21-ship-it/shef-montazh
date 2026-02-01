@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { X, Briefcase, MapPin, Clock, Users, DollarSign } from 'lucide-react';
+import { createClient } from '@/lib/supabase-client';
+import { hapticLight, hapticSuccess, hapticError } from '@/lib/haptic';
+import toast from 'react-hot-toast';
 
 interface CreateShiftScreenProps {
   onClose?: () => void;
@@ -12,7 +15,9 @@ interface CreateShiftScreenProps {
 
 export default function CreateShiftScreen({ onClose, onSuccess }: CreateShiftScreenProps) {
   const router = useRouter();
+  const supabase = createClient();
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     category: '',
@@ -31,10 +36,101 @@ export default function CreateShiftScreen({ onClose, onSuccess }: CreateShiftScr
     }
   };
 
-  const handleSubmit = () => {
-    console.log('[v0] Shift created:', formData);
-    if (onSuccess) onSuccess();
-    else router.push('/dashboard');
+  const handleSubmit = async () => {
+    try {
+      hapticLight();
+      setLoading(true);
+
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error('Необходимо войти в систему');
+        router.push('/auth/login');
+        return;
+      }
+
+      // Validate form
+      if (!formData.title || !formData.category || !formData.location || !formData.date || !formData.startTime || !formData.endTime) {
+        hapticError();
+        toast.error('Пожалуйста, заполните все обязательные поля');
+        return;
+      }
+
+      // Verify user has a client profile (for RLS policy check)
+      const { data: clientProfile, error: profileError } = await supabase
+        .from('client_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
+      console.log('Client profile fetch result:', { clientProfile, profileError, userId: user.id });
+
+      if (profileError || !clientProfile) {
+        console.error('Error fetching client profile:', profileError);
+        hapticError();
+        toast.error('Профиль клиента не найден. Зарегистрируйтесь как клиент.');
+        return;
+      }
+
+      console.log('Creating shift with data:', {
+        client_id: user.id,
+        title: formData.title,
+        category: formData.category,
+        location_address: formData.location,
+        date: formData.date,
+        start_time: formData.startTime,
+        end_time: formData.endTime,
+        workers_needed: formData.workers,
+        price: formData.rate,
+        description: formData.description,
+        status: 'published'
+      });
+
+      // Create shift in database
+      const { data, error } = await supabase
+        .from('shifts')
+        .insert({
+          client_id: user.id,
+          title: formData.title,
+          category: formData.category,
+          location_address: formData.location,
+          date: formData.date,
+          start_time: formData.startTime,
+          end_time: formData.endTime,
+          required_workers: formData.workers,
+          pay_amount: formData.rate,
+          description: formData.description,
+          status: 'published'
+        })
+        .select()
+        .single();
+
+      console.log('Shift creation result:', { data, error });
+
+      if (error) throw error;
+
+      hapticSuccess();
+      toast.success('Смена успешно создана!');
+
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.push('/client/shifts');
+      }
+    } catch (error: any) {
+      console.error('Error creating shift:', error);
+      console.error('Error details:', {
+        message: error?.message,
+        code: error?.code,
+        details: error?.details,
+        hint: error?.hint,
+        fullError: JSON.stringify(error, null, 2)
+      });
+      hapticError();
+      toast.error(error?.message || error?.details || 'Не удалось создать смену');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -193,7 +289,10 @@ export default function CreateShiftScreen({ onClose, onSuccess }: CreateShiftScr
                 step="100"
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[#E85D2F] transition-colors"
                 value={formData.rate}
-                onChange={(e) => setFormData({ ...formData, rate: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value);
+                  setFormData({ ...formData, rate: isNaN(val) ? 0 : val });
+                }}
               />
             </div>
 
@@ -239,7 +338,7 @@ export default function CreateShiftScreen({ onClose, onSuccess }: CreateShiftScr
       </div>
 
       {/* BOTTOM CTA */}
-      <div className="fixed bottom-24 left-0 right-0 bg-[#1A1A1A] border-t border-white/10 p-5 z-50 rounded-t-2xl">
+      <div className="fixed bottom-24 left-0 right-0 bg-white/10 backdrop-blur-xl border-t border-white/20 p-5 z-50 rounded-t-2xl">
         <div className="flex gap-3">
           {step === 2 && (
             <button
@@ -251,9 +350,10 @@ export default function CreateShiftScreen({ onClose, onSuccess }: CreateShiftScr
           )}
           <button
             onClick={step === 1 ? handleNext : handleSubmit}
-            className="flex-1 px-4 py-3 bg-[#E85D2F] rounded-lg text-white font-semibold hover:bg-[#d94d1f] transition-colors"
+            disabled={loading}
+            className="flex-1 px-4 py-3 bg-[#E85D2F] rounded-lg text-white font-semibold hover:bg-[#d94d1f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed btn-press"
           >
-            {step === 1 ? 'Далее' : 'Создать смену'}
+            {loading ? 'Создание...' : step === 1 ? 'Далее' : 'Создать смену'}
           </button>
         </div>
       </div>

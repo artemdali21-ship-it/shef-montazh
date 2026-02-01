@@ -11,13 +11,17 @@ export default function CreateShiftPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const userRole = getUserRole();
-    if (userRole === 'worker') {
-      // Workers can't create shifts
-      return;
-    }
-    setRole(userRole);
-    setMounted(true);
+    const initRole = async () => {
+      const userRole = await getUserRole();
+      if (userRole === 'worker') {
+        // Workers can't create shifts
+        return;
+      }
+      setRole(userRole);
+      setMounted(true);
+    };
+
+    initRole();
   }, []);
 
   if (!mounted) return null;

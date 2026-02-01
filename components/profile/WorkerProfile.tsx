@@ -22,6 +22,20 @@ export default function WorkerProfile() {
   const router = useRouter();
   const [selectedSkills, setSelectedSkills] = useState(new Set());
   const [isGosuslugiVerified, setIsGosuslugiVerified] = useState(false);
+  // Skill icons mapping
+  const skillIcons: Record<string, string> = {
+    'Курьер': '/images/skills/courier.png',
+    'Водитель': '/images/skills/driver-wheel.png',
+    'Механик': '/images/skills/mechanic.png',
+    'Грузчик': '/images/skills/loader.png',
+    'Сантехник': '/images/skills/plumber.png',
+    'Маляр': '/images/skills/painter.png',
+    'Уборщик': '/images/skills/cleaner.png',
+    'Официант': '/images/skills/waiter.png',
+    'Промоутер': '/images/skills/promoter.png',
+    'Слесарь': '/images/skills/mechanic.png',
+  };
+
   const [userProfile, setUserProfile] = useState<UserProfile>({
     id: 'SHF-0001',
     name: 'Загрузка...',
@@ -32,12 +46,12 @@ export default function WorkerProfile() {
       reliability: 98,
     },
     skills: [
-      { name: 'Сварка', level: 'advanced' },
-      { name: 'Электрика', level: 'intermediate' },
-      { name: 'Слесарь', level: 'advanced' },
-      { name: 'Кровельщик', level: 'intermediate' },
+      { name: 'Курьер', level: 'advanced' },
+      { name: 'Водитель', level: 'intermediate' },
+      { name: 'Механик', level: 'advanced' },
+      { name: 'Грузчик', level: 'intermediate' },
       { name: 'Маляр', level: 'beginner' },
-      { name: 'Монтаж', level: 'advanced' },
+      { name: 'Сантехник', level: 'advanced' },
     ],
     recentShifts: [
       { id: 1, title: 'Демонтаж дверей', date: '25 января', price: 2500, status: 'completed' },
@@ -106,13 +120,16 @@ export default function WorkerProfile() {
   };
 
   const availableSkills = [
-    'Монтаж',
-    'Декоратор',
-    'Альпинист',
-    'Электрик',
-    'Сварщик',
-    'Бутафор',
-    'Разнорабочий'
+    'Курьер',
+    'Водитель',
+    'Механик',
+    'Грузчик',
+    'Сантехник',
+    'Маляр',
+    'Уборщик',
+    'Официант',
+    'Промоутер',
+    'Слесарь'
   ];
 
   return (
@@ -121,7 +138,17 @@ export default function WorkerProfile() {
       {/* Profile Header */}
       <div className="p-5 text-center relative bg-cover bg-center border border-white/10" style={{ backgroundImage: 'url(/images/bg-main-splash.jpg)' }}>
         <div className="absolute inset-0 bg-black/20 z-0" />
-        
+
+        {/* Helmet in top right */}
+        <div className="absolute top-4 right-4 z-20">
+          <img
+            src="/images/helmet.png"
+            alt=""
+            className="w-16 h-16 object-contain"
+            style={{ filter: 'none' }}
+          />
+        </div>
+
         <div className="relative z-10">
           {/* Avatar */}
           <div className="relative w-24 h-24 rounded-full bg-orange-500/20 border-2 border-orange-500 flex items-center justify-center mx-auto mb-4">
@@ -158,26 +185,33 @@ export default function WorkerProfile() {
 
       {/* Skills Section */}
       <div className="p-5">
-        <h3 className="text-base font-bold text-white mb-4">Компетенции</h3>
+        <h3 className="text-base font-bold text-white mb-4">Мои специализации</h3>
         <div className="flex flex-wrap gap-2">
           {userProfile.skills.map((skill, idx) => {
             const isSelected = selectedSkills.has(skill.name);
+            const iconPath = skillIcons[skill.name];
             return (
               <button
                 key={idx}
                 onClick={() => toggleSkill(skill.name)}
-                className={`inline-flex gap-1.5 items-center px-4 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                className={`inline-flex gap-2 items-center px-4 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                   isSelected
                     ? 'bg-lime-300/25 border border-lime-300 text-lime-300'
                     : 'bg-white/5 border border-white/15 text-white hover:bg-white/10'
                 }`}
               >
-                {isSelected ? (
-                  <CheckCircle size={14} strokeWidth={2.5} color="#BFFF00" />
-                ) : (
-                  <Circle size={14} strokeWidth={2} />
+                {iconPath && (
+                  <img
+                    src={iconPath}
+                    alt={skill.name}
+                    className="w-5 h-5 object-contain"
+                    style={{ filter: isSelected ? 'brightness(1.2)' : 'brightness(0.8)' }}
+                  />
                 )}
                 <span>{skill.name}</span>
+                {isSelected && (
+                  <CheckCircle size={14} strokeWidth={2.5} color="#BFFF00" />
+                )}
               </button>
             );
           })}

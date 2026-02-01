@@ -1,4 +1,4 @@
-import { supabase } from '../supabase'
+import { createClient } from '@/lib/supabase-client'
 
 export type ShiftWorkerStatus = 'confirmed' | 'on_way' | 'checked_in' | 'checked_out' | 'completed'
 
@@ -17,6 +17,8 @@ export interface ShiftWorker {
 
 // Get worker shift status
 export async function getWorkerShiftStatus(shiftId: string, workerId: string) {
+  const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('shift_workers')
     .select('*')
@@ -33,6 +35,8 @@ export async function updateShiftWorkerStatus(
   workerId: string,
   status: ShiftWorkerStatus
 ) {
+  const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('shift_workers')
     .update({ status })
@@ -52,6 +56,8 @@ export async function checkInWorker(
   lat: number,
   lng: number
 ) {
+  const supabase = await createClient()
+
   try {
     // Upload photo to Supabase Storage
     const fileExt = photoFile.name.split('.').pop()
@@ -101,6 +107,8 @@ export async function checkInWorker(
 
 // Check out worker
 export async function checkOutWorker(shiftId: string, workerId: string) {
+  const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('shift_workers')
     .update({
@@ -117,6 +125,8 @@ export async function checkOutWorker(shiftId: string, workerId: string) {
 
 // Get all workers for a shift
 export async function getShiftWorkers(shiftId: string) {
+  const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('shift_workers')
     .select(`

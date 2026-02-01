@@ -63,7 +63,7 @@ export async function getWorkerPayments(
   workerId: string,
   filters: PaymentFilters = {}
 ) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     const {
@@ -140,7 +140,7 @@ export async function getClientPayments(
   clientId: string,
   filters: PaymentFilters = {}
 ) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     const {
@@ -214,7 +214,7 @@ export async function getClientPayments(
  * Get worker payments summary
  */
 export async function getWorkerPaymentsSummary(workerId: string): Promise<PaymentsSummary> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     // Total received (paid)
@@ -263,7 +263,7 @@ export async function getWorkerPaymentsSummary(workerId: string): Promise<Paymen
  * Get client payments summary
  */
 export async function getClientPaymentsSummary(clientId: string): Promise<PaymentsSummary> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     // Total spent (paid)
@@ -314,7 +314,7 @@ export async function getClientPaymentsSummary(clientId: string): Promise<Paymen
  * Get payment by ID with full details
  */
 export async function getPaymentById(paymentId: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     const { data, error } = await supabase
@@ -356,10 +356,55 @@ export async function getPaymentById(paymentId: string) {
 }
 
 /**
+ * Get payment by shift ID
+ */
+export async function getPaymentByShift(shiftId: string) {
+  const supabase = await createClient()
+
+  try {
+    const { data, error } = await supabase
+      .from('payments')
+      .select(`
+        *,
+        shift:shifts (
+          id,
+          title,
+          date,
+          address,
+          start_time,
+          end_time,
+          category
+        ),
+        worker:users!payments_worker_id_fkey (
+          id,
+          full_name,
+          avatar_url,
+          phone
+        ),
+        client:users!payments_client_id_fkey (
+          id,
+          full_name,
+          avatar_url,
+          phone
+        )
+      `)
+      .eq('shift_id', shiftId)
+      .single()
+
+    if (error) throw error
+
+    return { data, error: null }
+  } catch (err) {
+    console.error('Error getting payment by shift:', err)
+    return { data: null, error: err as Error }
+  }
+}
+
+/**
  * Export payments to Excel/CSV format
  */
 export async function exportPaymentsData(userId: string, role: 'worker' | 'client') {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     let query = supabase
@@ -399,7 +444,7 @@ export async function createPayment(paymentData: {
   platform_fee?: number
   payment_method?: string
 }) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('payments')
@@ -419,7 +464,7 @@ export async function updatePaymentStatus(
   status: PaymentStatus,
   yukassaPaymentId?: string
 ) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const updateData: any = { status }
 
   if (status === 'paid') {

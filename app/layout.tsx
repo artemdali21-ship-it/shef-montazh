@@ -1,5 +1,5 @@
 import React from "react"
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
 import { Inter, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
@@ -7,7 +7,16 @@ import './globals.css'
 import TelegramProvider from '@/components/providers/telegram-provider'
 import Background3D from '@/components/layouts/Background3D'
 import { Toaster } from '@/components/ui/Toaster'
+import { ToastProvider } from '@/components/ui/ToastProvider'
 import { DynamicLayout } from '@/components/layout/DynamicLayout'
+import InstallPWA from '@/components/InstallPWA'
+import { DemoBanner } from '@/components/DemoBanner'
+import { validateEnv } from '@/lib/env'
+
+// Проверяем environment variables при старте (только на сервере)
+if (typeof window === 'undefined') {
+  validateEnv()
+}
 
 const inter = Inter({
   weight: ['400', '500', '600', '700'],
@@ -24,12 +33,11 @@ export const metadata: Metadata = {
   title: 'ШЕФ-МОНТАЖ — Маркетплейс монтажников',
   description: 'Найди надежную бригаду за 5 минут. Репутация, цифровые подтверждения, прозрачность.',
   generator: 'v0.app',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: 'cover',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Шеф-Монтаж',
   },
   icons: {
     icon: [
@@ -46,7 +54,7 @@ export const metadata: Metadata = {
         type: 'image/svg+xml',
       },
     ],
-    apple: '/apple-icon.png',
+    apple: ['/apple-icon.png', '/icon-192.png'],
   },
   openGraph: {
     title: 'ШЕФ-МОНТАЖ',
@@ -70,6 +78,15 @@ export const metadata: Metadata = {
   },
 }
 
+export const viewport: Viewport = {
+  themeColor: '#E85D2F',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -78,17 +95,30 @@ export default function RootLayout({
   return (
     <html lang="ru" suppressHydrationWarning>
       <head>
-        <Script 
-          src="https://telegram.org/js/telegram-web-app.js" 
+        <Script
+          src="https://telegram.org/js/telegram-web-app.js"
           strategy="beforeInteractive"
         />
       </head>
-      <body className={`${inter.variable} ${geistMono.variable} font-inter bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] text-white`}>
+      <body
+        className={`${inter.variable} ${geistMono.variable} font-inter text-white min-h-screen`}
+        style={{
+          backgroundImage: 'url(/images/bg-dashboard.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        <DemoBanner />
         <TelegramProvider>
-          <DynamicLayout>
-            {children}
-          </DynamicLayout>
+          <ToastProvider>
+            <DynamicLayout>
+              {children}
+            </DynamicLayout>
+          </ToastProvider>
         </TelegramProvider>
+        <InstallPWA />
         <Analytics />
       </body>
     </html>

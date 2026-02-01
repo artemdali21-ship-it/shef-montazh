@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   Plus, Calendar, MapPin, DollarSign, Users, Star, Briefcase,
-  TrendingUp, FileText, Edit, Eye, Clock
+  Clock, FileText, Edit, Eye
 } from 'lucide-react'
 import { getClientShifts, getClientStats } from '@/lib/api/shifts'
 import { getPendingApplicationsCount } from '@/lib/api/applications'
@@ -29,8 +29,6 @@ interface ShiftWithApplicationsCount extends Shift {
 
 export default function ClientDashboard() {
   const router = useRouter()
-
-  // Mock client ID - in production, get from auth context
   const MOCK_CLIENT_ID = 'client-456'
 
   const [stats, setStats] = useState<ClientStats>({
@@ -42,7 +40,6 @@ export default function ClientDashboard() {
   const [shifts, setShifts] = useState<ShiftWithApplicationsCount[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<TabStatus>('open')
-  const [loadingApplicationsCounts, setLoadingApplicationsCounts] = useState(false)
 
   useEffect(() => {
     loadDashboardData()
@@ -55,15 +52,11 @@ export default function ClientDashboard() {
   const loadDashboardData = async () => {
     try {
       setLoading(true)
-
-      // Load stats
-      const { data: statsData, error: statsError } = await getClientStats(MOCK_CLIENT_ID)
-      if (statsError) throw statsError
-      if (statsData) {
-        setStats(statsData)
+      const result = await getClientStats(MOCK_CLIENT_ID)
+      if (result.error) throw result.error
+      if (result.data) {
+        setStats(result.data)
       }
-
-      // Load initial shifts (open)
       await loadShiftsByStatus('open')
     } catch (err) {
       console.error('Error loading dashboard data:', err)
@@ -74,22 +67,15 @@ export default function ClientDashboard() {
 
   const loadShiftsByStatus = async (status: TabStatus) => {
     try {
-      setLoadingApplicationsCounts(true)
+      const result = await getClientShifts(MOCK_CLIENT_ID, status)
+      if (result.error) throw result.error
 
-      const { data: shiftsData, error: shiftsError } = await getClientShifts(
-        MOCK_CLIENT_ID,
-        status
-      )
-
-      if (shiftsError) throw shiftsError
-
-      // Load applications count for each shift
       const shiftsWithCounts = await Promise.all(
-        (shiftsData || []).map(async (shift: Shift) => {
-          const { count } = await getPendingApplicationsCount(shift.id)
+        (result.data || []).map(async (shift: Shift) => {
+          const countResult = await getPendingApplicationsCount(shift.id)
           return {
             ...shift,
-            applicationsCount: count || 0,
+            applicationsCount: countResult.count || 0,
           }
         })
       )
@@ -97,8 +83,6 @@ export default function ClientDashboard() {
       setShifts(shiftsWithCounts)
     } catch (err) {
       console.error('Error loading shifts:', err)
-    } finally {
-      setLoadingApplicationsCounts(false)
     }
   }
 
@@ -119,10 +103,62 @@ export default function ClientDashboard() {
     return <LoadingScreen message="Загрузка панели..." />
   }
 
+  const TabButton = ({ status, label }: { status: TabStatus; label: string }) => {
+    const isActive = activeTab === status
+    return (
+      <button
+        onClick={() => setActiveTab(status)}
+        className={`px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition ${
+          isActive
+            ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30'
+            : 'bg-white/5 text-gray-400 hover:bg-white/10'
+        }`}
+      >
+        {label}
+      </button>
+    )
+  }
+
+  const StatCard = ({ icon: Icon, value, label, colorClass }: any) => (
+    <div className={`${colorClass} backdrop-blur-xl rounded-2xl border ${colorClass.replace('/10', '/20')} p-4`}>
+      <div className="flex items-center gap-2 mb-2">
+        <div className={`w-8 h-8 ${colorClass.replace('/10', '/20')} rounded-lg flex items-center justify-center`}>
+          <Icon className={`w-4 h-4 ${colorClass.replace('bg-', 'text-').replace('/10', '-400')}`} />
+        </div>
+      </div>
+      <p className="text-2xl font-bold text-white mb-1">{value}</p>
+      <p className="text-xs text-gray-400">{label}</p>
+    </div>
+  )
+
+  const EmptyState = () => {
+    const messages = {
+      open: { title: 'Нет открытых смен', subtitle: 'Создайте свою первую смену, чтобы начать работу' },
+      in_progress: { title: 'Нет смен в работе', subtitle: 'Одобренные смены появятся здесь' },
+      completed: { title: 'Нет завершенных смен', subtitle: 'Завершенные смены появятся здесь' }
+    }
+    const message = messages[activeTab]
+
+    return (
+      <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-12 text-center">
+        <Briefcase className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+        <h3 className="text-xl font-bold text-white mb-2">{message.title}</h3>
+        <p className="text-gray-400 mb-6">{message.subtitle}</p>
+        {activeTab === 'open' && (
+          <button
+            onClick={() => router.push('/shifts/create')}
+            className="px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-xl text-white font-semibold transition-all duration-200 active:scale-95 hover:shadow-lg shadow-lg shadow-orange-500/30"
+          >
+            Создать смену
+          </button>
+        )}
+      </div>
+    )
+  }
+
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A]">
-      {/* Header */}
-      <header className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-20">
+    <main className="min-h-screen bg-dashboard">
+      <header className="sticky top-0 bg-white/10 backdrop-blur-xl border-b border-white/20 z-20">
         <div className="p-4">
           <h1 className="text-h1 text-white mb-1">Панель заказчика</h1>
           <p className="text-body-small text-gray-400">Управляйте своими сменами</p>
@@ -130,58 +166,23 @@ export default function ClientDashboard() {
       </header>
 
       <div className="p-4 space-y-6">
-        {/* Stats Cards */}
         <div className="grid grid-cols-2 gap-3">
-          {/* Active Shifts */}
-          <div className="bg-orange-500/10 backdrop-blur-xl rounded-2xl border border-orange-500/20 p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center">
-                <Clock className="w-4 h-4 text-orange-400" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold text-white mb-1">{stats.activeShifts}</p>
-            <p className="text-xs text-gray-400">Активных смен</p>
-          </div>
-
-          {/* Total Published */}
-          <div className="bg-blue-500/10 backdrop-blur-xl rounded-2xl border border-blue-500/20 p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                <FileText className="w-4 h-4 text-blue-400" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold text-white mb-1">{stats.totalPublished}</p>
-            <p className="text-xs text-gray-400">Всего опубликовано</p>
-          </div>
-
-          {/* Total Spent */}
-          <div className="bg-green-500/10 backdrop-blur-xl rounded-2xl border border-green-500/20 p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
-                <DollarSign className="w-4 h-4 text-green-400" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold text-white mb-1">
-              {stats.totalSpent.toLocaleString('ru-RU')} ₽
-            </p>
-            <p className="text-xs text-gray-400">Всего потрачено</p>
-          </div>
-
-          {/* Average Rating */}
-          <div className="bg-yellow-500/10 backdrop-blur-xl rounded-2xl border border-yellow-500/20 p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-yellow-500/20 rounded-lg flex items-center justify-center">
-                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold text-white mb-1">
-              {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : '—'}
-            </p>
-            <p className="text-xs text-gray-400">Средний рейтинг</p>
-          </div>
+          <StatCard icon={Clock} value={stats.activeShifts} label="Активных смен" colorClass="bg-orange-500/10" />
+          <StatCard icon={FileText} value={stats.totalPublished} label="Всего опубликовано" colorClass="bg-blue-500/10" />
+          <StatCard
+            icon={DollarSign}
+            value={`${stats.totalSpent.toLocaleString('ru-RU')} ₽`}
+            label="Всего потрачено"
+            colorClass="bg-green-500/10"
+          />
+          <StatCard
+            icon={Star}
+            value={stats.averageRating > 0 ? stats.averageRating.toFixed(1) : '-'}
+            label="Средний рейтинг"
+            colorClass="bg-yellow-500/10"
+          />
         </div>
 
-        {/* Quick Action - Create Shift */}
         <button
           onClick={() => router.push('/shifts/create')}
           className="w-full py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-2xl text-white font-bold text-lg transition-all duration-200 active:scale-95 hover:shadow-lg shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
@@ -190,149 +191,94 @@ export default function ClientDashboard() {
           Создать смену
         </button>
 
-        {/* Tabs */}
         <div className="flex gap-2 overflow-x-auto pb-1">
-          <button
-            onClick={() => setActiveTab('open')}
-            className={`px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition ${
-              activeTab === 'open'
-                ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30'
-                : 'bg-white/5 text-gray-400 hover:bg-white/10'
-            }`}
-          >
-            Открытые
-          </button>
-          <button
-            onClick={() => setActiveTab('in_progress')}
-            className={`px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition ${
-              activeTab === 'in_progress'
-                ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30'
-                : 'bg-white/5 text-gray-400 hover:bg-white/10'
-            }`}
-          >
-            В работе
-          </button>
-          <button
-            onClick={() => setActiveTab('completed')}
-            className={`px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition ${
-              activeTab === 'completed'
-                ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30'
-                : 'bg-white/5 text-gray-400 hover:bg-white/10'
-            }`}
-          >
-            Завершенные
-          </button>
+          <TabButton status="open" label="Открытые" />
+          <TabButton status="in_progress" label="В работе" />
+          <TabButton status="completed" label="Завершенные" />
         </div>
 
-        {/* Shifts Grid */}
-        {shifts.length === 0 ? (
-          <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-12 text-center">
-            <Briefcase className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">
-              {activeTab === 'open' && 'Нет открытых смен'}
-              {activeTab === 'in_progress' && 'Нет смен в работе'}
-              {activeTab === 'completed' && 'Нет завершенных смен'}
-            </h3>
-            <p className="text-gray-400 mb-6">
-              {activeTab === 'open' && 'Создайте свою первую смену, чтобы начать работу'}
-              {activeTab === 'in_progress' && 'Одобренные смены появятся здесь'}
-              {activeTab === 'completed' && 'Завершенные смены появятся здесь'}
-            </p>
-            {activeTab === 'open' && (
-              <button
-                onClick={() => router.push('/shifts/create')}
-                className="px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-xl text-white font-semibold transition-all duration-200 active:scale-95 hover:shadow-lg shadow-lg shadow-orange-500/30"
-              >
-                Создать смену
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {shifts.map((shift) => (
-              <div
-                key={shift.id}
-                className="card-hover animate-fade-in bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5 hover:bg-white/10 transition cursor-pointer"
-                onClick={() => router.push(`/shift/${shift.id}`)}
-              >
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1 min-w-0 pr-3">
-                    <h3 className="text-lg font-bold text-white mb-1 truncate">
-                      {shift.title}
-                    </h3>
-                    <span className="inline-block px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-xs font-medium">
-                      {shift.category}
-                    </span>
+        <div>
+          {shifts.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {shifts.map((shift) => (
+                <div
+                  key={shift.id}
+                  className="card-hover animate-fade-in bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5 hover:bg-white/10 transition cursor-pointer"
+                  onClick={() => router.push(`/shift/${shift.id}`)}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1 min-w-0 pr-3">
+                      <h3 className="text-lg font-bold text-white mb-1 truncate">
+                        {shift.title}
+                      </h3>
+                      <span className="inline-block px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-xs font-medium">
+                        {shift.category}
+                      </span>
+                    </div>
+                    <ShiftStatusBadge status={shift.status as ShiftStatus} size="sm" />
                   </div>
-                  <ShiftStatusBadge
-                    status={shift.status as ShiftStatus}
-                    size="sm"
-                  />
-                </div>
 
-                {/* Details */}
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-300">
-                    <Calendar className="w-4 h-4 text-gray-400" />
-                    <span>
-                      {formatDate(shift.date)} • {formatTime(shift.start_time)} - {formatTime(shift.end_time)}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-300">
-                    <MapPin className="w-4 h-4 text-gray-400" />
-                    <span className="truncate">{shift.location_address}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <DollarSign className="w-4 h-4 text-green-400" />
-                    <span className="text-green-400 font-semibold">
-                      {shift.pay_amount.toLocaleString('ru-RU')} ₽
-                    </span>
-                  </div>
-                </div>
-
-                {/* Applications Badge */}
-                {shift.applicationsCount > 0 && (
-                  <div className="mb-4">
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-500/20 border border-blue-500/30 rounded-lg">
-                      <Users className="w-4 h-4 text-blue-400" />
-                      <span className="text-sm font-medium text-blue-400">
-                        {shift.applicationsCount} {shift.applicationsCount === 1 ? 'отклик' : 'откликов'}
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2 text-sm text-gray-300">
+                      <Calendar className="w-4 h-4 text-gray-400" />
+                      <span>
+                        {formatDate(shift.date)} • {formatTime(shift.start_time)} - {formatTime(shift.end_time)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-300">
+                      <MapPin className="w-4 h-4 text-gray-400" />
+                      <span className="truncate">{shift.location_address}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <DollarSign className="w-4 h-4 text-green-400" />
+                      <span className="text-green-400 font-semibold">
+                        {shift.pay_amount.toLocaleString('ru-RU')} ₽
                       </span>
                     </div>
                   </div>
-                )}
 
-                {/* Action Buttons */}
-                <div className="flex gap-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      router.push(`/shifts/${shift.id}/applications`)
-                    }}
-                    className="flex-1 py-2.5 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 rounded-xl text-blue-400 font-medium transition text-sm flex items-center justify-center gap-2"
-                  >
-                    <Eye className="w-4 h-4" />
-                    Отклики
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      router.push(`/shifts/${shift.id}/edit`)
-                    }}
-                    className="flex-1 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white font-medium transition text-sm flex items-center justify-center gap-2"
-                  >
-                    <Edit className="w-4 h-4" />
-                    Править
-                  </button>
+                  {shift.applicationsCount > 0 && (
+                    <div className="mb-4">
+                      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-500/20 border border-blue-500/30 rounded-lg">
+                        <Users className="w-4 h-4 text-blue-400" />
+                        <span className="text-sm font-medium text-blue-400">
+                          {shift.applicationsCount} {shift.applicationsCount === 1 ? 'отклик' : 'откликов'}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        router.push(`/shifts/${shift.id}/applications`)
+                      }}
+                      className="flex-1 py-2.5 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 rounded-xl text-blue-400 font-medium transition text-sm flex items-center justify-center gap-2"
+                    >
+                      <Eye className="w-4 h-4" />
+                      Отклики
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        router.push(`/shifts/${shift.id}/edit`)
+                      }}
+                      className="flex-1 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white font-medium transition text-sm flex items-center justify-center gap-2"
+                    >
+                      <Edit className="w-4 h-4" />
+                      Править
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Floating Action Button - positioned above BottomNav */}
       <button
         onClick={() => router.push('/shifts/create')}
         className="fixed bottom-28 right-6 w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-full shadow-2xl shadow-orange-500/50 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 z-40"

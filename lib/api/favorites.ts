@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase-client'
  * Add user to favorites
  */
 export async function addToFavorites(userId: string, targetUserId: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     const { error } = await supabase
@@ -27,7 +27,7 @@ export async function addToFavorites(userId: string, targetUserId: string) {
  * Remove user from favorites
  */
 export async function removeFromFavorites(userId: string, targetUserId: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     const { error } = await supabase
@@ -49,7 +49,7 @@ export async function removeFromFavorites(userId: string, targetUserId: string) 
  * Get list of favorite users with their details
  */
 export async function getFavorites(userId: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     const { data, error } = await supabase
@@ -86,7 +86,7 @@ export async function getFavorites(userId: string) {
  * Check if user is in favorites
  */
 export async function isFavorite(userId: string, targetUserId: string): Promise<boolean> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     const { data, error } = await supabase
@@ -109,7 +109,7 @@ export async function isFavorite(userId: string, targetUserId: string): Promise<
  * Get favorite user IDs (for filtering)
  */
 export async function getFavoriteIds(userId: string): Promise<string[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     const { data, error } = await supabase

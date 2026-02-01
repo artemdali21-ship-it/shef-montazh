@@ -5,6 +5,7 @@ import { Star, Shield, Briefcase, Users, Heart, DollarSign, UserPlus } from 'luc
 import { WorkerSearchResult } from '@/lib/api/worker-search'
 import FavoriteButton from '@/components/user/FavoriteButton'
 import BlockButton from '@/components/user/BlockButton'
+import CategoryBadge from '@/components/categories/CategoryBadge'
 import Image from 'next/image'
 
 interface WorkerGridProps {
@@ -131,16 +132,15 @@ export default function WorkerGrid({
             {/* Categories */}
             {worker.categories && worker.categories.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mb-3">
-                {worker.categories.slice(0, 3).map((cat, idx) => (
-                  <span
-                    key={idx}
-                    className="px-2 py-1 bg-orange-500/20 text-orange-400 rounded-md text-xs font-medium"
-                  >
-                    {cat}
-                  </span>
+                {worker.categories.slice(0, 3).map((categoryId) => (
+                  <CategoryBadge
+                    key={categoryId}
+                    categoryId={categoryId}
+                    size="sm"
+                  />
                 ))}
                 {worker.categories.length > 3 && (
-                  <span className="px-2 py-1 bg-white/5 text-gray-400 rounded-md text-xs font-medium">
+                  <span className="px-2 py-1 bg-white/5 text-gray-400 rounded-full text-xs font-medium border border-white/10">
                     +{worker.categories.length - 3}
                   </span>
                 )}

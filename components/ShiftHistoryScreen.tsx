@@ -5,7 +5,7 @@ import { ArrowLeft, Calendar, Clock, MapPin, User, Building2,
 
 export default function ShiftHistory() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A]">
+    <div className="min-h-screen bg-dashboard">
       {/* Header */}
       <header className="h-16 flex items-center justify-between px-4 bg-[#2A2A2A]/80 backdrop-blur-md border-b border-white/10">
         <button className="w-10 h-10 flex items-center justify-center">

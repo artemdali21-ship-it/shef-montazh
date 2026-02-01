@@ -83,7 +83,7 @@ export default function ChatDetailScreen({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex flex-col">
+    <div className="min-h-screen bg-dashboard flex flex-col">
       {/* Header */}
       <header className="bg-[#2A2A2A]/80 backdrop-blur-md border-b border-white/10 z-20">
         <div className="h-16 flex items-center justify-between px-4">

@@ -82,9 +82,9 @@ export default function ProfileSetupPage() {
     console.log('[v0] Profile setup complete:', { userType, formData })
     // Redirect to appropriate dashboard
     if (userType === 'worker') {
-      router.push('/worker-categories')
+      router.push('/worker/profile')
     } else if (userType === 'client') {
-      router.push('/dashboard')
+      router.push('/client/shifts')
     } else if (userType === 'shef') {
       router.push('/shef-dashboard')
     }

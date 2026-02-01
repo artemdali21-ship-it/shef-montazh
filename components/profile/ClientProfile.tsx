@@ -125,18 +125,30 @@ export default function ClientProfile({
       <div className="w-full">
       {/* PROFILE INFO SECTION */}
       <div
+        className="relative"
         style={{
-          background: 'rgba(0, 0, 0, 0.4)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
+          backgroundImage: 'url(/images/bg-main-splash.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           border: '1px solid rgba(255, 255, 255, 0.1)',
           margin: '16px',
           padding: '16px',
           borderRadius: '12px',
-          position: 'relative',
           overflow: 'hidden',
         }}
       >
+        <div className="absolute inset-0 bg-black/20 z-0" />
+
+        {/* Helmet in top right */}
+        <div className="absolute top-4 right-4 z-20">
+          <img
+            src="/images/helmet.png"
+            alt=""
+            className="w-16 h-16 object-contain"
+            style={{ filter: 'none' }}
+          />
+        </div>
+
         <div style={{ position: 'relative', zIndex: 2 }}>
           <h2 style={{ color: '#FFFFFF', fontWeight: 700, marginBottom: '4px', fontSize: '16px' }}>
             {companyName || 'ООО "Компания"'}

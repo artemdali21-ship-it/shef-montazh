@@ -5,12 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import { useTelegram } from '@/lib/telegram'
-
-const AsteriskIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8 1V15M3 4L13 12M13 4L3 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-  </svg>
-)
+import { Logo } from '@/components/ui/Logo'
 
 const NoisePattern = () => (
   <svg
@@ -64,16 +59,31 @@ export default function OnboardingScreen() {
   ]
 
   const handleNext = () => {
-    tg?.haptic('light')
+    console.log('[DEBUG] handleNext called, currentSlide:', currentSlide)
+    console.log('[DEBUG] slides.length:', slides.length)
+
+    try {
+      tg?.haptic('light')
+    } catch (e) {
+      console.log('[DEBUG] Haptic failed, continuing anyway')
+    }
+
     if (currentSlide < slides.length - 1) {
+      console.log('[DEBUG] Moving to next slide, new slide:', currentSlide + 1)
       setCurrentSlide(currentSlide + 1)
     } else {
+      console.log('[DEBUG] Last slide reached, navigating to /role-select')
       router.push('/role-select')
     }
   }
 
   const handleSkip = () => {
-    tg?.haptic('light')
+    console.log('[DEBUG] handleSkip called')
+    try {
+      tg?.haptic('light')
+    } catch (e) {
+      console.log('[DEBUG] Haptic failed, continuing anyway')
+    }
     router.push('/role-select')
   }
 
@@ -143,11 +153,8 @@ export default function OnboardingScreen() {
         <div className="w-full px-5 py-8 flex flex-col flex-1">
           {/* HEADER */}
           <div className="mb-6">
-            <div className="flex items-center justify-center gap-1.5 mb-2">
-              <div style={{ color: '#E85D2F' }} className="flex-shrink-0">
-                <AsteriskIcon />
-              </div>
-              <h1 style={{ color: '#FFFFFF', fontWeight: 800, letterSpacing: '-0.02em' }} className="text-xl uppercase tracking-wider font-sans">ШЕФ-МОНТАЖ</h1>
+            <div className="flex items-center justify-center mb-2">
+              <Logo size="lg" showText={true} />
             </div>
             <p style={{ color: '#FFFFFF' }} className="text-sm font-normal text-center tracking-tight leading-snug font-sans">
               Финтех-платформа гарантированных смен

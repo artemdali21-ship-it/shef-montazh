@@ -161,7 +161,7 @@ export default function RatingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center">
+      <div className="min-h-screen bg-dashboard flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-400">Загрузка...</p>
@@ -172,7 +172,7 @@ export default function RatingPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-dashboard flex items-center justify-center p-4">
         <div className="bg-green-500/10 backdrop-blur-xl rounded-2xl border border-green-500/30 p-8 text-center max-w-md">
           <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-8 h-8 text-green-400" />
@@ -186,7 +186,7 @@ export default function RatingPage() {
 
   if (error && !shift) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-dashboard flex items-center justify-center p-4">
         <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 max-w-md w-full">
           <div className="flex items-center gap-3 mb-4">
             <AlertCircle className="w-6 h-6 text-red-400" />
@@ -204,9 +204,9 @@ export default function RatingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] pb-8">
+    <div className="min-h-screen bg-dashboard pb-8">
       {/* Header */}
-      <div className="sticky top-0 bg-[#2A2A2A]/80 backdrop-blur-xl border-b border-white/10 z-10">
+      <div className="sticky top-0 bg-white/10 backdrop-blur-xl border-b border-white/20 z-10">
         <div className="p-4 flex items-center gap-4">
           <button
             onClick={() => router.back()}

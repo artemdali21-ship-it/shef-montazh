@@ -1,4 +1,4 @@
-import { supabase } from '../supabase'
+import { createClient } from '@/lib/supabase-client'
 
 export interface Rating {
   id: string
@@ -18,6 +18,8 @@ export async function createRating(ratingData: {
   rating: number
   comment?: string
 }) {
+  const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('ratings')
     .insert({
@@ -32,6 +34,8 @@ export async function createRating(ratingData: {
 
 // Get ratings for a shift
 export async function getShiftRatings(shiftId: string) {
+  const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('ratings')
     .select(`
@@ -57,6 +61,8 @@ export async function getShiftRatings(shiftId: string) {
 
 // Get ratings received by user
 export async function getUserReceivedRatings(userId: string) {
+  const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('ratings')
     .select(`
@@ -81,6 +87,8 @@ export async function getUserReceivedRatings(userId: string) {
 
 // Get ratings given by user
 export async function getUserGivenRatings(userId: string) {
+  const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('ratings')
     .select(`
@@ -105,6 +113,8 @@ export async function getUserGivenRatings(userId: string) {
 
 // Calculate average rating for user
 export async function calculateUserAverageRating(userId: string) {
+  const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('ratings')
     .select('rating')
@@ -130,6 +140,8 @@ export async function checkRatingExists(
   fromUserId: string,
   toUserId: string
 ) {
+  const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('ratings')
     .select('id')
@@ -143,6 +155,8 @@ export async function checkRatingExists(
 
 // Get rating by ID
 export async function getRatingById(ratingId: string) {
+  const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('ratings')
     .select('*')
@@ -158,6 +172,8 @@ export async function getRating(
   fromUserId: string,
   toUserId: string
 ) {
+  const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('ratings')
     .select(`
@@ -179,6 +195,8 @@ export async function getRating(
 
 // Check if user can rate for a shift
 export async function canRate(shiftId: string, userId: string) {
+  const supabase = await createClient()
+
   try {
     // Get shift details
     const { data: shift, error: shiftError } = await supabase
@@ -221,6 +239,8 @@ export async function canRate(shiftId: string, userId: string) {
 
 // Update user's rating in users table
 export async function updateUserRating(userId: string) {
+  const supabase = await createClient()
+
   try {
     // Calculate new average
     const { average, count } = await calculateUserAverageRating(userId)

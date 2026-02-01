@@ -5,7 +5,7 @@ import { removeFromFavorites } from './favorites'
  * Block a user
  */
 export async function blockUser(userId: string, targetUserId: string, reason?: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     // First, remove from favorites if exists
@@ -33,7 +33,7 @@ export async function blockUser(userId: string, targetUserId: string, reason?: s
  * Unblock a user
  */
 export async function unblockUser(userId: string, targetUserId: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     const { error } = await supabase
@@ -55,7 +55,7 @@ export async function unblockUser(userId: string, targetUserId: string) {
  * Get list of blocked users with their details
  */
 export async function getBlockedUsers(userId: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     const { data, error } = await supabase
@@ -87,7 +87,7 @@ export async function getBlockedUsers(userId: string) {
  * Check if user is blocked
  */
 export async function isBlocked(userId: string, targetUserId: string): Promise<boolean> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     const { data, error } = await supabase
@@ -110,7 +110,7 @@ export async function isBlocked(userId: string, targetUserId: string): Promise<b
  * Check if mutual block exists (either user blocked the other)
  */
 export async function isMutuallyBlocked(userId: string, targetUserId: string): Promise<boolean> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     const { data, error } = await supabase
@@ -132,7 +132,7 @@ export async function isMutuallyBlocked(userId: string, targetUserId: string): P
  * Get blocked user IDs (for filtering)
  */
 export async function getBlockedIds(userId: string): Promise<string[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     const { data, error } = await supabase

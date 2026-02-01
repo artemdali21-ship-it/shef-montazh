@@ -72,7 +72,7 @@ export async function sendTelegramNotification(
  * Main notification function with settings check and database logging
  */
 export async function notify(payload: NotificationPayload): Promise<{ success: boolean; error?: string }> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     // 1. Get user's telegram_id and notification settings

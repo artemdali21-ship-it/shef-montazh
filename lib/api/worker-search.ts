@@ -32,7 +32,7 @@ export interface WorkerSearchResult {
 const ITEMS_PER_PAGE = 20
 
 export async function searchWorkers(filters: WorkerSearchFilters, clientId?: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const page = filters.page || 1
   const offset = (page - 1) * ITEMS_PER_PAGE
 
@@ -64,7 +64,8 @@ export async function searchWorkers(filters: WorkerSearchFilters, clientId?: str
 
     // Apply filters
     if (filters.categories && filters.categories.length > 0) {
-      query = query.contains('worker_profiles.categories', filters.categories)
+      // Use overlaps to find workers with ANY of the selected categories
+      query = query.overlaps('worker_profiles.categories', filters.categories)
     }
 
     if (filters.minRating !== undefined && filters.minRating > 0) {

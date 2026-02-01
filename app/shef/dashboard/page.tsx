@@ -58,6 +58,9 @@ export default function ShefDashboard() {
     try {
       setLoading(true)
 
+      // Initialize statsMap
+      let statsMap: Record<string, TeamStats> = {}
+
       // Load teams
       const { data: teamsData, error: teamsError } = await getShefTeams(shefId)
       if (!teamsError && teamsData) {
@@ -70,7 +73,6 @@ export default function ShefDashboard() {
         })
 
         const statsResults = await Promise.all(statsPromises)
-        const statsMap: Record<string, TeamStats> = {}
         statsResults.forEach(({ teamId, stats }) => {
           if (stats) {
             statsMap[teamId] = stats
@@ -162,7 +164,7 @@ export default function ShefDashboard() {
 
   return (
     <motion.div
-      className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-8 px-4"
+      className="py-8 px-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}

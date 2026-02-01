@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Mail, Lock, User, Briefcase, Building, HardHat, AlertCircle, CheckCircle, Check, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
+import { Logo } from '@/components/ui/Logo'
 
 type Role = 'worker' | 'client' | 'shef'
 
@@ -33,6 +34,7 @@ const roles = [
 
 export default function RegisterPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   // Form refs for auto-focus
   const fullNameRef = useRef<HTMLInputElement>(null)
@@ -90,6 +92,14 @@ export default function RegisterPage() {
 
     setPasswordStrength(strength)
   }, [password])
+
+  // Read role from URL query params on mount
+  useEffect(() => {
+    const roleParam = searchParams.get('role')
+    if (roleParam && (roleParam === 'worker' || roleParam === 'client' || roleParam === 'shef')) {
+      setSelectedRole(roleParam as Role)
+    }
+  }, [searchParams])
 
   // Enter key handler to move to next field
   const handleKeyDown = (e: React.KeyboardEvent, nextRef?: React.RefObject<HTMLInputElement>) => {
@@ -154,7 +164,10 @@ export default function RegisterPage() {
 
       if (authData.user) {
         // Create user record in users table
-        const { error: userError } = await supabase.from('users').insert({
+        console.log('[DEBUG] Creating user record with ID:', authData.user.id)
+        console.log('[DEBUG] User data:', { fullName, phone, email, selectedRole })
+
+        const { data: userData, error: userError } = await supabase.from('users').insert({
           id: authData.user.id,
           full_name: fullName,
           phone: phone,
@@ -166,11 +179,19 @@ export default function RegisterPage() {
           successful_shifts: 0,
           is_verified: false,
           gosuslugi_verified: false,
-        })
+        }).select()
+
+        console.log('[DEBUG] User insert result:', { userData, userError })
 
         if (userError) {
-          console.error('User insert error:', userError)
-          throw new Error('Не удалось создать профиль')
+          console.error('[ERROR] User insert failed:', {
+            message: userError.message,
+            details: userError.details,
+            hint: userError.hint,
+            code: userError.code,
+            full: JSON.stringify(userError)
+          })
+          throw new Error(`Не удалось создать профиль: ${userError.message || 'Unknown error'}`)
         }
 
         // Create role-specific profile
@@ -187,13 +208,16 @@ export default function RegisterPage() {
         // Show success toast
         toast.success('Регистрация успешна! Добро пожаловать!')
 
+        // Save role to localStorage
+        localStorage.setItem('userRole', selectedRole)
+
         // Redirect immediately based on role
         switch (selectedRole) {
           case 'worker':
-            router.push('/feed')
+            router.push('/worker/shifts')
             break
           case 'client':
-            router.push('/dashboard')
+            router.push('/client/shifts')
             break
           case 'shef':
             router.push('/shef/dashboard')
@@ -231,7 +255,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4 py-12">
+    <div className="min-h-screen bg-dashboard flex items-center justify-center p-4 py-12">
       <motion.div
         className="w-full max-w-md"
         initial={{ opacity: 0, y: 20 }}
@@ -245,8 +269,10 @@ export default function RegisterPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
-          <h1 className="text-4xl font-bold text-white mb-2">Шеф-Монтаж</h1>
-          <p className="text-gray-400">Создайте новый аккаунт</p>
+          <div className="flex items-center justify-center mb-4">
+            <Logo size="lg" showText={true} />
+          </div>
+          <p className="text-gray-200">Создайте новый аккаунт</p>
         </motion.div>
 
         {/* Register Form */}
@@ -267,7 +293,7 @@ export default function RegisterPage() {
 
             {/* Role Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-3">
+              <label className="block text-sm font-medium text-white mb-3">
                 Выберите роль
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -285,7 +311,7 @@ export default function RegisterPage() {
                       className={`p-3 rounded-xl border transition ${
                         selectedRole === role.value
                           ? 'bg-orange-500/20 border-orange-500/50 text-orange-400'
-                          : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10'
+                          : 'bg-white/5 border-white/10 text-gray-200 hover:bg-white/10'
                       }`}
                     >
                       <Icon className="w-6 h-6 mx-auto mb-1" />
@@ -294,18 +320,22 @@ export default function RegisterPage() {
                   )
                 })}
               </div>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-gray-300 mt-2">
                 {roles.find((r) => r.value === selectedRole)?.description}
               </p>
             </div>
 
-            {/* Full Name */}
+            {/* Full Name / Company Name */}
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-300 mb-2">
-                Полное имя
+              <label htmlFor="fullName" className="block text-sm font-medium text-white mb-2">
+                {selectedRole === 'client' ? 'Название компании' : 'Полное имя'}
               </label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                {selectedRole === 'client' ? (
+                  <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                ) : (
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                )}
                 <input
                   ref={fullNameRef}
                   id="fullName"
@@ -314,8 +344,8 @@ export default function RegisterPage() {
                   onChange={(e) => setFullName(e.target.value)}
                   onKeyDown={(e) => handleKeyDown(e, emailRef)}
                   onFocus={() => scrollToField(fullNameRef)}
-                  placeholder="Иван Петров"
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
+                  placeholder={selectedRole === 'client' ? 'ООО "Строймонтаж"' : 'Иван Петров'}
+                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 transition"
                   disabled={loading}
                 />
               </div>
@@ -323,7 +353,7 @@ export default function RegisterPage() {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
                 Email
               </label>
               <div className="relative">
@@ -337,7 +367,7 @@ export default function RegisterPage() {
                   onKeyDown={(e) => handleKeyDown(e, phoneRef)}
                   onFocus={() => scrollToField(emailRef)}
                   placeholder="example@email.com"
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
+                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 transition"
                   disabled={loading}
                 />
               </div>
@@ -345,7 +375,7 @@ export default function RegisterPage() {
 
             {/* Phone */}
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="phone" className="block text-sm font-medium text-white mb-2">
                 Телефон
               </label>
               <div className="relative">
@@ -359,7 +389,7 @@ export default function RegisterPage() {
                   onKeyDown={(e) => handleKeyDown(e, passwordRef)}
                   onFocus={() => scrollToField(phoneRef)}
                   placeholder="+7 (999) 123-45-67"
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
+                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 transition"
                   disabled={loading}
                 />
               </div>
@@ -367,7 +397,7 @@ export default function RegisterPage() {
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
                 Пароль
               </label>
               <div className="relative">
@@ -380,7 +410,7 @@ export default function RegisterPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   onFocus={() => scrollToField(passwordRef)}
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
+                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 transition"
                   disabled={loading}
                 />
               </div>
@@ -412,7 +442,7 @@ export default function RegisterPage() {
 
             {/* Confirm Password */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-white mb-2">
                 Подтвердите пароль
               </label>
               <div className="relative">
@@ -425,7 +455,7 @@ export default function RegisterPage() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   onFocus={() => scrollToField(confirmPasswordRef)}
                   placeholder="••••••••"
-                  className={`w-full pl-12 pr-4 py-3 bg-white/5 border rounded-xl text-white placeholder-gray-500 focus:outline-none transition ${
+                  className={`w-full pl-12 pr-4 py-3 bg-white/5 border rounded-xl text-white placeholder-gray-400 focus:outline-none transition ${
                     passwordsMatch === null
                       ? 'border-white/10 focus:border-orange-500'
                       : passwordsMatch
@@ -485,7 +515,7 @@ export default function RegisterPage() {
 
           {/* Login Link */}
           <div className="mt-6 pt-6 border-t border-white/10 text-center">
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-200 text-sm">
               Уже есть аккаунт?{' '}
               <Link href="/auth/login" className="text-orange-400 hover:text-orange-300 font-semibold transition">
                 Войти
@@ -496,7 +526,7 @@ export default function RegisterPage() {
 
         {/* Footer */}
         <motion.p
-          className="text-center text-gray-500 text-xs mt-8"
+          className="text-center text-gray-300 text-xs mt-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.4 }}

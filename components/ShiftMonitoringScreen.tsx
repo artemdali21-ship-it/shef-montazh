@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Header } from './Header';
-import { WorkerStatusList } from './monitoring/WorkerStatusList';
+import WorkerStatusList from './monitoring/WorkerStatusList';
 
 export default function ShiftMonitoringScreen() {
   const router = useRouter()

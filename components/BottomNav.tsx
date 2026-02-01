@@ -56,10 +56,10 @@ export function BottomNav({ userType: propsUserType }: BottomNavProps) {
       aria-label="Главное меню"
       className="fixed bottom-0 left-0 right-0 max-w-full mx-auto z-30"
       style={{
-        background: 'rgba(255, 255, 255, 0.1)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+        background: 'rgba(255, 255, 255, 0.25)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        borderTop: '1px solid rgba(255, 255, 255, 0.35)',
         padding: '8px 0 20px 0',
       }}
     >
