@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase-server'
 import { Shield, Clock, Activity } from 'lucide-react'
 import AuditLogTable from '@/components/admin/AuditLogTable'
 
+export const dynamic = 'force-dynamic'
+
 async function getLogsStats() {
   const supabase = createClient()
 

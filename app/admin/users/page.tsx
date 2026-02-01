@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase-server'
 import UserTable from '@/components/admin/UserTable'
 import UserFilters from '@/components/admin/UserFilters'
 
+export const dynamic = 'force-dynamic'
+
 interface SearchParams {
   role?: string
   status?: string

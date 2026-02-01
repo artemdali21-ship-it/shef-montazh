@@ -5,6 +5,8 @@ import TransactionsTable from '@/components/admin/TransactionsTable'
 import ExportButton from '@/components/admin/ExportButton'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 async function getFinanceStats() {
   const supabase = createClient()
 

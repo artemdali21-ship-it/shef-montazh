@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase-server'
 import Link from 'next/link'
 import { Users, TrendingUp, AlertTriangle, Clock, Sparkles, Crown } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 interface Segment {
   id: string
   name: string

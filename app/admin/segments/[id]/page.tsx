@@ -4,6 +4,8 @@ import Link from 'next/link'
 import ExportSegmentButton from '@/components/admin/ExportSegmentButton'
 import SegmentUsersTable from '@/components/admin/SegmentUsersTable'
 
+export const dynamic = 'force-dynamic'
+
 const SEGMENT_INFO: Record<string, { name: string; description: string }> = {
   'top-workers': {
     name: 'ТОП исполнители',

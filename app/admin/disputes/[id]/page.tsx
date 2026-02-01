@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import DisputeDetailsClient from '@/components/admin/DisputeDetailsClient'
 
+export const dynamic = 'force-dynamic'
+
 async function getDispute(id: string) {
   const supabase = createClient()
 

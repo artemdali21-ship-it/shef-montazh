@@ -3,6 +3,8 @@ import { AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 import DisputeCard from '@/components/disputes/DisputeCard'
 
+export const dynamic = 'force-dynamic'
+
 interface SearchParams {
   status?: string
 }

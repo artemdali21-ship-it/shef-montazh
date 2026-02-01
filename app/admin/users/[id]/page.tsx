@@ -3,6 +3,8 @@ import { ArrowLeft, User, Mail, Calendar, Shield, Ban, CheckCircle, Star, Clock 
 import Link from 'next/link'
 import AdminNotes from '@/components/admin/AdminNotes'
 
+export const dynamic = 'force-dynamic'
+
 async function getUserDetails(userId: string) {
   const supabase = createClient()
 

@@ -3,6 +3,8 @@ import { ArrowLeft, User, Calendar, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import UserTimeline from '@/components/admin/UserTimeline'
 
+export const dynamic = 'force-dynamic'
+
 async function getUserHistory(userId: string) {
   const supabase = createClient()
 
