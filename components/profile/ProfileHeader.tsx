@@ -18,11 +18,11 @@ export default function ProfileHeader({ user, onEdit, profileType }: ProfileHead
       <div className="absolute inset-0 bg-black/20 z-0" />
 
       {/* Main content */}
-      <div className="relative z-10 flex items-start gap-4">
+      <div className="relative z-10 flex flex-col sm:flex-row items-start gap-4">
         {/* Left: Avatar and profile type */}
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex sm:flex-col items-center gap-3 sm:gap-2">
           <div className="relative">
-            <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gray-700 flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
               {user.avatar_url ? (
                 <img
                   src={user.avatar_url}
@@ -44,16 +44,16 @@ export default function ProfileHeader({ user, onEdit, profileType }: ProfileHead
 
           {/* Profile type below avatar */}
           {profileType && (
-            <p className="text-xs text-gray-300 font-medium text-center whitespace-nowrap">
+            <p className="text-xs text-gray-300 font-medium text-center sm:whitespace-nowrap">
               {profileType}
             </p>
           )}
         </div>
 
         {/* Center: Name and stats */}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h2 className="text-xl font-bold text-white">{user.full_name}</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-white truncate">{user.full_name}</h2>
             {user.is_verified && (
               <Shield className="w-5 h-5 text-blue-400" />
             )}
@@ -77,25 +77,28 @@ export default function ProfileHeader({ user, onEdit, profileType }: ProfileHead
           )}
         </div>
 
-        {/* Right: Contact info */}
-        <div className="flex flex-col gap-3 min-w-[180px]">
-          <div>
-            <p className="text-xs text-gray-400 mb-1">Email</p>
-            <p className="text-sm text-white font-medium break-all">{user.email || 'Не указан'}</p>
+        {/* Right: Contact info and Edit button wrapper */}
+        <div className="flex items-start gap-2 w-full sm:w-auto">
+          {/* Contact info */}
+          <div className="flex flex-col gap-2 flex-1 min-w-0">
+            <div>
+              <p className="text-xs text-gray-400 mb-0.5">Email</p>
+              <p className="text-xs sm:text-sm text-white font-medium truncate">{user.email || 'Не указан'}</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-400 mb-0.5">Телефон</p>
+              <p className="text-xs sm:text-sm text-white font-medium truncate">{user.phone || 'Не указан'}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs text-gray-400 mb-1">Телефон</p>
-            <p className="text-sm text-white font-medium">{user.phone || 'Не указан'}</p>
-          </div>
-        </div>
 
-        {/* Edit button */}
-        <button
-          onClick={onEdit}
-          className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition flex-shrink-0"
-        >
-          <Edit2 className="w-4 h-4 text-gray-400" />
-        </button>
+          {/* Edit button */}
+          <button
+            onClick={onEdit}
+            className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition flex-shrink-0"
+          >
+            <Edit2 className="w-4 h-4 text-gray-400" />
+          </button>
+        </div>
       </div>
     </div>
   )

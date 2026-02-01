@@ -79,7 +79,7 @@ export default function WorkerProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen pb-20">
+      <div className="min-h-screen pb-20 overflow-y-auto">
         <header className="sticky top-0 bg-white/10 backdrop-blur-xl border-b border-white/20 z-20 p-4">
           <Logo size="md" showText={true} />
         </header>
@@ -93,7 +93,7 @@ export default function WorkerProfilePage() {
   if (!user) return null
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20 overflow-y-auto">
       {/* Header */}
       <header className="sticky top-0 bg-white/10 backdrop-blur-xl border-b border-white/20 z-20">
         <div className="p-4 flex items-center justify-between">
