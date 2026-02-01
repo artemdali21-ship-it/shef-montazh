@@ -72,8 +72,8 @@ export default function OnboardingScreen() {
       console.log('[DEBUG] Moving to next slide, new slide:', currentSlide + 1)
       setCurrentSlide(currentSlide + 1)
     } else {
-      console.log('[DEBUG] Last slide reached, navigating to /role-select')
-      router.push('/role-select')
+      console.log('[DEBUG] Last slide reached, navigating to /auth/welcome')
+      router.push('/auth/welcome')
     }
   }
 
@@ -84,7 +84,7 @@ export default function OnboardingScreen() {
     } catch (e) {
       console.log('[DEBUG] Haptic failed, continuing anyway')
     }
-    router.push('/role-select')
+    router.push('/auth/welcome')
   }
 
   return (

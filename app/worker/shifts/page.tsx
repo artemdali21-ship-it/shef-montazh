@@ -119,7 +119,7 @@ export default function ShiftsPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <DollarSign size={16} />
                 <span style={{ color: '#E85D2F', fontWeight: 600 }}>
-                  {shift.price?.toLocaleString('ru-RU')} ₽
+                  {shift.pay_amount?.toLocaleString('ru-RU') || '0'} ₽
                 </span>
               </div>
             </div>

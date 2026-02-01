@@ -47,9 +47,16 @@ export default function WorkerProfilePage() {
 
       setUser(userData)
 
-      // Load worker categories if they exist
-      // TODO: Implement categories loading from database
-      setCategories([])
+      // Load worker categories from worker_profiles
+      const { data: workerProfile, error: profileError } = await supabase
+        .from('worker_profiles')
+        .select('categories')
+        .eq('user_id', authUser.id)
+        .single()
+
+      if (!profileError && workerProfile?.categories) {
+        setCategories(workerProfile.categories)
+      }
     } catch (error: any) {
       console.error('Error loading profile:', error)
       toast.error('Не удалось загрузить профиль')
@@ -70,9 +77,23 @@ export default function WorkerProfilePage() {
 
   const handleSaveCategories = async () => {
     try {
-      // TODO: Save categories to database
+      const { data: { user: authUser } } = await supabase.auth.getUser()
+      if (!authUser) return
+
+      // Update worker_profiles with selected categories
+      const { error } = await supabase
+        .from('worker_profiles')
+        .update({ categories })
+        .eq('user_id', authUser.id)
+
+      if (error) throw error
+
       toast.success('Категории сохранены')
+
+      // Reload profile to show updated data
+      await loadProfile()
     } catch (error) {
+      console.error('Error saving categories:', error)
       toast.error('Не удалось сохранить категории')
     }
   }
