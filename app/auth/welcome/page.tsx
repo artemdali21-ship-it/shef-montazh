@@ -14,25 +14,47 @@ export default function AuthWelcomePage() {
     <div className="min-h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4">
       {/* Background decorations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* 3D Helmet - top right */}
         <img
-          src="/images/helmet-silver.png"
+          src="/images/helmet.png"
           alt=""
-          className="absolute top-10 right-10 opacity-25 animate-pulse"
+          className="absolute opacity-20 animate-pulse"
           style={{
-            width: '140px',
-            height: '140px',
+            top: '8%',
+            right: '5%',
+            width: 'auto',
+            height: '160px',
             objectFit: 'contain'
           }}
         />
+
+        {/* Wrench - bottom left */}
         <img
           src="/images/wrench.png"
           alt=""
-          className="absolute bottom-20 left-10 opacity-20 animate-pulse"
+          className="absolute opacity-15 animate-pulse"
           style={{
-            width: '100px',
+            bottom: '15%',
+            left: '5%',
+            width: 'auto',
             height: '100px',
             objectFit: 'contain',
             animationDelay: '1s'
+          }}
+        />
+
+        {/* Concrete - bottom right */}
+        <img
+          src="/images/concrete-3.png"
+          alt=""
+          className="absolute opacity-25"
+          style={{
+            bottom: '5%',
+            right: '8%',
+            width: 'auto',
+            height: '120px',
+            objectFit: 'contain',
+            transform: 'rotate(-15deg)'
           }}
         />
       </div>
