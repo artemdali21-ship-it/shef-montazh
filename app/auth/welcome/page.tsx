@@ -5,6 +5,8 @@ import { LogIn, UserPlus } from 'lucide-react'
 import { Logo } from '@/components/ui/Logo'
 import { hapticLight } from '@/lib/haptic'
 
+export const dynamic = 'force-dynamic'
+
 export default function AuthWelcomePage() {
   const router = useRouter()
 
