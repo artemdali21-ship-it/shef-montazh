@@ -45,11 +45,13 @@ function generateRandomElement(id: number): FloatingElement {
 
   // Specific size rules for certain tools
   let size = Math.floor(Math.random() * 80) + 40 // Default: 40-120px
+  let yPosition = Math.floor(Math.random() * 100) // Default: anywhere
 
   if (randomImage.src.includes('saw')) {
     size = Math.floor(Math.random() * 50) + 90 // Saw: 90-140px (bigger)
   } else if (randomImage.src.includes('screwdriver')) {
-    size = Math.floor(Math.random() * 30) + 40 // Screwdriver: 40-70px (smaller)
+    size = Math.floor(Math.random() * 8) + 10 // Screwdriver: 10-18px (4x smaller)
+    yPosition = Math.floor(Math.random() * 40) // Top 40% of screen
   } else if (randomImage.src.includes('wrench')) {
     size = Math.floor(Math.random() * 40) + 60 // Wrench: 60-100px (medium)
   }
@@ -61,7 +63,7 @@ function generateRandomElement(id: number): FloatingElement {
     size,
     // Better distributed positions (avoid clustering in center)
     x: id % 2 === 0 ? Math.floor(Math.random() * 40) : Math.floor(Math.random() * 40) + 60,
-    y: Math.floor(Math.random() * 100),
+    y: yPosition,
     // Random rotation
     rotation: Math.floor(Math.random() * 360),
     // Random animation delay

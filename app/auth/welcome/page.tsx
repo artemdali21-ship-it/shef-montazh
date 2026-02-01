@@ -15,15 +15,25 @@ export default function AuthWelcomePage() {
       {/* Background decorations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <img
-          src="/images/helmet.png"
+          src="/images/helmet-silver.png"
           alt=""
-          className="absolute top-10 right-10 w-32 h-32 opacity-20 animate-pulse"
+          className="absolute top-10 right-10 opacity-25 animate-pulse"
+          style={{
+            width: '140px',
+            height: '140px',
+            objectFit: 'contain'
+          }}
         />
         <img
           src="/images/wrench.png"
           alt=""
-          className="absolute bottom-20 left-10 w-24 h-24 opacity-15 animate-pulse"
-          style={{ animationDelay: '1s' }}
+          className="absolute bottom-20 left-10 opacity-20 animate-pulse"
+          style={{
+            width: '100px',
+            height: '100px',
+            objectFit: 'contain',
+            animationDelay: '1s'
+          }}
         />
       </div>
 
