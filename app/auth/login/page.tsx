@@ -85,9 +85,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-dashboard flex items-center justify-center p-4">
+    <div className="min-h-screen bg-dashboard flex items-start justify-center p-4 py-8 overflow-y-auto">
       <motion.div
-        className="w-full max-w-md"
+        className="w-full max-w-md my-auto"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
