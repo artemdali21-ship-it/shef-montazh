@@ -15,19 +15,25 @@ export default function TelegramProvider({ children }: TelegramProvider) {
       const webapp = (window as any).Telegram?.WebApp
       if (!webapp) {
         // Script not loaded yet, wait a bit and try again
-        setTimeout(initTelegram, 100)
+        setTimeout(initTelegram, 50)
         return
       }
 
-      console.log('[Telegram WebApp] Initializing...')
+      console.log('[Telegram WebApp] Initializing...', {
+        version: webapp.version,
+        platform: webapp.platform,
+        isExpanded: webapp.isExpanded
+      })
 
-      // CRITICAL: Ready the app (removes "Layout OK" button)
+      // CRITICAL: Ready the app FIRST (removes "Layout OK" button)
       webapp.ready()
 
-      // Expand to fullscreen
-      webapp.expand()
-
-      console.log('[Telegram WebApp] Ready and expanded')
+      // Small delay to ensure ready() is processed
+      setTimeout(() => {
+        // Expand to fullscreen
+        webapp.expand()
+        console.log('[Telegram WebApp] Ready and expanded')
+      }, 10)
 
       // Set header color
       webapp.setHeaderColor('#2A2A2A')

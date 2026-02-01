@@ -43,14 +43,24 @@ const elementImages = [
 function generateRandomElement(id: number): FloatingElement {
   const randomImage = elementImages[Math.floor(Math.random() * elementImages.length)]
 
+  // Specific size rules for certain tools
+  let size = Math.floor(Math.random() * 80) + 40 // Default: 40-120px
+
+  if (randomImage.src.includes('saw')) {
+    size = Math.floor(Math.random() * 50) + 90 // Saw: 90-140px (bigger)
+  } else if (randomImage.src.includes('screwdriver')) {
+    size = Math.floor(Math.random() * 30) + 40 // Screwdriver: 40-70px (smaller)
+  } else if (randomImage.src.includes('wrench')) {
+    size = Math.floor(Math.random() * 40) + 60 // Wrench: 60-100px (medium)
+  }
+
   return {
     id,
     src: randomImage.src,
     alt: randomImage.alt,
-    // Random size between 40px and 120px
-    size: Math.floor(Math.random() * 80) + 40,
-    // Random position across viewport
-    x: Math.floor(Math.random() * 100),
+    size,
+    // Better distributed positions (avoid clustering in center)
+    x: id % 2 === 0 ? Math.floor(Math.random() * 40) : Math.floor(Math.random() * 40) + 60,
     y: Math.floor(Math.random() * 100),
     // Random rotation
     rotation: Math.floor(Math.random() * 360),
