@@ -31,7 +31,7 @@ export default function AuthWelcomePage() {
         {/* Logo and title */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-6">
-            <Logo size="xl" showText={true} />
+            <Logo size="lg" showText={true} />
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">
             Добро пожаловать!
