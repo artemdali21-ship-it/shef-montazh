@@ -8,42 +8,44 @@ interface TelegramProvider {
 
 export default function TelegramProvider({ children }: TelegramProvider) {
   useEffect(() => {
-    // Initialize Telegram Web App
-    if (typeof window !== 'undefined' && (window as any).Telegram?.WebApp) {
-      const webapp = (window as any).Telegram.WebApp
-      
-      // Ready the app
+    // Wait for Telegram WebApp script to be fully loaded
+    const initTelegram = () => {
+      if (typeof window === 'undefined') return
+
+      const webapp = (window as any).Telegram?.WebApp
+      if (!webapp) {
+        // Script not loaded yet, wait a bit and try again
+        setTimeout(initTelegram, 100)
+        return
+      }
+
+      console.log('[Telegram WebApp] Initializing...')
+
+      // CRITICAL: Ready the app (removes "Layout OK" button)
       webapp.ready()
-      
+
       // Expand to fullscreen
       webapp.expand()
-      
+
+      console.log('[Telegram WebApp] Ready and expanded')
+
       // Set header color
       webapp.setHeaderColor('#2A2A2A')
       webapp.setBackgroundColor('#1A1A1A')
-      
+
       // Enable closing confirmation
       webapp.enableClosingConfirmation()
-      
+
       // Set up platform-specific styling
       if (webapp.platform === 'ios') {
         document.documentElement.style.setProperty('--twa-bottom-safe-area', `${webapp.bottomSafeAreaInset}px`)
       }
-      
-      // Prevent double tap zoom - BUT ALLOW SCROLL
-      document.addEventListener('touchmove', (e) => {
-        // Allow scroll on elements with overflow-y-scroll or overflow-y-auto
-        const target = e.target as any
-        if (target.closest('[data-allow-scroll]') || 
-            target.closest('.overflow-y-scroll') ||
-            target.closest('.overflow-y-auto') ||
-            target.closest('[style*="overflow-y"]')) {
-          return
-        }
-        // Only prevent on non-scrollable elements
-        e.preventDefault()
-      }, { passive: false })
+
+      console.log('[Telegram WebApp] Platform:', webapp.platform, 'Version:', webapp.version)
     }
+
+    // Start initialization immediately
+    initTelegram()
   }, [])
 
   return (
