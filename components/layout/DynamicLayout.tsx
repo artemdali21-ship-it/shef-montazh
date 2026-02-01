@@ -21,6 +21,7 @@ const NO_NAV_PAGES = [
   '/worker-categories',
   '/auth/login',
   '/auth/register',
+  '/auth/welcome',
   '/create-shift',
 ]
 
