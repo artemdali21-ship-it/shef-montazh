@@ -230,15 +230,14 @@ export default function LoginPage() {
           </form>
 
           {/* Register Link - Only for non-Telegram users */}
-          {!isFromTelegram && (
-            <div className="mt-6 pt-6 border-t border-white/10 text-center">
-              <p className="text-gray-400 text-sm">
-                Нет аккаунта?{' '}
-                <Link href="/auth/register" className="text-orange-400 hover:text-orange-300 font-semibold transition">
-                  Зарегистрироваться
-                </Link>
-              </p>
-            </div>
+          <div className="mt-6 pt-6 border-t border-white/10 text-center">
+            <p className="text-gray-400 text-sm">
+              Нет аккаунта?{' '}
+              <Link href="/auth/register" className="text-orange-400 hover:text-orange-300 font-semibold transition">
+                Зарегистрироваться
+              </Link>
+            </p>
+          </div>
           )}
         </motion.div>
 
