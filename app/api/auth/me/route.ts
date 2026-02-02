@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase-server'
 
 /**
- * Get Current User Info
+ * Get Current User Info with Multi-Role Support
  *
- * Returns current authenticated user data including demo status.
- * Used by DemoBanner and other components to check user state.
+ * Returns current authenticated user data including all roles and active role.
+ * Used by components to check user state and available roles.
  */
 export async function GET() {
   try {
@@ -21,10 +21,10 @@ export async function GET() {
       )
     }
 
-    // Get user details from users table
+    // Get user details from users table including roles
     const { data: user, error: userError } = await supabase
       .from('users')
-      .select('id, telegram_id, username, first_name, last_name, role, is_demo, is_verified, is_blocked')
+      .select('id, telegram_id, full_name, phone, avatar_url, roles, current_role, is_demo, is_verified, is_blocked')
       .eq('id', session.user.id)
       .single()
 
@@ -39,17 +39,18 @@ export async function GET() {
       user: {
         id: user.id,
         telegram_id: user.telegram_id,
-        username: user.username,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        role: user.role,
+        full_name: user.full_name,
+        phone: user.phone,
+        avatar_url: user.avatar_url,
+        roles: user.roles || [],
+        current_role: user.current_role,
         is_demo: user.is_demo || false,
         is_verified: user.is_verified,
         is_blocked: user.is_blocked
       }
     })
   } catch (error) {
-    console.error('Error getting user info:', error)
+    console.error('[API] Error getting user info:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

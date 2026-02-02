@@ -15,13 +15,19 @@ export async function POST(request: NextRequest) {
 
     const supabase = createServerClient()
 
-    // Clear session AND reset onboarding flag
+    // Get user to check how many roles they have
+    const { data: user } = await supabase
+      .from('users')
+      .select('roles')
+      .eq('telegram_id', telegramId)
+      .maybeSingle()
+
+    // Clear session (but don't reset onboarding - user keeps their profile)
     const { error } = await supabase
       .from('users')
       .update({
         session_token: null,
         session_expires_at: null,
-        has_completed_onboarding: false, // Force re-registration
         current_role: null, // Clear current role
       })
       .eq('telegram_id', telegramId)
@@ -34,10 +40,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('[API] Logout successful, user will re-register on next login')
+    const userRoles = user?.roles || []
+    const multipleRoles = userRoles.length > 1
+
+    console.log('[API] Logout successful. User has', userRoles.length, 'role(s)')
 
     return NextResponse.json<LogoutResponse>({
       success: true,
+      multipleRoles, // Signal to frontend whether to show role-picker
     })
   } catch (error) {
     console.error('[API] Error in logout:', error)
