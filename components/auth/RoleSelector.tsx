@@ -93,8 +93,40 @@ export default function RoleSelector() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Floating Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <img
+          src="/images/tape-3.png"
+          alt=""
+          style={{
+            position: 'absolute',
+            top: '15%',
+            right: '5%',
+            width: '100px',
+            height: 'auto',
+            opacity: 0.4,
+            transform: 'rotate(-20deg)',
+            zIndex: 0,
+          }}
+        />
+        <img
+          src="/images/bolts.png"
+          alt=""
+          style={{
+            position: 'absolute',
+            bottom: '20%',
+            left: '3%',
+            width: '80px',
+            height: 'auto',
+            opacity: 0.3,
+            transform: 'rotate(15deg)',
+            zIndex: 0,
+          }}
+        />
+      </div>
+
+      <div className="max-w-md w-full relative z-10">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-6">

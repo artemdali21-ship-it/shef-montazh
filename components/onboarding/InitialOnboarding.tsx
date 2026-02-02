@@ -93,6 +93,23 @@ export default function InitialOnboarding({ onComplete }: InitialOnboardingProps
             filter: 'drop-shadow(0 6px 16px rgba(0, 0, 0, 0.3))',
           }}
         />
+        {/* Green Tape - for Shef role */}
+        <img
+          src="/images/tape-3.png"
+          alt=""
+          className="absolute"
+          style={{
+            width: '110px',
+            height: 'auto',
+            top: '35%',
+            left: '8%',
+            transform: 'rotate(-15deg)',
+            opacity: 0.6,
+            zIndex: 2,
+            animation: 'float 8s ease-in-out infinite 1.5s',
+            filter: 'drop-shadow(0 4px 12px rgba(50, 200, 100, 0.2))',
+          }}
+        />
       </div>
 
       <style>{`
