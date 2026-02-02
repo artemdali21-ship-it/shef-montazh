@@ -6,6 +6,7 @@ import { ArrowLeft, TrendingUp, DollarSign, Star, Calendar, Loader2, Users } fro
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase-client'
 import { useToast } from '@/components/ui/ToastProvider'
+import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
 import EarningsChart from '@/components/stats/EarningsChart'
 import ShiftsBreakdown from '@/components/stats/ShiftsBreakdown'
 import RatingTrend from '@/components/stats/RatingTrend'
@@ -34,23 +35,29 @@ export default function WorkerStatsPage() {
   const router = useRouter()
   const supabase = createClient()
   const toast = useToast()
+  const { session, loading: sessionLoading } = useTelegramSession()
 
   const [stats, setStats] = useState<StatsData | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    loadStats()
-  }, [])
+    if (!sessionLoading) {
+      loadStats()
+    }
+  }, [sessionLoading, session])
 
   const loadStats = async () => {
     try {
       setLoading(true)
 
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/auth/login')
+      // Check Telegram session
+      if (!session) {
+        console.log('[Stats] No session, redirecting to home')
+        router.push('/')
         return
       }
+
+      console.log('[Stats] Session found:', session)
 
       // Fetch all completed shifts for the worker
       const { data: assignments, error: shiftsError } = await supabase
@@ -66,7 +73,7 @@ export default function WorkerStatsPage() {
             client_id
           )
         `)
-        .eq('worker_id', user.id)
+        .eq('worker_id', session.userId)
         .eq('status', 'completed')
         .order('created_at', { ascending: false })
 
@@ -124,7 +131,7 @@ export default function WorkerStatsPage() {
       const { data: workerProfile } = await supabase
         .from('worker_profiles')
         .select('rating')
-        .eq('user_id', user.id)
+        .eq('user_id', session.userId)
         .single()
 
       const avgRating = workerProfile?.rating || 0
@@ -234,7 +241,7 @@ export default function WorkerStatsPage() {
     }
   }
 
-  if (loading) {
+  if (sessionLoading || loading) {
     return (
       <div className="min-h-screen bg-dashboard flex items-center justify-center">
         <Loader2 className="animate-spin text-orange-400" size={48} />
@@ -242,7 +249,7 @@ export default function WorkerStatsPage() {
     )
   }
 
-  if (!stats) return null
+  if (!session || !stats) return null
 
   return (
     <div className="min-h-screen bg-dashboard pb-24">

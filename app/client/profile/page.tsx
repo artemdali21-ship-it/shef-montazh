@@ -9,36 +9,42 @@ import { createClient } from '@/lib/supabase-client'
 import { useToast } from '@/components/ui/ToastProvider'
 import SkeletonProfile from '@/components/ui/SkeletonProfile'
 import { Logo } from '@/components/ui/Logo'
+import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
 
 export default function ClientProfilePage() {
   const router = useRouter()
   const supabase = createClient()
   const toast = useToast()
+  const { session, loading: sessionLoading } = useTelegramSession()
 
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [showEditModal, setShowEditModal] = useState(false)
 
   useEffect(() => {
-    loadProfile()
-  }, [])
+    if (!sessionLoading) {
+      loadProfile()
+    }
+  }, [sessionLoading, session])
 
   const loadProfile = async () => {
     try {
       setLoading(true)
 
-      // Get current user
-      const { data: { user: authUser } } = await supabase.auth.getUser()
-      if (!authUser) {
-        router.push('/auth/login')
+      // Check Telegram session
+      if (!session) {
+        console.log('[ClientProfile] No session, redirecting to home')
+        router.push('/')
         return
       }
+
+      console.log('[ClientProfile] Session found:', session)
 
       // Load user profile
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('*')
-        .eq('id', authUser.id)
+        .eq('id', session.userId)
         .single()
 
       if (userError) throw userError
@@ -54,15 +60,21 @@ export default function ClientProfilePage() {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut()
-      router.push('/auth/login')
+      // Call logout API to clear Telegram CloudStorage
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      // Force reload to clear session
+      window.location.href = '/'
       toast.success('Вы вышли из системы')
     } catch (error) {
       toast.error('Ошибка при выходе')
     }
   }
 
-  if (loading) {
+  if (sessionLoading || loading) {
     return (
       <div className="min-h-screen pb-20 overflow-y-auto">
         <header className="sticky top-0 bg-white/10 backdrop-blur-xl border-b border-white/20 z-20 p-4">
@@ -75,7 +87,9 @@ export default function ClientProfilePage() {
     )
   }
 
-  if (!user) return null
+  if (!session || !user) {
+    return null
+  }
 
   return (
     <div className="min-h-screen pb-20 overflow-y-auto">

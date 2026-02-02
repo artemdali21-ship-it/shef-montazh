@@ -139,15 +139,15 @@ export default function LoginPage() {
               </div>
 
               <button
-                onClick={() => router.push('/auth/register')}
+                onClick={() => window.location.href = '/'}
                 className="w-full py-3 bg-orange-500 hover:bg-orange-600 rounded-xl text-white font-bold transition shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
               >
-                Зарегистрироваться
+                На главную
               </button>
 
               <div className="text-center">
                 <p className="text-gray-400 text-sm">
-                  Нет аккаунта? Зарегистрируйтесь, это займёт меньше минуты!
+                  Нет аккаунта? Зарегистрируйтесь на главной странице!
                 </p>
               </div>
             </div>
