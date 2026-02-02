@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { sendTelegramNotification } from '@/lib/telegram'
 
 export async function POST(request: NextRequest) {
   try {
@@ -50,6 +51,41 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error) throw error
+
+    // Send notifications to matching workers
+    try {
+      const { data: workers } = await supabase
+        .from('worker_profiles')
+        .select('user_id, categories')
+        .contains('categories', [category])
+
+      if (workers && workers.length > 0) {
+        console.log(`[Shift Created] Sending notifications to ${workers.length} matching workers`)
+
+        for (const worker of workers) {
+          await sendTelegramNotification({
+            type: 'new_shift',
+            userId: worker.user_id,
+            title: '🔔 Новая смена!',
+            body: `Требуется ${category}
+
+📍 ${location_address}
+⏰ ${start_time} - ${end_time}
+💰 ${pay_amount.toLocaleString('ru-RU')}₽
+
+Нажми, чтобы откликнуться!`,
+            data: {
+              shiftId: shift.id,
+              category,
+              date,
+            },
+          })
+        }
+      }
+    } catch (notifError) {
+      console.error('Error sending shift notifications:', notifError)
+      // Don't fail the request if notifications fail
+    }
 
     return NextResponse.json({ shift }, { status: 201 })
   } catch (error: any) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase-server'
+import { sendTelegramNotification } from '@/lib/telegram'
 
 /**
  * Approve Application
@@ -144,12 +145,34 @@ export async function POST(
       }
 
       // Send notification to worker
-      // TODO: Implement notification system
-      // await sendNotification(application.worker_id, {
-      //   type: 'application_approved',
-      //   shiftId: shift.id,
-      //   shiftTitle: shift.title
-      // })
+      try {
+        const { data: shiftDetails } = await supabase
+          .from('shifts')
+          .select('title, date, start_time, end_time, location_address, pay_amount')
+          .eq('id', shift.id)
+          .single()
+
+        if (shiftDetails) {
+          await sendTelegramNotification({
+            type: 'shift_accepted',
+            userId: application.worker_id,
+            title: '✅ Твой отклик одобрен!',
+            body: `Поздравляем! Ты назначен на смену.
+
+📍 ${shiftDetails.location_address}
+⏰ ${shiftDetails.start_time} - ${shiftDetails.end_time}
+💰 ${shiftDetails.pay_amount?.toLocaleString('ru-RU') || '0'}₽
+
+Не забудь подтвердить выход за 30 мин до начала!`,
+            data: {
+              shiftId: shift.id,
+              shiftTitle: shiftDetails.title,
+            },
+          })
+        }
+      } catch (notifError) {
+        console.error('Error sending approval notification:', notifError)
+      }
 
       // Log event
       await supabase.from('action_audit_log').insert({
@@ -191,12 +214,22 @@ export async function POST(
       }
 
       // Send notification to worker
-      // TODO: Implement notification system
-      // await sendNotification(application.worker_id, {
-      //   type: 'application_rejected',
-      //   shiftId: shift.id,
-      //   shiftTitle: shift.title
-      // })
+      try {
+        await sendTelegramNotification({
+          type: 'shift_rejected',
+          userId: application.worker_id,
+          title: '❌ Отклик отклонён',
+          body: `К сожалению, твой отклик на смену "${shift.title}" не был принят.
+
+Не расстраивайся! Продолжай откликаться на другие смены.`,
+          data: {
+            shiftId: shift.id,
+            shiftTitle: shift.title,
+          },
+        })
+      } catch (notifError) {
+        console.error('Error sending rejection notification:', notifError)
+      }
 
       // Log event
       await supabase.from('action_audit_log').insert({
