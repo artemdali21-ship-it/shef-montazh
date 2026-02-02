@@ -25,17 +25,19 @@ export default function TelegramAutoLogin() {
     // Skip auto-login on certain pages
     const skipPages = [
       '/',
-      '/auth/login',
       '/auth/register',
-      '/auth/welcome',
       '/onboarding',
       '/auth/complete-profile'
     ]
+
+    // Important: We DON'T skip /auth/login and /auth/welcome so auto-login can work there
     if (skipPages.some(page => pathname?.startsWith(page))) {
+      console.log('[TelegramAutoLogin] Skipping auto-login on page:', pathname)
       setIsChecking(false)
       return
     }
 
+    console.log('[TelegramAutoLogin] Running auto-login check on page:', pathname)
     checkTelegramAuth()
   }, [pathname])
 

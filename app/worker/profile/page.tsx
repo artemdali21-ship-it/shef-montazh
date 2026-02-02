@@ -30,9 +30,14 @@ export default function WorkerProfilePage() {
     try {
       setLoading(true)
 
+      console.log('[Profile] Loading profile...')
+
       // Get current user
-      const { data: { user: authUser } } = await supabase.auth.getUser()
+      const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
+      console.log('[Profile] Auth user:', authUser?.id, 'Error:', authError)
+
       if (!authUser) {
+        console.log('[Profile] No auth user, redirecting to login')
         router.push('/auth/login')
         return
       }
@@ -44,7 +49,16 @@ export default function WorkerProfilePage() {
         .eq('id', authUser.id)
         .single()
 
-      if (userError) throw userError
+      console.log('[Profile] User data:', userData, 'Error:', userError)
+
+      if (userError) {
+        console.error('[Profile] User error:', userError)
+        throw new Error(`Не удалось загрузить данные пользователя: ${userError.message}`)
+      }
+
+      if (!userData) {
+        throw new Error('Данные пользователя не найдены')
+      }
 
       setUser(userData)
 
@@ -53,9 +67,30 @@ export default function WorkerProfilePage() {
         .from('worker_profiles')
         .select('categories')
         .eq('user_id', authUser.id)
-        .single()
+        .maybeSingle()
 
-      if (!profileError && workerProfile?.categories) {
+      console.log('[Profile] Worker profile:', workerProfile, 'Error:', profileError)
+
+      if (profileError) {
+        console.error('[Profile] Worker profile error:', profileError)
+        // Don't throw - just log and continue without categories
+        toast.error(`Ошибка загрузки профиля работника: ${profileError.message}`)
+      }
+
+      if (!workerProfile) {
+        console.log('[Profile] No worker profile found, creating one...')
+        // Create worker profile if doesn't exist
+        const { error: createError } = await supabase
+          .from('worker_profiles')
+          .insert({ user_id: authUser.id })
+
+        if (createError) {
+          console.error('[Profile] Error creating worker profile:', createError)
+        }
+
+        setCategories([])
+        setSavedCategories([])
+      } else if (workerProfile?.categories) {
         setCategories(workerProfile.categories)
         setSavedCategories(workerProfile.categories)
       } else {
@@ -63,8 +98,8 @@ export default function WorkerProfilePage() {
         setSavedCategories([])
       }
     } catch (error: any) {
-      console.error('Error loading profile:', error)
-      toast.error('Не удалось загрузить профиль')
+      console.error('[Profile] Error loading profile:', error)
+      toast.error(error.message || 'Не удалось загрузить профиль')
     } finally {
       setLoading(false)
     }
