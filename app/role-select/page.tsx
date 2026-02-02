@@ -47,7 +47,12 @@ export default function RoleSelectScreen() {
     localStorage.setItem('userRole', roleId)
     console.log('[RoleSelect] Stored role in localStorage:', roleId)
     console.log('[RoleSelect] About to redirect to:', `/auth/register?role=${roleId}`)
-    router.push(`/auth/register?role=${roleId}`)
+    
+    // Use setTimeout to ensure state updates are applied before navigation
+    setTimeout(() => {
+      console.log('[RoleSelect] Executing router.push()')
+      router.push(`/auth/register?role=${roleId}`)
+    }, 100)
   }
 
   return (
