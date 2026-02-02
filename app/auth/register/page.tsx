@@ -204,8 +204,7 @@ function RegisterForm() {
           successful_shifts: 0,
           is_verified: false,
           gosuslugi_verified: false,
-          telegram_id: telegramId || null,
-          username: telegramUsername || null,
+          telegram_id: telegramId?.toString() || null,
         }).select()
 
         console.log('[DEBUG] User insert result:', { userData, userError })

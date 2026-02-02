@@ -19,23 +19,6 @@ export function FloatingObjects() {
         filter: 'drop-shadow(0 4px 12px rgba(232, 93, 47, 0.3))',
       },
     },
-    // Объект 2: Дрель (левый средний)
-    {
-      src: '/images/drill.png',
-      style: {
-        position: 'fixed' as const,
-        top: '35%',
-        left: '5%',
-        width: '140px',
-        height: 'auto',
-        opacity: 0.55,
-        transform: 'rotate(-20deg)',
-        zIndex: 2,
-        pointerEvents: 'none' as const,
-        animation: 'float 7s ease-in-out infinite 1.5s',
-        filter: 'drop-shadow(0 6px 16px rgba(0, 0, 0, 0.25))',
-      },
-    },
     // Объект 3: Гаечный ключ (нижний правый)
     {
       src: '/images/wrench.png',
