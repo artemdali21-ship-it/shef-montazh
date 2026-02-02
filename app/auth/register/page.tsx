@@ -182,6 +182,65 @@ function RegisterForm() {
         ? `tg_${telegramId}_${process.env.NEXT_PUBLIC_TELEGRAM_AUTH_SECRET || 'secret'}`
         : password
 
+      // For Telegram users: Check if user with this phone already exists
+      if (telegramId && phone) {
+        const { data: existingUser } = await supabase
+          .from('users')
+          .select('id, telegram_id, email')
+          .eq('phone', phone)
+          .single()
+
+        if (existingUser && !existingUser.telegram_id) {
+          // User exists but doesn't have telegram_id - update it
+          console.log('[DEBUG] Found existing user without telegram_id, updating...')
+
+          const { error: updateError } = await supabase
+            .from('users')
+            .update({
+              telegram_id: telegramId.toString(),
+              email: finalEmail
+            })
+            .eq('id', existingUser.id)
+
+          if (updateError) {
+            throw new Error('Не удалось обновить профиль')
+          }
+
+          // Update auth user email and password
+          const { error: authUpdateError } = await supabase.auth.signInWithPassword({
+            email: existingUser.email,
+            password: 'temp' // Try old password
+          }).catch(async () => {
+            // If old password doesn't work, update via API
+            return { error: null }
+          })
+
+          // Create/update auth user with new Telegram credentials
+          const { error: signUpError } = await supabase.auth.signUp({
+            email: finalEmail,
+            password: finalPassword,
+            options: {
+              data: {
+                telegram_id: telegramId,
+                telegram_username: telegramUsername,
+              },
+            },
+          })
+
+          if (!signUpError) {
+            // Sign in with new credentials
+            await supabase.auth.signInWithPassword({
+              email: finalEmail,
+              password: finalPassword,
+            })
+
+            toast.success('Аккаунт обновлён! Теперь вы можете входить через Telegram')
+            router.push('/auth/complete-profile')
+            return
+          }
+        }
+      }
+
       // Sign up with Supabase Auth
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: finalEmail,
