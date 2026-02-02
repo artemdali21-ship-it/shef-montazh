@@ -11,24 +11,24 @@ import toast from 'react-hot-toast'
 const roles = [
   {
     value: 'worker' as UserRole,
-    label: 'Работник',
-    description: 'Ищу работу на смены',
+    label: 'Специалист',
+    description: 'Работаю руками, выхожу на смены',
     icon: HardHat,
     color: 'from-orange-500 to-orange-600',
   },
   {
-    value: 'client' as UserRole,
-    label: 'Заказчик',
-    description: 'Нужны работники',
-    icon: Building,
-    color: 'from-blue-500 to-blue-600',
-  },
-  {
     value: 'shef' as UserRole,
-    label: 'Шеф',
-    description: 'Управляю бригадами',
+    label: 'Шеф-монтаж',
+    description: 'Управляю командой и отвечаю за монтаж',
     icon: Briefcase,
     color: 'from-purple-500 to-purple-600',
+  },
+  {
+    value: 'client' as UserRole,
+    label: 'Компания',
+    description: 'Нанимаю специалистов и организую проекты',
+    icon: Building,
+    color: 'from-blue-500 to-blue-600',
   },
 ]
 
@@ -44,10 +44,15 @@ export default function RoleSelector() {
 
     try {
       const telegramId = tg?.user?.id
+      console.log('[RoleSelector] Telegram ID:', telegramId)
+
       if (!telegramId) {
-        toast.error('Telegram ID не найден')
+        toast.error('Telegram ID не найден. Откройте приложение через Telegram.')
+        setLoading(false)
         return
       }
+
+      console.log('[RoleSelector] Registering user...', { telegramId, role })
 
       // Register user with selected role
       const response = await fetch('/api/auth/register', {
@@ -60,25 +65,34 @@ export default function RoleSelector() {
         }),
       })
 
+      console.log('[RoleSelector] Response status:', response.status)
+
       const data = await response.json()
+      console.log('[RoleSelector] Response data:', data)
 
       if (!response.ok || !data.success) {
         if (response.status === 409) {
           toast.error('Вы уже зарегистрированы')
         } else {
-          toast.error(data.error || 'Ошибка регистрации')
+          const errorMsg = data.error || 'Ошибка регистрации'
+          console.error('[RoleSelector] Registration error:', errorMsg)
+          toast.error(errorMsg)
         }
+        setLoading(false)
         return
       }
 
       toast.success('Регистрация успешна!')
 
+      // Small delay to show success message
+      await new Promise(resolve => setTimeout(resolve, 500))
+
       // Redirect to onboarding
+      console.log('[RoleSelector] Redirecting to onboarding:', `/onboarding/${role}`)
       router.push(`/onboarding/${role}`)
-    } catch (error) {
+    } catch (error: any) {
       console.error('[RoleSelector] Error:', error)
-      toast.error('Ошибка подключения')
-    } finally {
+      toast.error('Ошибка подключения: ' + (error.message || 'Неизвестная ошибка'))
       setLoading(false)
     }
   }

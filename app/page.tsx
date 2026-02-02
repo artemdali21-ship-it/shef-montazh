@@ -42,13 +42,13 @@ export default function HomePage() {
   // Show loading while checking session
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center">
+      <div className="fixed inset-0 bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center z-50">
         <div className="text-center">
-          <div className="mb-4">
+          <div className="mb-6">
             <Logo size="lg" showText={true} />
           </div>
           <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white text-lg">Загрузка...</p>
+          <p className="text-white text-lg font-medium">Загрузка...</p>
         </div>
       </div>
     )
