@@ -1,10 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
 
 // Helper: get admin ID from request
 async function getAdminId(): Promise<string> {
@@ -13,7 +9,7 @@ async function getAdminId(): Promise<string> {
 }
 
 // Helper: update user verification level
-async function updateUserVerificationLevel(userId: string) {
+async function updateUserVerificationLevel(userId: string, supabase: any) {
   const { data: verifications } = await supabase
     .from('verifications')
     .select('type, status')
@@ -35,6 +31,11 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { userId: string } }
 ) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
   const { data, error } = await supabase
     .from('verifications')
     .select('*')
@@ -49,6 +50,11 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: { userId: string } }
 ) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
   const { verificationId, approved } = await req.json()
 
   const { data, error } = await supabase
@@ -65,7 +71,7 @@ export async function PATCH(
 
   // Обновляем verification_level в профиле
   if (approved) {
-    await updateUserVerificationLevel(params.userId)
+    await updateUserVerificationLevel(params.userId, supabase)
   }
 
   return NextResponse.json(data[0])
