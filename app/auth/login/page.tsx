@@ -195,7 +195,7 @@ export default function LoginPage() {
               </Link>
             </p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Footer */}
         <motion.p

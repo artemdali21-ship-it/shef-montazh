@@ -496,7 +496,7 @@ export default function RegisterPage() {
               </Link>
             </p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Footer */}
         <motion.p
