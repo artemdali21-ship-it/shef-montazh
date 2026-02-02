@@ -152,14 +152,15 @@ export default function LoginPage() {
               </div>
             </div>
           ) : (
-            <form onSubmit={handleLogin} className="space-y-6">
-              {/* Error Message */}
-              {error && (
-                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-                  <p className="text-red-400 text-sm">{error}</p>
-                </div>
-              )}
+            <>
+              <form onSubmit={handleLogin} className="space-y-6">
+                {/* Error Message */}
+                {error && (
+                  <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                    <p className="text-red-400 text-sm">{error}</p>
+                  </div>
+                )}
 
             {/* Email Field */}
             <div>
@@ -226,18 +227,19 @@ export default function LoginPage() {
                   Войти
                 </>
               )}
-            </button>
-          </form>
+              </button>
+            </form>
 
-          {/* Register Link - Only for non-Telegram users */}
-          <div className="mt-6 pt-6 border-t border-white/10 text-center">
-            <p className="text-gray-400 text-sm">
-              Нет аккаунта?{' '}
-              <Link href="/auth/register" className="text-orange-400 hover:text-orange-300 font-semibold transition">
-                Зарегистрироваться
-              </Link>
-            </p>
-          </div>
+            {/* Register Link - Only for non-Telegram users */}
+            <div className="mt-6 pt-6 border-t border-white/10 text-center">
+              <p className="text-gray-400 text-sm">
+                Нет аккаунта?{' '}
+                <Link href="/auth/register" className="text-orange-400 hover:text-orange-300 font-semibold transition">
+                  Зарегистрироваться
+                </Link>
+              </p>
+            </div>
+            </>
           )}
         </motion.div>
 
