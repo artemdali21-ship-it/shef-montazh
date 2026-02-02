@@ -98,6 +98,17 @@ export default function AuthWelcomePage() {
             <UserPlus className="w-6 h-6" />
             Зарегистрироваться
           </button>
+
+          {/* Debug button */}
+          <button
+            onClick={() => {
+              hapticLight()
+              router.push('/debug')
+            }}
+            className="w-full py-3 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/30 text-purple-300 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition-all duration-200 active:scale-95"
+          >
+            🔍 Диагностика
+          </button>
         </div>
 
         {/* Footer */}
