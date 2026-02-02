@@ -71,13 +71,9 @@ export default function RoleSelector() {
       console.log('[RoleSelector] Response data:', data)
 
       if (!response.ok || !data.success) {
-        if (response.status === 409) {
-          toast.error('Вы уже зарегистрированы')
-        } else {
-          const errorMsg = data.error || 'Ошибка регистрации'
-          console.error('[RoleSelector] Registration error:', errorMsg)
-          toast.error(errorMsg)
-        }
+        const errorMsg = data.error || 'Ошибка регистрации'
+        console.error('[RoleSelector] Registration error:', errorMsg)
+        toast.error(errorMsg)
         setLoading(false)
         return
       }

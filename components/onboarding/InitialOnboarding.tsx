@@ -16,19 +16,16 @@ export default function InitialOnboarding({ onComplete }: InitialOnboardingProps
       title: 'Найдите работу быстро',
       subtitle: 'Просматривайте доступные смены и откликайтесь на подходящие вакансии',
       image: '/helmet333.png',
-      emoji: '🔍',
     },
     {
       title: 'Гарантия выполнения работ',
       subtitle: 'Система штрафов за срывы смен',
       image: '/helmet333.png',
-      emoji: '💰',
     },
     {
       title: 'Поддержка 24/7',
       subtitle: 'Рассчитываемся в день завершения работ. Скоро подключим ИИ-помощника!',
       image: '/helmet333.png',
-      emoji: '🤖',
     },
   ]
 
@@ -141,9 +138,19 @@ export default function InitialOnboarding({ onComplete }: InitialOnboardingProps
 
           {/* SLIDE CONTENT */}
           <div className="mb-8 flex-1 flex flex-col justify-center">
-            {/* EMOJI/ICON */}
-            <div className="text-8xl text-center mb-6">
-              {slides[currentSlide].emoji}
+            {/* SLIDE IMAGE */}
+            <div className="relative rounded-2xl overflow-hidden mb-6 shadow-lg flex-shrink-0 mx-auto" style={{
+              width: '200px',
+              height: '200px',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+              backgroundColor: '#333333',
+            }}>
+              <img
+                src={slides[currentSlide].image}
+                alt={slides[currentSlide].title}
+                className="w-full h-full object-cover"
+                style={{ filter: 'brightness(1.05) contrast(1.05)' }}
+              />
             </div>
 
             {/* SLIDE TEXT */}

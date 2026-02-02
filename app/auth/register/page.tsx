@@ -354,7 +354,7 @@ function RegisterForm() {
       if (signUpError) {
         // Handle specific errors
         if (signUpError.message.includes('already registered')) {
-          throw new Error('Этот email уже зарегистрирован')
+          throw new Error('Вы уже зарегистрированы')
         }
         if (signUpError.message.includes('Password')) {
           throw new Error('Пароль слишком слабый. Используйте минимум 6 символов')

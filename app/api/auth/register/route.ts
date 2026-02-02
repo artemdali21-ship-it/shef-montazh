@@ -28,15 +28,74 @@ export async function POST(request: NextRequest) {
     // Check if user already exists
     const { data: existingUser } = await supabase
       .from('users')
-      .select('id')
+      .select('id, roles, current_role')
       .eq('telegram_id', telegramId)
       .maybeSingle()
 
     if (existingUser) {
-      return NextResponse.json<RegisterResponse>(
-        { success: false, error: 'User already exists' },
-        { status: 409 }
-      )
+      // User exists - check if they already have this role
+      const userRoles = existingUser.roles || []
+
+      if (userRoles.includes(role)) {
+        return NextResponse.json<RegisterResponse>(
+          { success: false, error: 'Вы уже зарегистрированы в этой роли' },
+          { status: 409 }
+        )
+      }
+
+      // Add new role to existing user
+      const updatedRoles = [...userRoles, role]
+
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({
+          current_role: role,
+          roles: updatedRoles,
+          has_completed_onboarding: false, // Reset onboarding for new role
+          last_login_at: new Date().toISOString(),
+        })
+        .eq('telegram_id', telegramId)
+
+      if (updateError) {
+        console.error('[API] Error adding role:', updateError)
+        return NextResponse.json<RegisterResponse>(
+          { success: false, error: updateError.message },
+          { status: 500 }
+        )
+      }
+
+      // Create role-specific profile if needed
+      if (role === 'worker') {
+        const { data: workerProfile } = await supabase
+          .from('worker_profiles')
+          .select('user_id')
+          .eq('user_id', existingUser.id)
+          .maybeSingle()
+
+        if (!workerProfile) {
+          await supabase.from('worker_profiles').insert({ user_id: existingUser.id })
+        }
+      } else if (role === 'client') {
+        const { data: clientProfile } = await supabase
+          .from('client_profiles')
+          .select('user_id')
+          .eq('user_id', existingUser.id)
+          .maybeSingle()
+
+        if (!clientProfile) {
+          await supabase.from('client_profiles').insert({ user_id: existingUser.id })
+        }
+      }
+
+      return NextResponse.json<RegisterResponse>({
+        success: true,
+        user: {
+          id: existingUser.id,
+          telegram_id: telegramId,
+          role: role as UserRole,
+          has_completed_onboarding: false,
+        },
+      })
     }
 
     // Generate session token using built-in crypto
