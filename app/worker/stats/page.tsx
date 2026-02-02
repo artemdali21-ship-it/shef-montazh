@@ -43,9 +43,12 @@ export default function WorkerStatsPage() {
   useEffect(() => {
     if (!sessionLoading && session) {
       loadStats()
+    } else if (!sessionLoading && !session) {
+      console.log('[Stats] No session available')
+      setLoading(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionLoading])
+  }, [sessionLoading, session?.userId])
 
   const loadStats = async () => {
     try {
@@ -58,7 +61,7 @@ export default function WorkerStatsPage() {
         return
       }
 
-      console.log('[Stats] Session found:', session)
+      console.log('[Stats] Loading stats for user:', session.userId)
 
       // Fetch all completed shifts for the worker
       const { data: assignments, error: shiftsError } = await supabase
@@ -78,9 +81,24 @@ export default function WorkerStatsPage() {
         .eq('status', 'completed')
         .order('created_at', { ascending: false })
 
+      console.log('[Stats] Assignments fetched:', assignments?.length || 0)
+
       if (shiftsError) {
-        console.error('Shifts error:', shiftsError)
-        throw shiftsError
+        console.error('[Stats] Error fetching shifts:', shiftsError)
+        toast.error(`Ошибка загрузки: ${shiftsError.message}`)
+        // Set empty stats on error
+        setStats({
+          totalShifts: 0,
+          totalEarnings: 0,
+          avgRating: 0,
+          growthPercentage: 0,
+          monthlyEarnings: [],
+          categoryBreakdown: [],
+          ratingTrend: [],
+          topClients: []
+        })
+        setLoading(false)
+        return
       }
 
       // Fetch client names separately
@@ -235,8 +253,19 @@ export default function WorkerStatsPage() {
         topClients
       })
     } catch (error: any) {
-      console.error('Load stats error:', error)
-      toast.error('Ошибка загрузки статистики')
+      console.error('[Stats] Load stats error:', error)
+      toast.error(`Ошибка загрузки статистики: ${error.message || 'Неизвестная ошибка'}`)
+      // Set empty stats on error
+      setStats({
+        totalShifts: 0,
+        totalEarnings: 0,
+        avgRating: 0,
+        growthPercentage: 0,
+        monthlyEarnings: [],
+        categoryBreakdown: [],
+        ratingTrend: [],
+        topClients: []
+      })
     } finally {
       setLoading(false)
     }
