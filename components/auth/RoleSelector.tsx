@@ -39,20 +39,24 @@ export default function RoleSelector() {
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null)
 
   const handleSelectRole = async (role: UserRole) => {
+    console.log('[RoleSelector] handleSelectRole called with role:', role)
     setSelectedRole(role)
     setLoading(true)
 
     try {
       const telegramId = tg?.user?.id
+      console.log('[RoleSelector] Telegram object:', tg)
       console.log('[RoleSelector] Telegram ID:', telegramId)
+      console.log('[RoleSelector] Telegram user:', tg?.user)
 
       if (!telegramId) {
+        console.error('[RoleSelector] No Telegram ID found!')
         toast.error('Telegram ID не найден. Откройте приложение через Telegram.')
         setLoading(false)
         return
       }
 
-      console.log('[RoleSelector] Registering user...', { telegramId, role })
+      console.log('[RoleSelector] Starting registration...', { telegramId, role, fullName: tg?.user?.first_name })
 
       // Register user with selected role
       const response = await fetch('/api/auth/register', {

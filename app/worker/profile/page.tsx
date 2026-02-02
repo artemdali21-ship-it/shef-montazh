@@ -19,42 +19,26 @@ export default function WorkerProfilePage() {
   const { session, loading: sessionLoading } = useTelegramSession()
 
   const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [showEditModal, setShowEditModal] = useState(false)
   const [categories, setCategories] = useState<string[]>([])
   const [savedCategories, setSavedCategories] = useState<string[]>([])
-  const [profileLoaded, setProfileLoaded] = useState(false)
-  const [isLoadingProfile, setIsLoadingProfile] = useState(false)
 
   useEffect(() => {
-    // Загружаем профиль только один раз
-    if (!sessionLoading && session && !profileLoaded) {
+    if (!sessionLoading && session) {
       loadProfile()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionLoading, profileLoaded])
+  }, [sessionLoading, session?.userId])
 
   const loadProfile = async () => {
-    // Prevent multiple calls
-    if (profileLoaded || isLoadingProfile) {
-      console.log('[Profile] Already loading or loaded, skipping')
-      return
-    }
-
     try {
-      setIsLoadingProfile(true)
-      setLoading(true)
+      console.log('[Profile] Loading profile...', { session })
 
-      console.log('[Profile] Loading profile...')
-
-      // Check Telegram session
       if (!session) {
-        console.log('[Profile] No session, redirecting to home')
+        console.log('[Profile] No session')
         router.push('/')
         return
       }
-
-      console.log('[Profile] Session found:', session)
 
       // Load user profile by user ID
       const { data: userData, error: userError } = await supabase
@@ -67,68 +51,46 @@ export default function WorkerProfilePage() {
 
       if (userError) {
         console.error('[Profile] User error:', userError)
-        throw new Error(`Не удалось загрузить данные пользователя: ${userError.message}`)
+        toast.error(`Ошибка загрузки: ${userError.message}`)
+        setLoading(false)
+        return
       }
 
       if (!userData) {
-        throw new Error('Пользователь не найден')
+        toast.error('Пользователь не найден')
+        setLoading(false)
+        return
       }
 
       setUser(userData)
-      setProfileLoaded(true)
 
-      // Load worker categories from worker_profiles
-      const { data: workerProfile, error: profileError } = await supabase
+      // Load worker categories
+      const { data: workerProfile } = await supabase
         .from('worker_profiles')
         .select('categories')
         .eq('user_id', session.userId)
         .maybeSingle()
 
-      console.log('[Profile] Worker profile:', workerProfile, 'Error:', profileError)
-
-      if (profileError) {
-        console.error('[Profile] Worker profile error:', profileError)
-        // Don't throw - just log and continue without categories
-        toast.error(`Ошибка загрузки профиля работника: ${profileError.message}`)
-      }
-
-      if (!workerProfile) {
-        console.log('[Profile] No worker profile found, creating one...')
-        // Create worker profile if doesn't exist
-        const { error: createError } = await supabase
-          .from('worker_profiles')
-          .insert({ user_id: session.userId })
-
-        if (createError) {
-          console.error('[Profile] Error creating worker profile:', createError)
-        }
-
-        setCategories([])
-        setSavedCategories([])
-      } else if (workerProfile?.categories) {
+      if (workerProfile?.categories) {
         setCategories(workerProfile.categories)
         setSavedCategories(workerProfile.categories)
-      } else {
-        setCategories([])
-        setSavedCategories([])
       }
+
+      setLoading(false)
     } catch (error: any) {
-      console.error('[Profile] Error loading profile:', error)
-      toast.error(error.message || 'Не удалось загрузить профиль')
-    } finally {
+      console.error('[Profile] Error:', error)
+      toast.error('Ошибка загрузки профиля')
       setLoading(false)
     }
   }
 
   const handleLogout = async () => {
     try {
-      // Call logout API to clear Telegram CloudStorage
       await fetch('/api/auth/logout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       })
 
-      // Force reload to clear session
       window.location.href = '/'
       toast.success('Вы вышли из системы')
     } catch (error) {
@@ -140,7 +102,6 @@ export default function WorkerProfilePage() {
     try {
       if (!session) return
 
-      // Update worker_profiles with selected categories
       const { error } = await supabase
         .from('worker_profiles')
         .update({ categories })
@@ -149,8 +110,6 @@ export default function WorkerProfilePage() {
       if (error) throw error
 
       toast.success('Категории сохранены')
-
-      // Reload profile to show updated data
       await loadProfile()
     } catch (error) {
       console.error('Error saving categories:', error)
@@ -158,8 +117,7 @@ export default function WorkerProfilePage() {
     }
   }
 
-  // Show loading skeleton while session or profile is loading
-  if (sessionLoading || (loading && !user)) {
+  if (sessionLoading || loading) {
     return (
       <div className="min-h-screen pb-20 overflow-y-auto">
         <header className="sticky top-0 bg-white/10 backdrop-blur-xl border-b border-white/20 z-20 p-4">
@@ -172,7 +130,6 @@ export default function WorkerProfilePage() {
     )
   }
 
-  // If session loaded but no user yet, still show skeleton
   if (!user) {
     return (
       <div className="min-h-screen pb-20 overflow-y-auto">
@@ -180,14 +137,18 @@ export default function WorkerProfilePage() {
           <Logo size="md" showText={true} />
         </header>
         <div className="p-4">
-          <SkeletonProfile />
+          <div className="text-center text-white mt-20">
+            <p>Не удалось загрузить профиль</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 px-6 py-3 bg-orange-500 rounded-xl"
+            >
+              Обновить
+            </button>
+          </div>
         </div>
       </div>
     )
-  }
-
-  if (!session) {
-    return null
   }
 
   return (
