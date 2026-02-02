@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase-server'
 import type { RegisterResponse, UserRole } from '@/types/session'
-import { v4 as uuidv4 } from 'uuid'
+import crypto from 'crypto'
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,8 +39,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generate session token
-    const sessionToken = uuidv4()
+    // Generate session token using built-in crypto
+    const sessionToken = crypto.randomUUID()
     const sessionExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
 
     // Create user
