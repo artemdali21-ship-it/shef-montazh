@@ -86,14 +86,26 @@ export default function WorkerProfilePage() {
 
   const handleLogout = async () => {
     try {
+      if (!session) {
+        console.log('[Profile] No session for logout')
+        window.location.href = '/'
+        return
+      }
+
+      console.log('[Profile] Logging out, telegramId:', session.telegramId)
+
+      // Call logout API to clear database
       await fetch('/api/auth/logout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ telegramId: session.telegramId }),
       })
 
+      // Force reload to clear all state
       window.location.href = '/'
       toast.success('Вы вышли из системы')
     } catch (error) {
+      console.error('[Profile] Logout error:', error)
       toast.error('Ошибка при выходе')
     }
   }

@@ -26,23 +26,16 @@ export default function HomePage() {
       console.log('[HomePage] Session found after onboarding:', session)
       setIsRedirecting(true)
 
-      // User is logged in - redirect to dashboard
-      if (session.hasSeenOnboarding) {
-        const dashboardPaths = {
-          worker: '/worker/shifts',
-          client: '/client/shifts',
-          shef: '/shef/dashboard',
-        }
-
-        const path = dashboardPaths[session.role]
-        console.log('[HomePage] Redirecting to:', path)
-        router.push(path)
-      } else {
-        // Onboarding not complete - redirect to role-specific onboarding
-        const onboardingPath = `/onboarding/${session.role}`
-        console.log('[HomePage] Redirecting to onboarding:', onboardingPath)
-        router.push(onboardingPath)
+      // User is logged in - redirect to dashboard directly (no second onboarding!)
+      const dashboardPaths = {
+        worker: '/worker/shifts',
+        client: '/client/shifts',
+        shef: '/shef/dashboard',
       }
+
+      const path = dashboardPaths[session.role]
+      console.log('[HomePage] Redirecting to:', path)
+      router.push(path)
     }
     // Если session нет - просто показываем RoleSelector (ниже)
   }, [onboardingComplete, sessionLoading, session, router])

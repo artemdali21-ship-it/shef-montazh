@@ -15,12 +15,14 @@ export async function POST(request: NextRequest) {
 
     const supabase = createServerClient()
 
-    // Clear session token
+    // Clear session AND reset onboarding flag
     const { error } = await supabase
       .from('users')
       .update({
         session_token: null,
         session_expires_at: null,
+        has_completed_onboarding: false, // Force re-registration
+        current_role: null, // Clear current role
       })
       .eq('telegram_id', telegramId)
 
@@ -31,6 +33,8 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       )
     }
+
+    console.log('[API] Logout successful, user will re-register on next login')
 
     return NextResponse.json<LogoutResponse>({
       success: true,
