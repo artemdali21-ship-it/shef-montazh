@@ -20,6 +20,7 @@ export default function WorkerProfilePage() {
   const [loading, setLoading] = useState(true)
   const [showEditModal, setShowEditModal] = useState(false)
   const [categories, setCategories] = useState<string[]>([])
+  const [savedCategories, setSavedCategories] = useState<string[]>([])
 
   useEffect(() => {
     loadProfile()
@@ -56,6 +57,10 @@ export default function WorkerProfilePage() {
 
       if (!profileError && workerProfile?.categories) {
         setCategories(workerProfile.categories)
+        setSavedCategories(workerProfile.categories)
+      } else {
+        setCategories([])
+        setSavedCategories([])
       }
     } catch (error: any) {
       console.error('Error loading profile:', error)
@@ -176,7 +181,7 @@ export default function WorkerProfilePage() {
           onChange={setCategories}
         />
 
-        {categories.length > 0 && (
+        {JSON.stringify(categories.sort()) !== JSON.stringify(savedCategories.sort()) && (
           <button
             onClick={handleSaveCategories}
             className="w-full py-3 bg-orange-500 text-white rounded-xl font-medium hover:bg-orange-600 transition"
