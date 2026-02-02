@@ -33,17 +33,30 @@ export default function TelegramAutoLogin() {
 
   const checkTelegramAuth = async () => {
     try {
+      console.log('[TelegramAutoLogin] Starting auth check...')
+
       // Check if already authenticated via Supabase
-      const { data: { session } } = await supabase.auth.getSession()
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+
+      if (sessionError) {
+        console.error('[TelegramAutoLogin] Session error:', sessionError)
+      }
+
+      console.log('[TelegramAutoLogin] Session check result:', {
+        hasSession: !!session,
+        hasUser: !!session?.user,
+        userId: session?.user?.id,
+        expiresAt: session?.expires_at
+      })
 
       if (session?.user) {
-        console.log('[TelegramAutoLogin] Active session found, user already authenticated')
+        console.log('[TelegramAutoLogin] ✅ Active session found, user already authenticated')
         setIsChecking(false)
         return
       }
 
       // If no session, redirect to welcome page for login/registration
-      console.log('[TelegramAutoLogin] No active session, redirecting to welcome')
+      console.log('[TelegramAutoLogin] ❌ No active session, redirecting to welcome')
       router.push('/auth/welcome')
 
     } catch (error) {
