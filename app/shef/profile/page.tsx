@@ -31,6 +31,12 @@ export default function ShefProfilePage() {
   }, [sessionLoading, profileLoaded])
 
   const loadProfile = async () => {
+    // Prevent multiple calls
+    if (profileLoaded || loading) {
+      console.log('[ShefProfile] Already loading or loaded, skipping')
+      return
+    }
+
     try {
       setLoading(true)
 

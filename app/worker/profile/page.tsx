@@ -34,6 +34,12 @@ export default function WorkerProfilePage() {
   }, [sessionLoading, profileLoaded])
 
   const loadProfile = async () => {
+    // Prevent multiple calls
+    if (profileLoaded || loading) {
+      console.log('[Profile] Already loading or loaded, skipping')
+      return
+    }
+
     try {
       setLoading(true)
 

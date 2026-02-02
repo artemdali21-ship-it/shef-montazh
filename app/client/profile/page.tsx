@@ -31,6 +31,12 @@ export default function ClientProfilePage() {
   }, [sessionLoading, profileLoaded])
 
   const loadProfile = async () => {
+    // Prevent multiple calls
+    if (profileLoaded || loading) {
+      console.log('[ClientProfile] Already loading or loaded, skipping')
+      return
+    }
+
     try {
       setLoading(true)
 
