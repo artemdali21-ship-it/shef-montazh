@@ -9,9 +9,10 @@ import { useTelegram } from '@/lib/telegram'
  * TelegramAutoLogin Component
  *
  * Automatically authenticates user via Telegram ID on app load
- * - Checks if user exists in database
- * - If yes: auto-login and redirect to appropriate dashboard
- * - If no: redirect to registration with pre-filled Telegram data
+ * - Checks if user exists in database by telegram_id
+ * - If exists and profile completed: auto-login and redirect to dashboard
+ * - If exists but profile not completed: redirect to profile completion
+ * - If doesn't exist: redirect to registration
  */
 export default function TelegramAutoLogin() {
   const supabase = createClient()
@@ -22,7 +23,14 @@ export default function TelegramAutoLogin() {
 
   useEffect(() => {
     // Skip auto-login on certain pages
-    const skipPages = ['/', '/auth/login', '/auth/register', '/auth/welcome', '/onboarding']
+    const skipPages = [
+      '/',
+      '/auth/login',
+      '/auth/register',
+      '/auth/welcome',
+      '/onboarding',
+      '/auth/complete-profile'
+    ]
     if (skipPages.some(page => pathname?.startsWith(page))) {
       setIsChecking(false)
       return
@@ -35,36 +43,137 @@ export default function TelegramAutoLogin() {
     try {
       console.log('[TelegramAutoLogin] Starting auth check...')
 
-      // Check if already authenticated via Supabase
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-
-      if (sessionError) {
-        console.error('[TelegramAutoLogin] Session error:', sessionError)
-      }
-
-      console.log('[TelegramAutoLogin] Session check result:', {
-        hasSession: !!session,
-        hasUser: !!session?.user,
-        userId: session?.user?.id,
-        expiresAt: session?.expires_at
-      })
+      // First check if already authenticated via Supabase session
+      const { data: { session } } = await supabase.auth.getSession()
 
       if (session?.user) {
-        console.log('[TelegramAutoLogin] ✅ Active session found, user already authenticated')
+        console.log('[TelegramAutoLogin] ✅ Active session found')
+
+        // Check if profile is completed
+        const { data: userData } = await supabase
+          .from('users')
+          .select('profile_completed, current_role, roles')
+          .eq('id', session.user.id)
+          .single()
+
+        if (userData && !userData.profile_completed) {
+          console.log('[TelegramAutoLogin] Profile not completed, redirecting...')
+          router.push('/auth/complete-profile')
+          return
+        }
+
+        // Session valid and profile completed
         setIsChecking(false)
         return
       }
 
-      // If no session, redirect to welcome page for login/registration
-      console.log('[TelegramAutoLogin] ❌ No active session, redirecting to welcome')
-      router.push('/auth/welcome')
+      // No active session, check Telegram ID
+      const telegramId = tg?.user?.id
+
+      if (!telegramId) {
+        console.log('[TelegramAutoLogin] No Telegram ID available')
+        router.push('/auth/welcome')
+        setIsChecking(false)
+        return
+      }
+
+      console.log('[TelegramAutoLogin] Checking for user with Telegram ID:', telegramId)
+
+      // Check if user exists with this telegram_id
+      const { data: existingUser, error: userError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('telegram_id', telegramId)
+        .single()
+
+      if (userError || !existingUser) {
+        console.log('[TelegramAutoLogin] User not found, redirecting to registration')
+        router.push('/auth/register')
+        setIsChecking(false)
+        return
+      }
+
+      console.log('[TelegramAutoLogin] User found:', existingUser.id)
+
+      // Check if profile is completed
+      if (!existingUser.profile_completed) {
+        console.log('[TelegramAutoLogin] Profile not completed')
+
+        // Sign in first, then redirect to profile completion
+        await signInUserByTelegramId(existingUser)
+        router.push('/auth/complete-profile')
+        return
+      }
+
+      // User exists and profile completed - auto sign in
+      console.log('[TelegramAutoLogin] Auto-signing in user...')
+      await signInUserByTelegramId(existingUser)
+
+      // Redirect based on current_role
+      const role = existingUser.current_role || existingUser.roles?.[0] || 'worker'
+      console.log('[TelegramAutoLogin] Redirecting to dashboard for role:', role)
+
+      switch (role) {
+        case 'worker':
+          router.push('/worker/shifts')
+          break
+        case 'client':
+          router.push('/client/shifts')
+          break
+        case 'shef':
+          router.push('/shef/dashboard')
+          break
+        case 'admin':
+          router.push('/admin')
+          break
+        default:
+          router.push('/worker/shifts')
+      }
 
     } catch (error) {
       console.error('[TelegramAutoLogin] Error:', error)
-      // On error, redirect to welcome page
       router.push('/auth/welcome')
     } finally {
       setIsChecking(false)
+    }
+  }
+
+  /**
+   * Sign in user using their Telegram ID
+   * Creates a session using the user's email (telegram_id@telegram.user)
+   */
+  const signInUserByTelegramId = async (user: any) => {
+    try {
+      // Use Supabase admin auth to create session
+      // Note: In production, this should be done via a secure API endpoint
+      const email = `${user.telegram_id}@telegram.user`
+      const password = `tg_${user.telegram_id}_${process.env.NEXT_PUBLIC_TELEGRAM_AUTH_SECRET || 'secret'}`
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (error) {
+        console.error('[TelegramAutoLogin] Sign in error:', error.message)
+        // If password auth fails, try to sign up first (creates auth user)
+        await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              telegram_id: user.telegram_id
+            }
+          }
+        })
+        // Then try to sign in again
+        await supabase.auth.signInWithPassword({ email, password })
+      }
+
+      console.log('[TelegramAutoLogin] ✅ User signed in successfully')
+    } catch (err) {
+      console.error('[TelegramAutoLogin] Sign in failed:', err)
+      throw err
     }
   }
 

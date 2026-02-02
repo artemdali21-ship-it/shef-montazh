@@ -511,13 +511,16 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string | null
+          current_role: string | null
           full_name: string
           gosuslugi_verified: boolean | null
           id: string
           is_verified: boolean | null
           phone: string
+          profile_completed: boolean | null
           rating: number | null
           role: string
+          roles: string[] | null
           successful_shifts: number | null
           telegram_id: number | null
           total_shifts: number | null
@@ -526,13 +529,16 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           created_at?: string | null
+          current_role?: string | null
           full_name: string
           gosuslugi_verified?: boolean | null
           id?: string
           is_verified?: boolean | null
           phone: string
+          profile_completed?: boolean | null
           rating?: number | null
           role: string
+          roles?: string[] | null
           successful_shifts?: number | null
           telegram_id?: number | null
           total_shifts?: number | null
@@ -541,13 +547,16 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string | null
+          current_role?: string | null
           full_name?: string
           gosuslugi_verified?: boolean | null
           id?: string
           is_verified?: boolean | null
           phone?: string
+          profile_completed?: boolean | null
           rating?: number | null
           role?: string
+          roles?: string[] | null
           successful_shifts?: number | null
           telegram_id?: number | null
           total_shifts?: number | null

@@ -200,6 +200,9 @@ function RegisterForm() {
           email: email,
           user_type: selectedRole,
           role: selectedRole,
+          roles: [selectedRole], // NEW: Multi-role support
+          current_role: selectedRole, // NEW: Set initial role
+          profile_completed: false, // NEW: Profile needs to be completed
           rating: 0,
           total_shifts: 0,
           successful_shifts: 0,
@@ -233,25 +236,13 @@ function RegisterForm() {
         }
 
         // Show success toast
-        toast.success('Регистрация успешна! Добро пожаловать!')
+        toast.success('Регистрация успешна! Теперь заполните профиль')
 
         // Save role to localStorage
         localStorage.setItem('userRole', selectedRole)
 
-        // Redirect immediately based on role
-        switch (selectedRole) {
-          case 'worker':
-            router.push('/worker/shifts')
-            break
-          case 'client':
-            router.push('/client/shifts')
-            break
-          case 'shef':
-            router.push('/shef/dashboard')
-            break
-          default:
-            router.push('/')
-        }
+        // Redirect to profile completion page
+        router.push('/auth/complete-profile')
       }
     } catch (err: any) {
       console.error('Registration error:', err)
