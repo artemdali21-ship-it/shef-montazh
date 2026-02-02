@@ -1,21 +1,26 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Mail, Lock, LogIn, AlertCircle } from 'lucide-react'
+import { Mail, Lock, LogIn, AlertCircle, Info } from 'lucide-react'
 import { createClient } from '@/lib/supabase-client'
+import { useTelegram } from '@/lib/telegram'
 import toast from 'react-hot-toast'
 import { Logo } from '@/components/ui/Logo'
 
 export default function LoginPage() {
   const router = useRouter()
   const supabase = createClient()
+  const tg = useTelegram()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Check if user is from Telegram
+  const isFromTelegram = Boolean(tg?.user?.id)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -113,14 +118,48 @@ export default function LoginPage() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.2 }}
         >
-          <form onSubmit={handleLogin} className="space-y-6">
-            {/* Error Message */}
-            {error && (
-              <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-                <p className="text-red-400 text-sm">{error}</p>
+          {/* Telegram User Message */}
+          {isFromTelegram ? (
+            <div className="space-y-6">
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-6">
+                <div className="flex items-start gap-3 mb-4">
+                  <Info className="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-blue-400 font-semibold text-lg mb-2">
+                      Вход через Telegram
+                    </h3>
+                    <p className="text-blue-300 text-sm mb-3">
+                      Вы используете Telegram! Вход происходит автоматически.
+                    </p>
+                    <p className="text-blue-300 text-sm">
+                      Если у вас уже есть аккаунт - вы будете авторизованы автоматически.
+                    </p>
+                  </div>
+                </div>
               </div>
-            )}
+
+              <button
+                onClick={() => router.push('/auth/register')}
+                className="w-full py-3 bg-orange-500 hover:bg-orange-600 rounded-xl text-white font-bold transition shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
+              >
+                Зарегистрироваться
+              </button>
+
+              <div className="text-center">
+                <p className="text-gray-400 text-sm">
+                  Нет аккаунта? Зарегистрируйтесь, это займёт меньше минуты!
+                </p>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={handleLogin} className="space-y-6">
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-red-400 text-sm">{error}</p>
+                </div>
+              )}
 
             {/* Email Field */}
             <div>
@@ -190,15 +229,17 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Register Link */}
-          <div className="mt-6 pt-6 border-t border-white/10 text-center">
-            <p className="text-gray-400 text-sm">
-              Нет аккаунта?{' '}
-              <Link href="/auth/register" className="text-orange-400 hover:text-orange-300 font-semibold transition">
-                Зарегистрироваться
-              </Link>
-            </p>
-          </div>
+          {/* Register Link - Only for non-Telegram users */}
+          {!isFromTelegram && (
+            <div className="mt-6 pt-6 border-t border-white/10 text-center">
+              <p className="text-gray-400 text-sm">
+                Нет аккаунта?{' '}
+                <Link href="/auth/register" className="text-orange-400 hover:text-orange-300 font-semibold transition">
+                  Зарегистрироваться
+                </Link>
+              </p>
+            </div>
+          )}
         </motion.div>
 
         {/* Footer */}
