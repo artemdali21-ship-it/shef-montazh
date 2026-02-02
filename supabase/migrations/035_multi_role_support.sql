@@ -12,12 +12,12 @@ BEGIN
     EXECUTE 'ALTER TABLE users ADD COLUMN roles TEXT[] DEFAULT ARRAY[]::TEXT[]';
   END IF;
 
-  -- Add current_role column
+  -- Add current_role column (quoted because it's a reserved keyword)
   IF NOT EXISTS (
     SELECT 1 FROM information_schema.columns
     WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'current_role'
   ) THEN
-    EXECUTE 'ALTER TABLE users ADD COLUMN current_role TEXT';
+    EXECUTE 'ALTER TABLE users ADD COLUMN "current_role" TEXT';
   END IF;
 
   -- Add profile_completed column
@@ -35,7 +35,7 @@ BEGIN
   UPDATE users
   SET
     roles = ARRAY[role],
-    current_role = role
+    "current_role" = role
   WHERE roles = ARRAY[]::TEXT[] OR roles IS NULL;
 END $$;
 
@@ -59,18 +59,18 @@ BEGIN
   ) THEN
     ALTER TABLE users
     ADD CONSTRAINT current_role_in_roles_check
-    CHECK (current_role = ANY(roles) OR current_role IS NULL);
+    CHECK ("current_role" = ANY(roles) OR "current_role" IS NULL);
   END IF;
 END $$;
 
 -- 5. Create indexes for faster role-based queries
 CREATE INDEX IF NOT EXISTS idx_users_roles ON users USING GIN(roles);
-CREATE INDEX IF NOT EXISTS idx_users_current_role ON users(current_role);
+CREATE INDEX IF NOT EXISTS idx_users_current_role ON users("current_role");
 CREATE INDEX IF NOT EXISTS idx_users_profile_completed ON users(profile_completed);
 
 -- 6. Add comments for documentation
 COMMENT ON COLUMN users.roles IS 'Array of roles assigned to user (e.g., [''worker'', ''client''])';
-COMMENT ON COLUMN users.current_role IS 'Currently active role for this user session';
+COMMENT ON COLUMN users."current_role" IS 'Currently active role for this user session';
 COMMENT ON COLUMN users.profile_completed IS 'Whether user has completed their profile (full name, phone, etc.)';
 
 -- 7. Function to switch user role
@@ -88,7 +88,7 @@ BEGIN
 
   -- Update current_role
   UPDATE users
-  SET current_role = new_role
+  SET "current_role" = new_role
   WHERE id = user_id;
 
   RETURN TRUE;
@@ -112,9 +112,9 @@ BEGIN
 
   -- Set as current_role if it's the first role
   UPDATE users
-  SET current_role = new_role
+  SET "current_role" = new_role
   WHERE id = user_id
-  AND current_role IS NULL;
+  AND "current_role" IS NULL;
 
   RETURN TRUE;
 END;
@@ -144,9 +144,9 @@ BEGIN
 
   -- Update current_role if it was removed
   UPDATE users
-  SET current_role = remaining_roles[1]
+  SET "current_role" = remaining_roles[1]
   WHERE id = user_id
-  AND current_role = role_to_remove;
+  AND "current_role" = role_to_remove;
 
   RETURN TRUE;
 END;
