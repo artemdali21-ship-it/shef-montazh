@@ -176,6 +176,18 @@ function RegisterForm() {
       const telegramId = tg?.user?.id
       const telegramUsername = tg?.user?.username
 
+      // Normalize phone number (convert 89266035059 to +79266035059)
+      let normalizedPhone = phone.trim()
+      if (normalizedPhone.startsWith('8') && normalizedPhone.length === 11) {
+        normalizedPhone = '+7' + normalizedPhone.slice(1)
+      } else if (normalizedPhone.startsWith('9') && normalizedPhone.length === 10) {
+        normalizedPhone = '+7' + normalizedPhone
+      } else if (!normalizedPhone.startsWith('+')) {
+        normalizedPhone = '+' + normalizedPhone
+      }
+
+      console.log('[DEBUG] Phone normalized:', phone, '->', normalizedPhone)
+
       // Use consistent password generation pattern (same as auto-login)
       const finalEmail = telegramId ? `${telegramId}@telegram.user` : email
       const finalPassword = telegramId
@@ -183,12 +195,30 @@ function RegisterForm() {
         : password
 
       // For Telegram users: Check if user with this phone already exists
-      if (telegramId && phone) {
-        const { data: existingUser } = await supabase
-          .from('users')
-          .select('id, telegram_id, email, profile_completed')
-          .eq('phone', phone)
-          .single()
+      if (telegramId) {
+        // Try multiple phone formats to find existing user
+        const phoneVariants = [
+          normalizedPhone,
+          phone,
+          phone.startsWith('+') ? phone.slice(1) : '+' + phone,
+        ]
+
+        let existingUser = null
+        for (const phoneVariant of phoneVariants) {
+          const { data } = await supabase
+            .from('users')
+            .select('id, telegram_id, email, profile_completed')
+            .eq('phone', phoneVariant)
+            .maybeSingle()
+
+          if (data) {
+            existingUser = data
+            console.log('[DEBUG] Found existing user with phone variant:', phoneVariant)
+            break
+          }
+        }
+
+        if (existingUser) {
 
         if (existingUser) {
           console.log('[DEBUG] Found existing user with this phone:', existingUser)
@@ -285,8 +315,8 @@ function RegisterForm() {
         const { data: userData, error: userError } = await supabase.from('users').insert({
           id: authData.user.id,
           full_name: fullName,
-          phone: phone,
-          email: email,
+          phone: normalizedPhone,
+          email: finalEmail,
           user_type: selectedRole,
           role: selectedRole,
           roles: [selectedRole], // NEW: Multi-role support
