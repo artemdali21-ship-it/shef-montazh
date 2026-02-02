@@ -91,7 +91,7 @@ export default function TelegramAutoLogin() {
         router.push('/auth/register')
         setIsChecking(false)
         return
-      }'
+      }
 
       console.log('[TelegramAutoLogin] User found:', existingUser.id)
 
