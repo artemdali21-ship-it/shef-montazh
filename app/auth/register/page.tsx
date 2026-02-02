@@ -264,19 +264,45 @@ function RegisterForm() {
           }
 
           // Try to sign in with Telegram credentials
-          const { error: signInError } = await supabase.auth.signInWithPassword({
+          let signInResult = await supabase.auth.signInWithPassword({
             email: finalEmail,
             password: finalPassword,
           })
 
-          if (signInError) {
-            console.log('[DEBUG] Sign in failed, user might not exist in auth.users')
-            // This is fine - user exists in users table but not in auth.users
-            // TelegramAutoLogin will handle this case
-          } else {
-            console.log('[DEBUG] Successfully signed in existing user')
+          if (signInResult.error) {
+            console.log('[DEBUG] Sign in failed, creating auth user...', signInResult.error.message)
+
+            // Auth user doesn't exist - create it
+            const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+              email: finalEmail,
+              password: finalPassword,
+              options: {
+                data: {
+                  telegram_id: telegramId,
+                  telegram_username: telegramUsername,
+                },
+              },
+            })
+
+            if (signUpError) {
+              console.error('[DEBUG] Failed to create auth user:', signUpError)
+              throw new Error(`Не удалось создать учётную запись: ${signUpError.message}`)
+            }
+
+            console.log('[DEBUG] Auth user created, signing in...')
+
+            // Now sign in
+            signInResult = await supabase.auth.signInWithPassword({
+              email: finalEmail,
+              password: finalPassword,
+            })
+
+            if (signInResult.error) {
+              throw new Error(`Не удалось войти: ${signInResult.error.message}`)
+            }
           }
 
+          console.log('[DEBUG] Successfully signed in existing user')
           toast.success('Вход выполнен! Добро пожаловать обратно')
 
           // Redirect based on profile completion

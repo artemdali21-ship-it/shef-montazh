@@ -135,8 +135,8 @@ export default function CompleteProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-start justify-center p-4 pb-32">
+      <div className="max-w-md w-full mt-8">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-6">
@@ -188,6 +188,12 @@ export default function CompleteProfilePage() {
                     setFullName(e.target.value)
                     setHasManuallyEdited(true)
                   }}
+                  onFocus={(e) => {
+                    // Scroll input into view when keyboard appears
+                    setTimeout(() => {
+                      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                    }, 300)
+                  }}
                   placeholder="Иванов Иван Иванович"
                   className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
                   disabled={loading}
@@ -211,6 +217,12 @@ export default function CompleteProfilePage() {
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  onFocus={(e) => {
+                    // Scroll input into view when keyboard appears
+                    setTimeout(() => {
+                      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                    }, 300)
+                  }}
                   placeholder="+7 999 123 45 67"
                   className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
                   disabled={loading}
