@@ -32,6 +32,7 @@ export default function OnboardingScreen() {
   const router = useRouter()
   const [currentSlide, setCurrentSlide] = useState(0)
   const [tgUser, setTgUser] = useState<any>(null)
+  const [isNavigating, setIsNavigating] = useState(false)
   const tg = useTelegram()
 
   useEffect(() => {
@@ -39,6 +40,11 @@ export default function OnboardingScreen() {
       setTgUser(tg.user)
     }
   }, [tg])
+
+  // Debug: Log slide changes
+  useEffect(() => {
+    console.log('[Onboarding] currentSlide changed to:', currentSlide)
+  }, [currentSlide])
 
   const slides = [
     {
@@ -59,6 +65,12 @@ export default function OnboardingScreen() {
   ]
 
   const handleNext = () => {
+    // Prevent multiple clicks
+    if (isNavigating) {
+      console.log('[DEBUG] Already navigating, ignoring click')
+      return
+    }
+
     console.log('[DEBUG] handleNext called, currentSlide:', currentSlide)
     console.log('[DEBUG] slides.length:', slides.length)
 
@@ -70,20 +82,28 @@ export default function OnboardingScreen() {
 
     if (currentSlide < slides.length - 1) {
       console.log('[DEBUG] Moving to next slide, new slide:', currentSlide + 1)
-      setCurrentSlide(currentSlide + 1)
+      setCurrentSlide(prev => prev + 1)
     } else {
       console.log('[DEBUG] Last slide reached, navigating to /auth/welcome')
+      setIsNavigating(true)
       router.push('/auth/welcome')
     }
   }
 
   const handleSkip = () => {
+    if (isNavigating) {
+      console.log('[DEBUG] Already navigating, ignoring skip')
+      return
+    }
+
     console.log('[DEBUG] handleSkip called')
     try {
       tg?.haptic('light')
     } catch (e) {
       console.log('[DEBUG] Haptic failed, continuing anyway')
     }
+
+    setIsNavigating(true)
     router.push('/auth/welcome')
   }
 
@@ -214,44 +234,54 @@ export default function OnboardingScreen() {
         <div className="space-y-4 flex-shrink-0">
           <button
             onClick={handleNext}
-            className="w-full text-white rounded-lg transition-all duration-300 font-sans flex items-center justify-center gap-2 font-semibold h-12 hover:scale-105 active:scale-95"
+            disabled={isNavigating}
+            className="w-full text-white rounded-lg transition-all duration-300 font-sans flex items-center justify-center gap-2 font-semibold h-12 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
-              background: '#E85D2F',
+              background: isNavigating ? '#999' : '#E85D2F',
               boxShadow: '0 6px 20px rgba(232, 93, 47, 0.3)',
-              cursor: 'pointer',
+              cursor: isNavigating ? 'not-allowed' : 'pointer',
               border: 'none',
               fontSize: '16px',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#D04D1F'
+              if (!isNavigating) {
+                e.currentTarget.style.background = '#D04D1F'
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#E85D2F'
+              if (!isNavigating) {
+                e.currentTarget.style.background = '#E85D2F'
+              }
             }}
           >
-            {currentSlide === slides.length - 1 ? 'Начать' : 'Далее'}
-            {currentSlide < slides.length - 1 && <ChevronRight size={20} strokeWidth={2} />}
+            {isNavigating ? 'Загрузка...' : (currentSlide === slides.length - 1 ? 'Начать' : 'Далее')}
+            {!isNavigating && currentSlide < slides.length - 1 && <ChevronRight size={20} strokeWidth={2} />}
           </button>
 
           {currentSlide > 0 && (
             <button
               onClick={handleSkip}
-              className="w-full rounded-lg transition-all duration-300 font-sans font-semibold h-12"
+              disabled={isNavigating}
+              className="w-full rounded-lg transition-all duration-300 font-sans font-semibold h-12 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 background: 'rgba(255, 255, 255, 0.1)',
                 backdropFilter: 'blur(10px)',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
-                cursor: 'pointer',
+                cursor: isNavigating ? 'not-allowed' : 'pointer',
                 fontSize: '16px',
                 color: '#FFFFFF',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)'
+                if (!isNavigating) {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)'
+                }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
+                if (!isNavigating) {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
+                }
               }}
             >
               Пропустить
