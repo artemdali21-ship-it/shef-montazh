@@ -186,58 +186,68 @@ function RegisterForm() {
       if (telegramId && phone) {
         const { data: existingUser } = await supabase
           .from('users')
-          .select('id, telegram_id, email')
+          .select('id, telegram_id, email, profile_completed')
           .eq('phone', phone)
           .single()
 
-        if (existingUser && !existingUser.telegram_id) {
-          // User exists but doesn't have telegram_id - update it
-          console.log('[DEBUG] Found existing user without telegram_id, updating...')
+        if (existingUser) {
+          console.log('[DEBUG] Found existing user with this phone:', existingUser)
 
-          const { error: updateError } = await supabase
-            .from('users')
-            .update({
-              telegram_id: telegramId.toString(),
-              email: finalEmail
-            })
-            .eq('id', existingUser.id)
-
-          if (updateError) {
-            throw new Error('Не удалось обновить профиль')
+          // Update telegram_id if not set
+          if (!existingUser.telegram_id) {
+            console.log('[DEBUG] Updating telegram_id for existing user...')
+            await supabase
+              .from('users')
+              .update({
+                telegram_id: telegramId.toString(),
+              })
+              .eq('id', existingUser.id)
           }
 
-          // Update auth user email and password
-          const { error: authUpdateError } = await supabase.auth.signInWithPassword({
-            email: existingUser.email,
-            password: 'temp' // Try old password
-          }).catch(async () => {
-            // If old password doesn't work, update via API
-            return { error: null }
-          })
-
-          // Create/update auth user with new Telegram credentials
-          const { error: signUpError } = await supabase.auth.signUp({
+          // Try to sign in with Telegram credentials
+          const { error: signInError } = await supabase.auth.signInWithPassword({
             email: finalEmail,
             password: finalPassword,
-            options: {
-              data: {
-                telegram_id: telegramId,
-                telegram_username: telegramUsername,
-              },
-            },
           })
 
-          if (!signUpError) {
-            // Sign in with new credentials
-            await supabase.auth.signInWithPassword({
-              email: finalEmail,
-              password: finalPassword,
-            })
-
-            toast.success('Аккаунт обновлён! Теперь вы можете входить через Telegram')
-            router.push('/auth/complete-profile')
-            return
+          if (signInError) {
+            console.log('[DEBUG] Sign in failed, user might not exist in auth.users')
+            // This is fine - user exists in users table but not in auth.users
+            // TelegramAutoLogin will handle this case
+          } else {
+            console.log('[DEBUG] Successfully signed in existing user')
           }
+
+          toast.success('Вход выполнен! Добро пожаловать обратно')
+
+          // Redirect based on profile completion
+          if (!existingUser.profile_completed) {
+            router.push('/auth/complete-profile')
+          } else {
+            // Get user's current role and redirect
+            const { data: userData } = await supabase
+              .from('users')
+              .select('current_role, roles')
+              .eq('id', existingUser.id)
+              .single()
+
+            const role = userData?.current_role || userData?.roles?.[0] || 'worker'
+
+            switch (role) {
+              case 'worker':
+                router.push('/worker/shifts')
+                break
+              case 'client':
+                router.push('/client/shifts')
+                break
+              case 'shef':
+                router.push('/shef/dashboard')
+                break
+              default:
+                router.push('/worker/shifts')
+            }
+          }
+          return
         }
       }
 
