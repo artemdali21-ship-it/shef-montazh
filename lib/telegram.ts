@@ -2,10 +2,23 @@ import { createClient } from '@supabase/supabase-js'
 
 export const useTelegram = () => {
   if (typeof window === 'undefined') return null;
+  
   const tg = (window as any).Telegram?.WebApp;
   if (!tg) return null;
 
-  tg.ready();
+  // Ensure WebApp is ready
+  if (!tg.isReady) {
+    console.log('[useTelegram] WebApp not ready yet, calling ready()');
+    tg.ready();
+  }
+
+  // Wait for initData to be available
+  if (!tg.initDataUnsafe?.user) {
+    console.warn('[useTelegram] initDataUnsafe.user not yet available');
+    // This might happen if called before Telegram finishes initialization
+    // The caller should retry or wait
+  }
+
   tg.expand();
   tg.setHeaderColor('#8B8B8B');
   tg.setBackgroundColor('#8B8B8B');

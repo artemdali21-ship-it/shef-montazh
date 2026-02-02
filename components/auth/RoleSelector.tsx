@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { HardHat, Building, Briefcase } from 'lucide-react'
 import { useTelegram } from '@/lib/telegram'
@@ -37,6 +37,34 @@ export default function RoleSelector() {
   const tg = useTelegram()
   const [loading, setLoading] = useState(false)
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null)
+  const [isReady, setIsReady] = useState(false)
+
+  useEffect(() => {
+    // Wait for Telegram data to be ready
+    const waitForTelegramData = async () => {
+      let attempts = 0
+      const maxAttempts = 50 // 5 seconds with 100ms intervals
+
+      while (attempts < maxAttempts) {
+        const webapp = (window as any).Telegram?.WebApp
+        
+        if (webapp?.initDataUnsafe?.user?.id) {
+          console.log('[RoleSelector] Telegram user data ready:', webapp.initDataUnsafe.user)
+          setIsReady(true)
+          return
+        }
+
+        attempts++
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+
+      // After max attempts, log warning but proceed anyway
+      console.warn('[RoleSelector] Telegram user data not ready after 5 seconds, proceeding anyway')
+      setIsReady(true)
+    }
+
+    waitForTelegramData()
+  }, [])
 
   const handleSelectRole = async (role: UserRole) => {
     console.log('[RoleSelector] handleSelectRole called with role:', role)
