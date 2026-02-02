@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { sendTelegramNotification } from '@/lib/telegram'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 // POST - Send message
 export async function POST(req: NextRequest) {
   try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
     const { from_id, to_id, content } = await req.json()
 
     if (!from_id || !to_id || !content) {
@@ -48,6 +48,11 @@ export async function POST(req: NextRequest) {
 // GET - Get message history
 export async function GET(req: NextRequest) {
   try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
     const searchParams = req.nextUrl.searchParams
     const userId = searchParams.get('userId')
     const otherUserId = searchParams.get('otherUserId')

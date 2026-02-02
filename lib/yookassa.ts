@@ -1,10 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 const YUKASSA_API_URL = 'https://api.yookassa.ru/v3'
 const YUKASSA_SHOP_ID = process.env.YUKASSA_SHOP_ID!
 const YUKASSA_SECRET_KEY = process.env.YUKASSA_SECRET_KEY!
@@ -128,6 +123,11 @@ export async function refundPayment(paymentId: string, amount: number, reason?: 
  * Process YooKassa webhook
  */
 export async function processYooKassaWebhook(event: any): Promise<void> {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
   const { type, object } = event
 
   if (type === 'payment.succeeded') {

@@ -1,10 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 /**
  * Log types for different operations
  */
@@ -34,6 +29,11 @@ export interface LogEntry {
  */
 export async function logEvent(entry: LogEntry): Promise<void> {
   try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
     const { error } = await supabase.from('api_logs').insert({
       type: entry.type,
       user_id: entry.userId,
@@ -140,6 +140,11 @@ export async function getMonitoringStats(timeRange: 'hour' | 'day' | 'week' = 'd
   }
 
   try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
     // Get total API calls
     const { count: totalCalls } = await supabase
       .from('api_logs')
@@ -206,6 +211,11 @@ export async function getRecentLogs(
   limit: number = 50
 ) {
   try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
     let query = supabase
       .from('api_logs')
       .select('*')

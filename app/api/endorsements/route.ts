@@ -1,13 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 // Helper: update endorsement stats
-async function updateWorkerEndorsementStats(userId: string) {
+async function updateWorkerEndorsementStats(userId: string, supabase: any) {
   const { data: endorsements } = await supabase
     .from('endorsements')
     .select('weight')
@@ -31,6 +26,11 @@ async function updateWorkerEndorsementStats(userId: string) {
 
 // POST /api/endorsements - создать рекомендацию
 export async function POST(req: NextRequest) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
   const { endorsedUserId, endorserUserId, role, weight = 1, reason } = await req.json()
 
   // Проверка: рекомендовать может только верифицированный шеф/admin
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
 
   // Обновляем endorsement_count
-  await updateWorkerEndorsementStats(endorsedUserId)
+  await updateWorkerEndorsementStats(endorsedUserId, supabase)
 
   return NextResponse.json(data[0])
 }

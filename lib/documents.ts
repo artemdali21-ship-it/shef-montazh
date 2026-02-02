@@ -1,10 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 export interface CompletionActData {
   shiftId: string
   clientId: string
@@ -67,6 +62,11 @@ ID смены: ${shiftId}
   `.trim()
 
   // Save document to database
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
   const { data: doc, error } = await supabase
     .from('documents')
     .insert({
@@ -138,6 +138,11 @@ ID смены: ${shiftId}
   `.trim()
 
   // Save document
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
   const { error } = await supabase
     .from('documents')
     .insert({
@@ -167,6 +172,11 @@ ID смены: ${shiftId}
  * Get user's documents
  */
 export async function getUserDocuments(userId: string) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
   const { data, error } = await supabase
     .from('documents')
     .select(`
@@ -188,6 +198,11 @@ export async function getUserDocuments(userId: string) {
  * Get document by ID
  */
 export async function getDocument(documentId: string) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
   const { data, error } = await supabase
     .from('documents')
     .select('*')

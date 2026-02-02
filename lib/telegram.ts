@@ -18,11 +18,6 @@ export const useTelegram = () => {
 };
 
 // Server-side Telegram Bot Integration
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN!
 const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`
 
@@ -59,6 +54,11 @@ export async function sendTelegramNotification(
   payload: NotificationPayload
 ): Promise<{ success: boolean; error?: string; messageId?: number }> {
   try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
     // 1. Получить telegram_id пользователя из БД
     const { data: user, error: userError } = await supabase
       .from('users')
@@ -175,6 +175,11 @@ export async function sendTelegramNotificationWithButtons(
   buttons: Array<{ text: string; url: string }>
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
     const { data: user } = await supabase
       .from('users')
       .select('telegram_id')
