@@ -128,7 +128,7 @@ export default function TelegramAutoLogin() {
           break
         default:
           router.push('/worker/shifts')
-      }'
+      }
 
     } catch (error) {
       console.error('[TelegramAutoLogin] Error:', error)
