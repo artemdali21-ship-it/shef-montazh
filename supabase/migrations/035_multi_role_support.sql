@@ -1,31 +1,31 @@
 -- Migration: Multi-role support and profile completion tracking
 -- Allows users to have multiple roles and switch between them
 
--- 1. Add new columns for multi-role support (one by one to avoid syntax errors)
+-- 1. Add new columns for multi-role support (using dynamic SQL)
 DO $$
 BEGIN
   -- Add roles column
   IF NOT EXISTS (
     SELECT 1 FROM information_schema.columns
-    WHERE table_name = 'users' AND column_name = 'roles'
+    WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'roles'
   ) THEN
-    ALTER TABLE users ADD COLUMN roles TEXT[] DEFAULT ARRAY[]::TEXT[];
+    EXECUTE 'ALTER TABLE users ADD COLUMN roles TEXT[] DEFAULT ARRAY[]::TEXT[]';
   END IF;
 
   -- Add current_role column
   IF NOT EXISTS (
     SELECT 1 FROM information_schema.columns
-    WHERE table_name = 'users' AND column_name = 'current_role'
+    WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'current_role'
   ) THEN
-    ALTER TABLE users ADD COLUMN current_role TEXT;
+    EXECUTE 'ALTER TABLE users ADD COLUMN current_role TEXT';
   END IF;
 
   -- Add profile_completed column
   IF NOT EXISTS (
     SELECT 1 FROM information_schema.columns
-    WHERE table_name = 'users' AND column_name = 'profile_completed'
+    WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'profile_completed'
   ) THEN
-    ALTER TABLE users ADD COLUMN profile_completed BOOLEAN DEFAULT FALSE;
+    EXECUTE 'ALTER TABLE users ADD COLUMN profile_completed BOOLEAN DEFAULT FALSE';
   END IF;
 END $$;
 
