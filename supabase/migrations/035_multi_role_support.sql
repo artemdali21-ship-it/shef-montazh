@@ -30,11 +30,14 @@ BEGIN
 END $$;
 
 -- 2. Migrate existing single role data to roles array
-UPDATE users
-SET
-  roles = ARRAY[role],
-  current_role = role
-WHERE roles = ARRAY[]::TEXT[] OR roles IS NULL;
+DO $$
+BEGIN
+  UPDATE users
+  SET
+    roles = ARRAY[role],
+    current_role = role
+  WHERE roles = ARRAY[]::TEXT[] OR roles IS NULL;
+END $$;
 
 -- 3. Add constraint to ensure roles array contains valid values
 DO $$
