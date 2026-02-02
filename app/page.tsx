@@ -1,14 +1,17 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
 import RoleSelector from '@/components/auth/RoleSelector'
+import InitialOnboarding from '@/components/onboarding/InitialOnboarding'
 import { Logo } from '@/components/ui/Logo'
 
 export default function HomePage() {
   const router = useRouter()
   const { session, loading } = useTelegramSession()
+  const [showOnboarding, setShowOnboarding] = useState(false)
+  const [showRoleSelector, setShowRoleSelector] = useState(false)
 
   useEffect(() => {
     if (loading) return
@@ -16,9 +19,8 @@ export default function HomePage() {
     if (session) {
       console.log('[HomePage] Session found:', session)
 
-      // User is logged in - check if onboarding is complete
+      // User is logged in - redirect to dashboard
       if (session.hasSeenOnboarding) {
-        // Redirect to role-specific dashboard
         const dashboardPaths = {
           worker: '/worker/shifts',
           client: '/client/shifts',
@@ -29,15 +31,23 @@ export default function HomePage() {
         console.log('[HomePage] Redirecting to:', path)
         router.push(path)
       } else {
-        // Redirect to onboarding
+        // Onboarding not complete - redirect to onboarding
         const onboardingPath = `/onboarding/${session.role}`
         console.log('[HomePage] Redirecting to onboarding:', onboardingPath)
         router.push(onboardingPath)
       }
     } else {
-      console.log('[HomePage] No session - showing role selector')
+      // No session - show initial onboarding slides
+      console.log('[HomePage] No session - showing initial onboarding')
+      setShowOnboarding(true)
     }
   }, [session, loading, router])
+
+  const handleOnboardingComplete = () => {
+    console.log('[HomePage] Initial onboarding complete - showing role selector')
+    setShowOnboarding(false)
+    setShowRoleSelector(true)
+  }
 
   // Show loading while checking session
   if (loading) {
@@ -54,8 +64,13 @@ export default function HomePage() {
     )
   }
 
-  // Show role selector if no session
-  if (!session) {
+  // Show initial onboarding (3 slides with helmets)
+  if (showOnboarding) {
+    return <InitialOnboarding onComplete={handleOnboardingComplete} />
+  }
+
+  // Show role selector after onboarding
+  if (showRoleSelector) {
     return <RoleSelector />
   }
 
