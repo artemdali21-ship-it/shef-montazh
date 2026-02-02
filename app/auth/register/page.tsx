@@ -55,6 +55,9 @@ function RegisterForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Check if user is from Telegram
+  const isFromTelegram = Boolean(tg?.user?.id)
+
   // Pre-fill form from Telegram data
   useEffect(() => {
     if (tg?.user) {
@@ -62,9 +65,15 @@ function RegisterForm() {
       const lastName = tg.user.last_name || ''
       setFullName(`${firstName} ${lastName}`.trim())
 
-      // Auto-generate email from telegram_id if not available
-      if (!email && tg.user.id) {
-        setEmail(`${tg.user.id}@telegram.user`)
+      // Auto-generate email from telegram_id
+      if (tg.user.id) {
+        const autoEmail = `${tg.user.id}@telegram.user`
+        setEmail(autoEmail)
+
+        // Auto-generate password
+        const autoPassword = `tg_${tg.user.id}_${process.env.NEXT_PUBLIC_TELEGRAM_AUTH_SECRET || 'secret'}`
+        setPassword(autoPassword)
+        setConfirmPassword(autoPassword)
       }
     }
   }, [tg])
@@ -136,20 +145,28 @@ function RegisterForm() {
     e.preventDefault()
     setError(null)
 
-    // Validation
-    if (!fullName || !email || !phone || !password || !confirmPassword) {
-      setError('Пожалуйста, заполните все поля')
-      return
-    }
+    // Validation for Telegram users (only name and phone required)
+    if (isFromTelegram) {
+      if (!fullName || !phone) {
+        setError('Пожалуйста, заполните имя и телефон')
+        return
+      }
+    } else {
+      // Validation for non-Telegram users (all fields required)
+      if (!fullName || !email || !phone || !password || !confirmPassword) {
+        setError('Пожалуйста, заполните все поля')
+        return
+      }
 
-    if (password !== confirmPassword) {
-      setError('Пароли не совпадают')
-      return
-    }
+      if (password !== confirmPassword) {
+        setError('Пароли не совпадают')
+        return
+      }
 
-    if (password.length < 6) {
-      setError('Пароль должен содержать минимум 6 символов')
-      return
+      if (password.length < 6) {
+        setError('Пароль должен содержать минимум 6 символов')
+        return
+      }
     }
 
     try {
@@ -159,12 +176,15 @@ function RegisterForm() {
       const telegramId = tg?.user?.id
       const telegramUsername = tg?.user?.username
 
-      // Use auto-generated password for Telegram users
-      const finalPassword = telegramId ? `telegram_${telegramId}_autologin` : password
+      // Use consistent password generation pattern (same as auto-login)
+      const finalEmail = telegramId ? `${telegramId}@telegram.user` : email
+      const finalPassword = telegramId
+        ? `tg_${telegramId}_${process.env.NEXT_PUBLIC_TELEGRAM_AUTH_SECRET || 'secret'}`
+        : password
 
       // Sign up with Supabase Auth
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        email,
+        email: finalEmail,
         password: finalPassword,
         options: {
           data: {
@@ -343,6 +363,21 @@ function RegisterForm() {
               </p>
             </div>
 
+            {/* Telegram Info */}
+            {isFromTelegram && (
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-blue-400 font-semibold mb-1">Регистрация через Telegram</h3>
+                    <p className="text-blue-300 text-sm">
+                      Вы регистрируетесь через Telegram ID. Email и пароль не требуются!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Full Name / Company Name */}
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-white mb-2">
@@ -369,27 +404,29 @@ function RegisterForm() {
               </div>
             </div>
 
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
-                Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  ref={emailRef}
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(e, phoneRef)}
-                  onFocus={() => scrollToField(emailRef)}
-                  placeholder="example@email.com"
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 transition"
-                  disabled={loading}
-                />
+            {/* Email - Hidden for Telegram users */}
+            {!isFromTelegram && (
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
+                  Email
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    ref={emailRef}
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e, phoneRef)}
+                    onFocus={() => scrollToField(emailRef)}
+                    placeholder="example@email.com"
+                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 transition"
+                    disabled={loading}
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Phone */}
             <div>
@@ -413,108 +450,112 @@ function RegisterForm() {
               </div>
             </div>
 
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
-                Пароль
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  ref={passwordRef}
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onFocus={() => scrollToField(passwordRef)}
-                  placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 transition"
-                  disabled={loading}
-                />
-              </div>
-
-              {/* Password Strength Indicator */}
-              {password.length > 0 && (
-                <div className="mt-2">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-gray-400">Надёжность пароля:</span>
-                    <span className={`text-xs font-medium ${
-                      passwordStrength === 'weak' ? 'text-red-400' :
-                      passwordStrength === 'medium' ? 'text-yellow-400' :
-                      'text-green-400'
-                    }`}>
-                      {passwordStrength === 'weak' && 'Слабый'}
-                      {passwordStrength === 'medium' && 'Средний'}
-                      {passwordStrength === 'strong' && 'Сильный'}
-                    </span>
-                  </div>
-                  <div className="h-1 bg-white/10 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full transition-all duration-300 ${getPasswordStrengthColor()}`}
-                      style={{ width: getPasswordStrengthWidth() }}
+            {/* Password - Hidden for Telegram users */}
+            {!isFromTelegram && (
+              <>
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
+                    Пароль
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      ref={passwordRef}
+                      id="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      onFocus={() => scrollToField(passwordRef)}
+                      placeholder="••••••••"
+                      className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 transition"
+                      disabled={loading}
                     />
                   </div>
-                </div>
-              )}
-            </div>
 
-            {/* Confirm Password */}
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-white mb-2">
-                Подтвердите пароль
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  ref={confirmPasswordRef}
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  onFocus={() => scrollToField(confirmPasswordRef)}
-                  placeholder="••••••••"
-                  className={`w-full pl-12 pr-4 py-3 bg-white/5 border rounded-xl text-white placeholder-gray-400 focus:outline-none transition ${
-                    passwordsMatch === null
-                      ? 'border-white/10 focus:border-orange-500'
-                      : passwordsMatch
-                      ? 'border-green-500 focus:border-green-500'
-                      : 'border-red-500 focus:border-red-500'
-                  }`}
-                  disabled={loading}
-                />
-                {/* Password Match Icon */}
-                {passwordsMatch !== null && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    {passwordsMatch ? (
-                      <Check className="w-5 h-5 text-green-400" />
-                    ) : (
-                      <X className="w-5 h-5 text-red-400" />
+                  {/* Password Strength Indicator */}
+                  {password.length > 0 && (
+                    <div className="mt-2">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs text-gray-400">Надёжность пароля:</span>
+                        <span className={`text-xs font-medium ${
+                          passwordStrength === 'weak' ? 'text-red-400' :
+                          passwordStrength === 'medium' ? 'text-yellow-400' :
+                          'text-green-400'
+                        }`}>
+                          {passwordStrength === 'weak' && 'Слабый'}
+                          {passwordStrength === 'medium' && 'Средний'}
+                          {passwordStrength === 'strong' && 'Сильный'}
+                        </span>
+                      </div>
+                      <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full transition-all duration-300 ${getPasswordStrengthColor()}`}
+                          style={{ width: getPasswordStrengthWidth() }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Confirm Password */}
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-white mb-2">
+                    Подтвердите пароль
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      ref={confirmPasswordRef}
+                      id="confirmPassword"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      onFocus={() => scrollToField(confirmPasswordRef)}
+                      placeholder="••••••••"
+                      className={`w-full pl-12 pr-4 py-3 bg-white/5 border rounded-xl text-white placeholder-gray-400 focus:outline-none transition ${
+                        passwordsMatch === null
+                          ? 'border-white/10 focus:border-orange-500'
+                          : passwordsMatch
+                          ? 'border-green-500 focus:border-green-500'
+                          : 'border-red-500 focus:border-red-500'
+                      }`}
+                      disabled={loading}
+                    />
+                    {/* Password Match Icon */}
+                    {passwordsMatch !== null && (
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                        {passwordsMatch ? (
+                          <Check className="w-5 h-5 text-green-400" />
+                        ) : (
+                          <X className="w-5 h-5 text-red-400" />
+                        )}
+                      </div>
                     )}
                   </div>
-                )}
-              </div>
 
-              {/* Password Mismatch Error */}
-              {passwordsMatch === false && confirmPassword.length > 0 && (
-                <p className="mt-2 text-sm text-red-400 flex items-center gap-1">
-                  <X className="w-4 h-4" />
-                  Пароли не совпадают
-                </p>
-              )}
+                  {/* Password Mismatch Error */}
+                  {passwordsMatch === false && confirmPassword.length > 0 && (
+                    <p className="mt-2 text-sm text-red-400 flex items-center gap-1">
+                      <X className="w-4 h-4" />
+                      Пароли не совпадают
+                    </p>
+                  )}
 
-              {/* Password Match Success */}
-              {passwordsMatch === true && (
-                <p className="mt-2 text-sm text-green-400 flex items-center gap-1">
-                  <Check className="w-4 h-4" />
-                  Пароли совпадают
-                </p>
-              )}
-            </div>
+                  {/* Password Match Success */}
+                  {passwordsMatch === true && (
+                    <p className="mt-2 text-sm text-green-400 flex items-center gap-1">
+                      <Check className="w-4 h-4" />
+                      Пароли совпадают
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
 
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading || passwordsMatch === false}
+              disabled={loading || (!isFromTelegram && passwordsMatch === false)}
               className="w-full py-3 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-500/50 disabled:cursor-not-allowed rounded-xl text-white font-bold transition shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
             >
               {loading ? (
