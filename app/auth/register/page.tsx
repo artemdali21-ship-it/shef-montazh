@@ -372,11 +372,10 @@ function RegisterForm() {
           full_name: fullName,
           phone: normalizedPhone,
           email: finalEmail,
-          user_type: selectedRole,
           role: selectedRole,
-          roles: [selectedRole], // NEW: Multi-role support
-          current_role: selectedRole, // NEW: Set initial role
-          profile_completed: false, // NEW: Profile needs to be completed
+          roles: [selectedRole], // Multi-role support
+          current_role: selectedRole, // Set initial role
+          profile_completed: false, // Profile needs to be completed
           rating: 0,
           total_shifts: 0,
           successful_shifts: 0,
@@ -398,15 +397,37 @@ function RegisterForm() {
           throw new Error(`Не удалось создать профиль: ${userError.message || 'Unknown error'}`)
         }
 
+        // Verify user record was actually created
+        const { data: verifyUser, error: verifyError } = await supabase
+          .from('users')
+          .select('id')
+          .eq('id', authData.user.id)
+          .maybeSingle()
+
+        if (verifyError || !verifyUser) {
+          console.error('[ERROR] User record verification failed:', verifyError)
+          throw new Error('Профиль не был создан. Попробуйте снова или обратитесь в поддержку.')
+        }
+
+        console.log('[DEBUG] User record verified:', verifyUser)
+
         // Create role-specific profile
         if (selectedRole === 'worker') {
-          await supabase.from('worker_profiles').insert({
+          const { error: workerProfileError } = await supabase.from('worker_profiles').insert({
             user_id: authData.user.id,
           })
+          if (workerProfileError) {
+            console.error('[ERROR] Failed to create worker profile:', workerProfileError)
+            // Don't throw - profile can be created later
+          }
         } else if (selectedRole === 'client') {
-          await supabase.from('client_profiles').insert({
+          const { error: clientProfileError } = await supabase.from('client_profiles').insert({
             user_id: authData.user.id,
           })
+          if (clientProfileError) {
+            console.error('[ERROR] Failed to create client profile:', clientProfileError)
+            // Don't throw - profile can be created later
+          }
         }
 
         // Show success toast

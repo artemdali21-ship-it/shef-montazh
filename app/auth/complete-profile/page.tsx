@@ -79,38 +79,102 @@ export default function CompleteProfilePage() {
       setLoading(true)
 
       // Get current user
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
+      const { data: { user: authUser } } = await supabase.auth.getUser()
+      if (!authUser) {
         toast.error('Ошибка авторизации')
         router.push('/auth/login')
         return
       }
 
-      // Update user profile
-      const { error: updateError } = await supabase
-        .from('users')
-        .update({
-          full_name: fullName.trim(),
-          phone: phone.trim(),
-          profile_completed: true,
-        })
-        .eq('id', user.id)
+      console.log('[CompleteProfile] Auth user:', authUser.id)
 
-      if (updateError) {
-        throw updateError
+      // Check if user record exists in public.users
+      const { data: existingUser, error: fetchError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', authUser.id)
+        .maybeSingle()
+
+      console.log('[CompleteProfile] Existing user:', existingUser, 'Error:', fetchError)
+
+      if (!existingUser) {
+        console.log('[CompleteProfile] No user record found, creating one...')
+
+        // Extract telegram_id from email (format: 232922222@telegram.user)
+        const telegramId = authUser.email?.includes('@telegram.user')
+          ? authUser.email.split('@')[0]
+          : null
+
+        // Create user record
+        const { error: createError } = await supabase
+          .from('users')
+          .insert({
+            id: authUser.id,
+            email: authUser.email,
+            full_name: fullName.trim(),
+            phone: phone.trim(),
+            telegram_id: telegramId,
+            role: 'worker',
+            roles: ['worker'],
+            current_role: 'worker',
+            profile_completed: true,
+            rating: 0,
+            total_shifts: 0,
+            successful_shifts: 0,
+            is_verified: false,
+            gosuslugi_verified: false,
+          })
+
+        if (createError) {
+          console.error('[CompleteProfile] Error creating user:', createError)
+          throw new Error(`Не удалось создать профиль: ${createError.message}`)
+        }
+
+        // Create worker_profile
+        const { error: profileError } = await supabase
+          .from('worker_profiles')
+          .insert({ user_id: authUser.id })
+
+        if (profileError) {
+          console.error('[CompleteProfile] Error creating worker profile:', profileError)
+          // Don't throw - profile can be created later
+        }
+
+        console.log('[CompleteProfile] User record created successfully')
+      } else {
+        console.log('[CompleteProfile] User record exists, updating...')
+
+        // Update existing user profile
+        const { error: updateError } = await supabase
+          .from('users')
+          .update({
+            full_name: fullName.trim(),
+            phone: phone.trim(),
+            profile_completed: true,
+          })
+          .eq('id', authUser.id)
+
+        if (updateError) {
+          console.error('[CompleteProfile] Error updating user:', updateError)
+          throw updateError
+        }
       }
 
       // Get updated user data with role
       const { data: userData } = await supabase
         .from('users')
         .select('current_role, roles')
-        .eq('id', user.id)
+        .eq('id', authUser.id)
         .single()
+
+      console.log('[CompleteProfile] User data after save:', userData)
 
       toast.success('Профиль успешно заполнен!')
 
       // Redirect based on role
       const role = userData?.current_role || userData?.roles?.[0] || 'worker'
+      console.log('[CompleteProfile] Redirecting to role:', role)
+
       switch (role) {
         case 'worker':
           router.push('/worker/shifts')
@@ -126,7 +190,7 @@ export default function CompleteProfilePage() {
       }
 
     } catch (err: any) {
-      console.error('Profile completion error:', err)
+      console.error('[CompleteProfile] Error:', err)
       setError(err.message || 'Ошибка сохранения профиля')
       toast.error('Ошибка сохранения профиля')
     } finally {
