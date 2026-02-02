@@ -219,8 +219,6 @@ function RegisterForm() {
         }
 
         if (existingUser) {
-
-        if (existingUser) {
           console.log('[DEBUG] Found existing user with this phone:', existingUser)
 
           // Update telegram_id if not set

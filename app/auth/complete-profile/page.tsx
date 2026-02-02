@@ -17,16 +17,17 @@ export default function CompleteProfilePage() {
   const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
   const [error, setError] = useState('')
+  const [hasManuallyEdited, setHasManuallyEdited] = useState(false)
 
   useEffect(() => {
-    // Pre-fill with Telegram data if available
-    if (tg?.user) {
+    // Pre-fill with Telegram data if available (only once, and only if user hasn't edited)
+    if (tg?.user && !hasManuallyEdited && !fullName) {
       const telegramFullName = [tg.user.first_name, tg.user.last_name].filter(Boolean).join(' ')
-      if (telegramFullName && !fullName) {
+      if (telegramFullName) {
         setFullName(telegramFullName)
       }
     }
-  }, [tg])
+  }, [tg, hasManuallyEdited, fullName])
 
   const validateFullName = (name: string): boolean => {
     // Check if contains Cyrillic characters (ФИО должно быть на русском)
@@ -183,7 +184,10 @@ export default function CompleteProfilePage() {
                   id="fullName"
                   type="text"
                   value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  onChange={(e) => {
+                    setFullName(e.target.value)
+                    setHasManuallyEdited(true)
+                  }}
                   placeholder="Иванов Иван Иванович"
                   className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
                   disabled={loading}
