@@ -53,31 +53,54 @@ export default function WorkerStatsPage() {
       }
 
       // Fetch all completed shifts for the worker
-      const { data: shifts, error: shiftsError } = await supabase
-        .from('shift_workers')
+      const { data: assignments, error: shiftsError } = await supabase
+        .from('shift_assignments')
         .select(`
           *,
           shift:shifts (
             id,
             title,
             category,
-            price,
+            pay_amount,
             date,
-            client:client_id (
-              id,
-              full_name
-            )
-          ),
-          rating:worker_ratings (
-            rating,
-            created_at
+            client_id
           )
         `)
         .eq('worker_id', user.id)
         .eq('status', 'completed')
         .order('created_at', { ascending: false })
 
-      if (shiftsError) throw shiftsError
+      if (shiftsError) {
+        console.error('Shifts error:', shiftsError)
+        throw shiftsError
+      }
+
+      // Fetch client names separately
+      const shifts = await Promise.all((assignments || []).map(async (assignment) => {
+        if (assignment.shift?.client_id) {
+          const { data: client } = await supabase
+            .from('users')
+            .select('id, full_name')
+            .eq('id', assignment.shift.client_id)
+            .single()
+
+          return {
+            ...assignment,
+            shift: {
+              ...assignment.shift,
+              price: assignment.shift.pay_amount,
+              client
+            }
+          }
+        }
+        return {
+          ...assignment,
+          shift: {
+            ...assignment.shift,
+            price: assignment.shift.pay_amount
+          }
+        }
+      }))
 
       if (!shifts || shifts.length === 0) {
         setStats({
@@ -97,11 +120,15 @@ export default function WorkerStatsPage() {
       const totalShifts = shifts.length
       const totalEarnings = shifts.reduce((sum, s) => sum + (s.shift?.price || 0), 0)
 
-      // Calculate average rating
-      const ratingsData = shifts.flatMap(s => s.rating || [])
-      const avgRating = ratingsData.length > 0
-        ? ratingsData.reduce((sum, r) => sum + r.rating, 0) / ratingsData.length
-        : 0
+      // Get worker profile rating
+      const { data: workerProfile } = await supabase
+        .from('worker_profiles')
+        .select('rating')
+        .eq('user_id', user.id)
+        .single()
+
+      const avgRating = workerProfile?.rating || 0
+      const ratingsData: any[] = [] // No individual ratings for now
 
       // Calculate growth percentage (compare last 30 days vs previous 30 days)
       const now = new Date()
