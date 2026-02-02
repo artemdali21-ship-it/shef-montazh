@@ -67,6 +67,14 @@ export default function TelegramAutoLogin() {
         return
       }
 
+      // No active session - redirect to welcome page
+      // TODO: Implement full Telegram ID auto-login after migration
+      console.log('[TelegramAutoLogin] No active session, redirecting to welcome')
+      router.push('/auth/welcome')
+      setIsChecking(false)
+      return
+
+      /* ВРЕМЕННО ОТКЛЮЧЕНО - для существующих пользователей
       // No active session, check Telegram ID
       const telegramId = tg?.user?.id
 
@@ -92,7 +100,9 @@ export default function TelegramAutoLogin() {
         setIsChecking(false)
         return
       }
+      */'
 
+      /* ПРОДОЛЖЕНИЕ ОТКЛЮЧЕННОГО КОДА
       console.log('[TelegramAutoLogin] User found:', existingUser.id)
 
       // Check if profile is completed
@@ -129,6 +139,7 @@ export default function TelegramAutoLogin() {
         default:
           router.push('/worker/shifts')
       }
+      */'
 
     } catch (error) {
       console.error('[TelegramAutoLogin] Error:', error)
