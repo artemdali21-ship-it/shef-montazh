@@ -79,15 +79,38 @@ export default function TelegramAutoLogin() {
 
       console.log('[TelegramAutoLogin] Checking for user with Telegram ID:', telegramId)
 
-      // Check if user exists with this telegram_id
-      const { data: existingUser, error: userError } = await supabase
+      // Check if user exists with this telegram_id (try both string and number)
+      let existingUser = null
+      let userError = null
+
+      // Try as string first
+      const result1 = await supabase
         .from('users')
         .select('*')
-        .eq('telegram_id', telegramId)
-        .single()
+        .eq('telegram_id', telegramId.toString())
+        .maybeSingle()
+
+      if (result1.data) {
+        existingUser = result1.data
+        console.log('[TelegramAutoLogin] Found user with telegram_id (as string)')
+      } else {
+        // Try as number
+        const result2 = await supabase
+          .from('users')
+          .select('*')
+          .eq('telegram_id', telegramId)
+          .maybeSingle()
+
+        if (result2.data) {
+          existingUser = result2.data
+          console.log('[TelegramAutoLogin] Found user with telegram_id (as number)')
+        } else {
+          userError = result2.error
+        }
+      }
 
       if (userError || !existingUser) {
-        console.log('[TelegramAutoLogin] User not found, redirecting to registration')
+        console.log('[TelegramAutoLogin] User not found, redirecting to registration. Error:', userError)
         router.push('/auth/register')
         setIsChecking(false)
         return

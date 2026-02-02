@@ -228,8 +228,39 @@ function RegisterForm() {
               .from('users')
               .update({
                 telegram_id: telegramId.toString(),
+                roles: [selectedRole],
+                current_role: selectedRole,
               })
               .eq('id', existingUser.id)
+
+            // Create role-specific profile if doesn't exist
+            if (selectedRole === 'worker') {
+              // Check if worker_profile exists
+              const { data: workerProfile } = await supabase
+                .from('worker_profiles')
+                .select('user_id')
+                .eq('user_id', existingUser.id)
+                .maybeSingle()
+
+              if (!workerProfile) {
+                await supabase.from('worker_profiles').insert({
+                  user_id: existingUser.id,
+                })
+              }
+            } else if (selectedRole === 'client') {
+              // Check if client_profile exists
+              const { data: clientProfile } = await supabase
+                .from('client_profiles')
+                .select('user_id')
+                .eq('user_id', existingUser.id)
+                .maybeSingle()
+
+              if (!clientProfile) {
+                await supabase.from('client_profiles').insert({
+                  user_id: existingUser.id,
+                })
+              }
+            }
           }
 
           // Try to sign in with Telegram credentials
