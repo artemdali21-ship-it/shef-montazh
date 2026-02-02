@@ -1,12 +1,3 @@
 {
-  "crons": [
-    {
-      "path": "/api/cron/shift-reminders",
-      "schedule": "*/5 * * * *"
-    },
-    {
-      "path": "/api/cron/payments-overdue",
-      "schedule": "0 * * * *"
-    }
-  ]
+  "crons": []
 }
