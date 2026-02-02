@@ -13,6 +13,11 @@ export function BottomNav({ userType: propsUserType }: BottomNavProps) {
   const pathname = usePathname();
   const [userType, setUserType] = useState<'worker' | 'client' | 'shef'>(propsUserType || 'worker');
 
+  // Hide bottom nav on auth pages
+  if (pathname.startsWith('/auth') || pathname === '/debug' || pathname === '/onboarding') {
+    return null;
+  }
+
   useEffect(() => {
     // Get role from props or localStorage
     if (propsUserType) {

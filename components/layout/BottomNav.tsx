@@ -23,6 +23,11 @@ export function BottomNav({ userType, userId }: BottomNavProps) {
   const router = useRouter()
   const [unreadCount, setUnreadCount] = useState(0)
 
+  // Hide bottom nav on auth pages
+  if (pathname.startsWith('/auth') || pathname === '/debug' || pathname === '/onboarding') {
+    return null
+  }
+
   // Fetch unread messages count
   useEffect(() => {
     if (!userId) return

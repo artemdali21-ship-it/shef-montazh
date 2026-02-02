@@ -98,50 +98,113 @@ export default function CompleteProfilePage() {
       console.log('[CompleteProfile] Existing user:', existingUser, 'Error:', fetchError)
 
       if (!existingUser) {
-        console.log('[CompleteProfile] No user record found, creating one...')
+        console.log('[CompleteProfile] No user record found, checking for orphaned records...')
 
         // Extract telegram_id from email (format: 232922222@telegram.user)
         const telegramId = authUser.email?.includes('@telegram.user')
           ? authUser.email.split('@')[0]
           : null
 
-        // Create user record
-        const { error: createError } = await supabase
+        // Check if there's an existing user with this phone number (orphaned record)
+        const { data: orphanedUser } = await supabase
           .from('users')
-          .insert({
-            id: authUser.id,
-            email: authUser.email,
-            full_name: fullName.trim(),
-            phone: phone.trim(),
-            telegram_id: telegramId,
-            user_type: 'worker',
-            role: 'worker',
-            roles: ['worker'],
-            current_role: 'worker',
-            profile_completed: true,
-            rating: 0,
-            total_shifts: 0,
-            successful_shifts: 0,
-            is_verified: false,
-            gosuslugi_verified: false,
-          })
+          .select('*')
+          .eq('phone', phone.trim())
+          .maybeSingle()
 
-        if (createError) {
-          console.error('[CompleteProfile] Error creating user:', createError)
-          throw new Error(`Не удалось создать профиль: ${createError.message}`)
+        if (orphanedUser) {
+          console.log('[CompleteProfile] Found orphaned user record with same phone, updating...')
+
+          // Update the orphaned record with new auth user ID
+          const { error: updateError } = await supabase
+            .from('users')
+            .update({
+              id: authUser.id,
+              email: authUser.email,
+              full_name: fullName.trim(),
+              telegram_id: telegramId,
+              profile_completed: true,
+              user_type: 'worker',
+              role: 'worker',
+              roles: ['worker'],
+              current_role: 'worker',
+            })
+            .eq('phone', phone.trim())
+
+          if (updateError) {
+            console.error('[CompleteProfile] Error updating orphaned user:', updateError)
+            // If update fails, try deleting and creating new
+            await supabase.from('users').delete().eq('phone', phone.trim())
+
+            const { error: createError } = await supabase
+              .from('users')
+              .insert({
+                id: authUser.id,
+                email: authUser.email,
+                full_name: fullName.trim(),
+                phone: phone.trim(),
+                telegram_id: telegramId,
+                user_type: 'worker',
+                role: 'worker',
+                roles: ['worker'],
+                current_role: 'worker',
+                profile_completed: true,
+                rating: 0,
+                total_shifts: 0,
+                successful_shifts: 0,
+                is_verified: false,
+                gosuslugi_verified: false,
+              })
+
+            if (createError) {
+              console.error('[CompleteProfile] Error creating user after delete:', createError)
+              throw new Error(`Не удалось создать профиль: ${createError.message}`)
+            }
+          }
+
+          console.log('[CompleteProfile] Orphaned record updated successfully')
+        } else {
+          console.log('[CompleteProfile] No orphaned records, creating new user...')
+
+          // Create user record
+          const { error: createError } = await supabase
+            .from('users')
+            .insert({
+              id: authUser.id,
+              email: authUser.email,
+              full_name: fullName.trim(),
+              phone: phone.trim(),
+              telegram_id: telegramId,
+              user_type: 'worker',
+              role: 'worker',
+              roles: ['worker'],
+              current_role: 'worker',
+              profile_completed: true,
+              rating: 0,
+              total_shifts: 0,
+              successful_shifts: 0,
+              is_verified: false,
+              gosuslugi_verified: false,
+            })
+
+          if (createError) {
+            console.error('[CompleteProfile] Error creating user:', createError)
+            throw new Error(`Не удалось создать профиль: ${createError.message}`)
+          }
+
+          console.log('[CompleteProfile] User record created successfully')
         }
 
-        // Create worker_profile
+        // Create worker_profile if doesn't exist
         const { error: profileError } = await supabase
           .from('worker_profiles')
           .insert({ user_id: authUser.id })
+          .select()
 
-        if (profileError) {
+        if (profileError && !profileError.message.includes('duplicate')) {
           console.error('[CompleteProfile] Error creating worker profile:', profileError)
           // Don't throw - profile can be created later
         }
-
-        console.log('[CompleteProfile] User record created successfully')
       } else {
         console.log('[CompleteProfile] User record exists, updating...')
 
