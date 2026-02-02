@@ -18,9 +18,10 @@ export default function ClientProfilePage() {
   const { session, loading: sessionLoading } = useTelegramSession()
 
   const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [profileLoaded, setProfileLoaded] = useState(false)
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false)
 
   useEffect(() => {
     // Загружаем профиль только один раз
@@ -32,12 +33,13 @@ export default function ClientProfilePage() {
 
   const loadProfile = async () => {
     // Prevent multiple calls
-    if (profileLoaded || loading) {
+    if (profileLoaded || isLoadingProfile) {
       console.log('[ClientProfile] Already loading or loaded, skipping')
       return
     }
 
     try {
+      setIsLoadingProfile(true)
       setLoading(true)
 
       // Check Telegram session
@@ -84,7 +86,7 @@ export default function ClientProfilePage() {
     }
   }
 
-  if (sessionLoading || loading) {
+  if (sessionLoading || (loading && !user)) {
     return (
       <div className="min-h-screen pb-20 overflow-y-auto">
         <header className="sticky top-0 bg-white/10 backdrop-blur-xl border-b border-white/20 z-20 p-4">
@@ -97,7 +99,20 @@ export default function ClientProfilePage() {
     )
   }
 
-  if (!session || !user) {
+  if (!user) {
+    return (
+      <div className="min-h-screen pb-20 overflow-y-auto">
+        <header className="sticky top-0 bg-white/10 backdrop-blur-xl border-b border-white/20 z-20 p-4">
+          <Logo size="md" showText={true} />
+        </header>
+        <div className="p-4">
+          <SkeletonProfile />
+        </div>
+      </div>
+    )
+  }
+
+  if (!session) {
     return null
   }
 
