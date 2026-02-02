@@ -372,6 +372,7 @@ function RegisterForm() {
           full_name: fullName,
           phone: normalizedPhone,
           email: finalEmail,
+          user_type: selectedRole,
           role: selectedRole,
           roles: [selectedRole], // Multi-role support
           current_role: selectedRole, // Set initial role

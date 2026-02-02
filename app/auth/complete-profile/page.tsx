@@ -114,6 +114,7 @@ export default function CompleteProfilePage() {
             full_name: fullName.trim(),
             phone: phone.trim(),
             telegram_id: telegramId,
+            user_type: 'worker',
             role: 'worker',
             roles: ['worker'],
             current_role: 'worker',
