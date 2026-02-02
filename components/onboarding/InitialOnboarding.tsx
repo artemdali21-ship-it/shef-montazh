@@ -11,8 +11,8 @@ interface InitialOnboardingProps {
 export default function InitialOnboarding({ onComplete }: InitialOnboardingProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
 
-  // Cache busting timestamp
-  const cacheBuster = '?v=202602021900'
+  // Cache busting timestamp - update to force reload
+  const cacheBuster = '?v=202602021930'
 
   const slides = [
     {

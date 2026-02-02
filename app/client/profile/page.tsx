@@ -20,13 +20,15 @@ export default function ClientProfilePage() {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [profileLoaded, setProfileLoaded] = useState(false)
 
   useEffect(() => {
-    if (!sessionLoading && session) {
+    // Загружаем профиль только один раз
+    if (!sessionLoading && session && !profileLoaded) {
       loadProfile()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionLoading])
+  }, [sessionLoading, profileLoaded])
 
   const loadProfile = async () => {
     try {
@@ -51,6 +53,7 @@ export default function ClientProfilePage() {
       if (userError) throw userError
 
       setUser(userData)
+      setProfileLoaded(true)
     } catch (error: any) {
       console.error('Error loading profile:', error)
       toast.error('Не удалось загрузить профиль')

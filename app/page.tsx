@@ -9,90 +9,74 @@ import { Logo } from '@/components/ui/Logo'
 
 export default function HomePage() {
   const router = useRouter()
-  const { session, loading } = useTelegramSession()
-  const [showOnboarding, setShowOnboarding] = useState(false)
-  const [showRoleSelector, setShowRoleSelector] = useState(false)
+  const { session, loading: sessionLoading } = useTelegramSession()
+  const [onboardingComplete, setOnboardingComplete] = useState(false)
   const [isRedirecting, setIsRedirecting] = useState(false)
 
+  // Проверяем session только после завершения onboarding
   useEffect(() => {
-    if (loading) return
+    // Если onboarding еще не завершен - ничего не делаем
+    if (!onboardingComplete) return
 
+    // Если session еще загружается - ждем
+    if (sessionLoading) return
+
+    // Onboarding завершен и session загружена
     if (session) {
-      console.log('[HomePage] Session found:', session)
+      console.log('[HomePage] Session found after onboarding:', session)
       setIsRedirecting(true)
 
-      // Add small delay for smooth transition
-      setTimeout(() => {
-        // User is logged in - redirect to dashboard
-        if (session.hasSeenOnboarding) {
-          const dashboardPaths = {
-            worker: '/worker/shifts',
-            client: '/client/shifts',
-            shef: '/shef/dashboard',
-          }
-
-          const path = dashboardPaths[session.role]
-          console.log('[HomePage] Redirecting to:', path)
-          router.push(path)
-        } else {
-          // Onboarding not complete - redirect to onboarding
-          const onboardingPath = `/onboarding/${session.role}`
-          console.log('[HomePage] Redirecting to onboarding:', onboardingPath)
-          router.push(onboardingPath)
+      // User is logged in - redirect to dashboard
+      if (session.hasSeenOnboarding) {
+        const dashboardPaths = {
+          worker: '/worker/shifts',
+          client: '/client/shifts',
+          shef: '/shef/dashboard',
         }
-      }, 300)
-    } else {
-      // No session - show initial onboarding slides
-      console.log('[HomePage] No session - showing initial onboarding')
-      setShowOnboarding(true)
+
+        const path = dashboardPaths[session.role]
+        console.log('[HomePage] Redirecting to:', path)
+        router.push(path)
+      } else {
+        // Onboarding not complete - redirect to role-specific onboarding
+        const onboardingPath = `/onboarding/${session.role}`
+        console.log('[HomePage] Redirecting to onboarding:', onboardingPath)
+        router.push(onboardingPath)
+      }
     }
-  }, [session, loading, router])
+    // Если session нет - просто показываем RoleSelector (ниже)
+  }, [onboardingComplete, sessionLoading, session, router])
 
   const handleOnboardingComplete = () => {
-    console.log('[HomePage] Initial onboarding complete - showing role selector')
-    setShowOnboarding(false)
-    setShowRoleSelector(true)
+    console.log('[HomePage] Initial onboarding complete')
+    setOnboardingComplete(true)
   }
 
-  // Show loading while checking session or redirecting
-  if (loading || isRedirecting) {
+  // Сразу показываем onboarding (session грузится параллельно в фоне)
+  if (!onboardingComplete) {
+    return <InitialOnboarding onComplete={handleOnboardingComplete} />
+  }
+
+  // Onboarding завершен, но session еще загружается или происходит редирект
+  if (sessionLoading || isRedirecting) {
     return (
       <div
         className="fixed inset-0 bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center z-50"
         style={{
           opacity: 1,
-          transition: 'opacity 0.5s ease-in-out',
+          transition: 'opacity 0.3s ease-in-out',
         }}
       >
-        <style>{`
-          @keyframes smoothPulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(0.98); }
-          }
-        `}</style>
         <div className="text-center">
-          <div className="mb-6" style={{ animation: 'smoothPulse 2.5s ease-in-out infinite' }}>
+          <div className="mb-6 opacity-90">
             <Logo size="lg" showText={true} />
           </div>
-          <div className="w-16 h-16 border-4 border-orange-500/30 border-t-orange-500 rounded-full animate-spin mx-auto mb-4" style={{ animationDuration: '1s' }}></div>
-          <p className="text-white text-lg font-medium opacity-70">
-            {isRedirecting ? 'Входим...' : 'Загрузка...'}
-          </p>
+          <div className="w-12 h-12 border-4 border-orange-500/30 border-t-orange-500 rounded-full animate-spin mx-auto"></div>
         </div>
       </div>
     )
   }
 
-  // Show initial onboarding (3 slides with helmets)
-  if (showOnboarding) {
-    return <InitialOnboarding onComplete={handleOnboardingComplete} />
-  }
-
-  // Show role selector after onboarding
-  if (showRoleSelector) {
-    return <RoleSelector />
-  }
-
-  // Show nothing while redirecting
-  return null
+  // Onboarding завершен, session загружена (или нет) - показываем RoleSelector
+  return <RoleSelector />
 }

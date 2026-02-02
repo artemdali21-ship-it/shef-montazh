@@ -23,13 +23,15 @@ export default function WorkerProfilePage() {
   const [showEditModal, setShowEditModal] = useState(false)
   const [categories, setCategories] = useState<string[]>([])
   const [savedCategories, setSavedCategories] = useState<string[]>([])
+  const [profileLoaded, setProfileLoaded] = useState(false)
 
   useEffect(() => {
-    if (!sessionLoading && session) {
+    // Загружаем профиль только один раз
+    if (!sessionLoading && session && !profileLoaded) {
       loadProfile()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionLoading])
+  }, [sessionLoading, profileLoaded])
 
   const loadProfile = async () => {
     try {
@@ -65,6 +67,7 @@ export default function WorkerProfilePage() {
       }
 
       setUser(userData)
+      setProfileLoaded(true)
 
       // Load worker categories from worker_profiles
       const { data: workerProfile, error: profileError } = await supabase
