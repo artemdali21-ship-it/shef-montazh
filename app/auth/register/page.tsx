@@ -8,6 +8,7 @@ import { Mail, Lock, User, Briefcase, Building, HardHat, AlertCircle, CheckCircl
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 import { Logo } from '@/components/ui/Logo'
+import { useTelegram } from '@/lib/telegram'
 
 type Role = 'worker' | 'client' | 'shef'
 
@@ -35,6 +36,7 @@ const roles = [
 function RegisterForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const tg = useTelegram()
 
   // Form refs for auto-focus
   const fullNameRef = useRef<HTMLInputElement>(null)
@@ -51,6 +53,20 @@ function RegisterForm() {
   const [selectedRole, setSelectedRole] = useState<Role>('worker')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Pre-fill form from Telegram data
+  useEffect(() => {
+    if (tg?.user) {
+      const firstName = tg.user.first_name || ''
+      const lastName = tg.user.last_name || ''
+      setFullName(`${firstName} ${lastName}`.trim())
+
+      // Auto-generate email from telegram_id if not available
+      if (!email && tg.user.id) {
+        setEmail(`${tg.user.id}@telegram.user`)
+      }
+    }
+  }, [tg])
 
   // Password validation states
   const [passwordsMatch, setPasswordsMatch] = useState<boolean | null>(null)
@@ -138,15 +154,24 @@ function RegisterForm() {
     try {
       setLoading(true)
 
+      // Get Telegram data
+      const telegramId = tg?.user?.id
+      const telegramUsername = tg?.user?.username
+
+      // Use auto-generated password for Telegram users
+      const finalPassword = telegramId ? `telegram_${telegramId}_autologin` : password
+
       // Sign up with Supabase Auth
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email,
-        password,
+        password: finalPassword,
         options: {
           data: {
             full_name: fullName,
             phone: phone,
             role: selectedRole,
+            telegram_id: telegramId,
+            telegram_username: telegramUsername,
           },
         },
       })
@@ -179,6 +204,8 @@ function RegisterForm() {
           successful_shifts: 0,
           is_verified: false,
           gosuslugi_verified: false,
+          telegram_id: telegramId || null,
+          telegram_username: telegramUsername || null,
         }).select()
 
         console.log('[DEBUG] User insert result:', { userData, userError })
