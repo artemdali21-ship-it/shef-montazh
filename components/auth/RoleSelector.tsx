@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { HardHat, Building, Briefcase } from 'lucide-react'
-import { useTelegram } from '@/lib/telegram'
 import type { UserRole } from '@/types/session'
 import { Logo } from '@/components/ui/Logo'
 import toast from 'react-hot-toast'
@@ -34,37 +33,8 @@ const roles = [
 
 export default function RoleSelector() {
   const router = useRouter()
-  const tg = useTelegram()
   const [loading, setLoading] = useState(false)
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null)
-  const [isReady, setIsReady] = useState(false)
-
-  useEffect(() => {
-    // Wait for Telegram data to be ready
-    const waitForTelegramData = async () => {
-      let attempts = 0
-      const maxAttempts = 50 // 5 seconds with 100ms intervals
-
-      while (attempts < maxAttempts) {
-        const webapp = (window as any).Telegram?.WebApp
-        
-        if (webapp?.initDataUnsafe?.user?.id) {
-          console.log('[RoleSelector] Telegram user data ready:', webapp.initDataUnsafe.user)
-          setIsReady(true)
-          return
-        }
-
-        attempts++
-        await new Promise(resolve => setTimeout(resolve, 100))
-      }
-
-      // After max attempts, log warning but proceed anyway
-      console.warn('[RoleSelector] Telegram user data not ready after 5 seconds, proceeding anyway')
-      setIsReady(true)
-    }
-
-    waitForTelegramData()
-  }, [])
 
   const handleSelectRole = async (role: UserRole) => {
     console.log('[RoleSelector] handleSelectRole called with role:', role)
@@ -72,19 +42,36 @@ export default function RoleSelector() {
     setLoading(true)
 
     try {
-      const telegramId = tg?.user?.id
-      console.log('[RoleSelector] Telegram object:', tg)
-      console.log('[RoleSelector] Telegram ID:', telegramId)
-      console.log('[RoleSelector] Telegram user:', tg?.user)
+      // Wait for Telegram data to be available
+      let telegramId: number | undefined
+      let attempts = 0
+      const maxAttempts = 50 // 5 seconds with 100ms intervals
+
+      while (attempts < maxAttempts && !telegramId) {
+        const webapp = (window as any).Telegram?.WebApp
+        telegramId = webapp?.initDataUnsafe?.user?.id
+        
+        if (telegramId) {
+          console.log('[RoleSelector] Telegram user data found:', webapp?.initDataUnsafe?.user)
+          break
+        }
+
+        attempts++
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
 
       if (!telegramId) {
-        console.error('[RoleSelector] No Telegram ID found!')
+        console.error('[RoleSelector] No Telegram ID found after waiting!')
         toast.error('Telegram ID не найден. Откройте приложение через Telegram.')
         setLoading(false)
+        setSelectedRole(null)
         return
       }
 
-      console.log('[RoleSelector] Starting registration...', { telegramId, role, fullName: tg?.user?.first_name })
+      const webapp = (window as any).Telegram?.WebApp
+      const userName = webapp?.initDataUnsafe?.user?.first_name || 'User'
+
+      console.log('[RoleSelector] Starting registration...', { telegramId, role, fullName: userName })
 
       // Register user with selected role
       const response = await fetch('/api/auth/register', {
@@ -93,7 +80,7 @@ export default function RoleSelector() {
         body: JSON.stringify({
           telegramId,
           role,
-          fullName: tg?.user?.first_name || 'User',
+          fullName: userName,
         }),
       })
 
@@ -107,6 +94,7 @@ export default function RoleSelector() {
         console.error('[RoleSelector] Registration error:', errorMsg)
         toast.error(errorMsg)
         setLoading(false)
+        setSelectedRole(null)
         return
       }
 
@@ -127,6 +115,7 @@ export default function RoleSelector() {
       console.error('[RoleSelector] Error:', error)
       toast.error('Ошибка подключения: ' + (error.message || 'Неизвестная ошибка'))
       setLoading(false)
+      setSelectedRole(null)
     }
   }
 
