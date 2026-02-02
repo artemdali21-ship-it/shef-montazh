@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         .update({
           current_role: role,
           roles: updatedRoles,
-          has_completed_onboarding: false, // Reset onboarding for new role
+          has_completed_onboarding: true, // User already saw InitialOnboarding
           last_login_at: new Date().toISOString(),
         })
         .eq('telegram_id', telegramId)
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
           id: existingUser.id,
           telegram_id: telegramId,
           role: role as UserRole,
-          has_completed_onboarding: false,
+          has_completed_onboarding: true,
         },
       })
     }
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
         full_name: fullName || 'User',
         phone: phone || null,
         email: `${telegramId}@telegram.user`,
-        has_completed_onboarding: false,
+        has_completed_onboarding: true, // User already saw InitialOnboarding
         profile_completed: false,
         last_login_at: new Date().toISOString(),
         session_token: sessionToken,

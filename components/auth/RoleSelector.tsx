@@ -81,10 +81,16 @@ export default function RoleSelector() {
       toast.success('Регистрация успешна!')
 
       // Clear and refresh session to get new role
-      console.log('[RoleSelector] Clearing old session and reloading...')
+      console.log('[RoleSelector] Redirecting to dashboard...')
 
-      // Force reload to refresh session with new role
-      window.location.href = `/onboarding/${role}`
+      // Redirect directly to dashboard (skip second onboarding)
+      const dashboardPaths = {
+        worker: '/worker/shifts',
+        client: '/client/shifts',
+        shef: '/shef/dashboard',
+      }
+
+      window.location.href = dashboardPaths[role]
     } catch (error: any) {
       console.error('[RoleSelector] Error:', error)
       toast.error('Ошибка подключения: ' + (error.message || 'Неизвестная ошибка'))
