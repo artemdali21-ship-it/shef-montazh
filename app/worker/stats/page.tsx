@@ -41,10 +41,11 @@ export default function WorkerStatsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!sessionLoading) {
+    if (!sessionLoading && session) {
       loadStats()
     }
-  }, [sessionLoading, session])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionLoading])
 
   const loadStats = async () => {
     try {

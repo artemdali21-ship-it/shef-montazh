@@ -25,10 +25,11 @@ export default function WorkerProfilePage() {
   const [savedCategories, setSavedCategories] = useState<string[]>([])
 
   useEffect(() => {
-    if (!sessionLoading) {
+    if (!sessionLoading && session) {
       loadProfile()
     }
-  }, [sessionLoading, session])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionLoading])
 
   const loadProfile = async () => {
     try {

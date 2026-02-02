@@ -22,10 +22,11 @@ export default function ShefProfilePage() {
   const [showEditModal, setShowEditModal] = useState(false)
 
   useEffect(() => {
-    if (!sessionLoading) {
+    if (!sessionLoading && session) {
       loadProfile()
     }
-  }, [sessionLoading, session])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionLoading])
 
   const loadProfile = async () => {
     try {

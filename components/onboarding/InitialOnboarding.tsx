@@ -11,21 +11,24 @@ interface InitialOnboardingProps {
 export default function InitialOnboarding({ onComplete }: InitialOnboardingProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
 
+  // Cache busting timestamp
+  const cacheBuster = '?v=202602021900'
+
   const slides = [
     {
       title: 'Найдите работу быстро',
       subtitle: 'Просматривайте доступные смены и откликайтесь на подходящие вакансии',
-      image: '/helmet333.png',
+      image: `/helmet333.png${cacheBuster}`,
     },
     {
       title: 'Гарантия выполнения работ',
       subtitle: 'Система штрафов за срывы смен',
-      image: '/helmet333.png',
+      image: `/helmet333.png${cacheBuster}`,
     },
     {
       title: 'Поддержка 24/7',
       subtitle: 'Рассчитываемся в день завершения работ. Скоро подключим ИИ-помощника!',
-      image: '/helmet333.png',
+      image: `/helmet333.png${cacheBuster}`,
     },
   ]
 
@@ -46,7 +49,7 @@ export default function InitialOnboarding({ onComplete }: InitialOnboardingProps
       {/* FLOATING 3D ELEMENTS */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <img
-          src="/images/carabiner.png"
+          src={`/images/carabiner.png${cacheBuster}`}
           alt=""
           style={{
             position: 'fixed',
@@ -62,7 +65,7 @@ export default function InitialOnboarding({ onComplete }: InitialOnboardingProps
           }}
         />
         <img
-          src="/images/bolts.png"
+          src={`/images/bolts.png${cacheBuster}`}
           alt=""
           className="absolute"
           style={{
@@ -78,7 +81,7 @@ export default function InitialOnboarding({ onComplete }: InitialOnboardingProps
           }}
         />
         <img
-          src="/images/chain.png"
+          src={`/images/chain.png${cacheBuster}`}
           alt=""
           className="absolute"
           style={{
@@ -95,7 +98,7 @@ export default function InitialOnboarding({ onComplete }: InitialOnboardingProps
         />
         {/* Green Tape - for Shef role */}
         <img
-          src="/images/tape-3.png"
+          src={`/images/tape-3.png${cacheBuster}`}
           alt=""
           className="absolute"
           style={{
