@@ -25,16 +25,45 @@ export const CustomButton: React.FC<ButtonProps> = ({
   className = '',
   ...props
 }) => {
+  // Base styles with all 5 states per design guide
   const baseStyles =
-    'font-inter font-bold rounded-xl transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] active:scale-95 flex items-center justify-center gap-2'
+    'font-inter font-600 rounded-lg transition-all duration-200 cubic-bezier(0.4, 0, 0.2, 1) flex items-center justify-center gap-2 min-h-[44px]'
 
   const variants = {
-    primary: 'bg-[#E85D2F] hover:bg-[#D94D1F] text-white disabled:bg-[#E85D2F]/50 shadow-md',
-    secondary: 'bg-[#BFFF00] hover:bg-[#AAEE00] text-black disabled:bg-[#BFFF00]/50 shadow-md',
-    outline:
-      'bg-transparent border-2 border-white/10 hover:border-[#E85D2F]/50 text-white disabled:opacity-50',
-    ghost: 'bg-white/5 hover:bg-white/10 text-white disabled:opacity-50',
-    danger: 'bg-red-500 hover:bg-red-600 text-white disabled:bg-red-500/50 shadow-md',
+    primary: `
+      bg-primary hover:bg-primary/90 active:bg-primary/80 
+      text-primary-foreground
+      disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
+      shadow-sm hover:shadow-md active:shadow-sm
+      hover:translate-y-[-1px] active:scale-95
+    `,
+    secondary: `
+      bg-secondary hover:bg-secondary/90 active:bg-secondary/80
+      text-secondary-foreground
+      disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
+      shadow-sm hover:shadow-md active:shadow-sm
+      hover:translate-y-[-1px] active:scale-95
+    `,
+    outline: `
+      bg-transparent border border-border
+      text-foreground hover:text-primary hover:border-primary
+      active:bg-primary/5
+      disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
+      hover:translate-y-[-1px] active:scale-95
+    `,
+    ghost: `
+      bg-transparent hover:bg-white/5 active:bg-white/10
+      text-foreground
+      disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
+      hover:translate-y-[-1px] active:scale-95
+    `,
+    danger: `
+      bg-destructive hover:bg-destructive/90 active:bg-destructive/80
+      text-destructive-foreground
+      disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
+      shadow-sm hover:shadow-md active:shadow-sm
+      hover:translate-y-[-1px] active:scale-95
+    `,
   }
 
   const sizes = {
