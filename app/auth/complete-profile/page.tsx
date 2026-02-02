@@ -135,8 +135,8 @@ export default function CompleteProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-start justify-center p-4 pb-32">
-      <div className="max-w-md w-full mt-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] p-4 overflow-y-auto" style={{ paddingBottom: '400px', minHeight: '100vh' }}>
+      <div className="max-w-md w-full mx-auto" style={{ marginTop: '2rem' }}>
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-6">

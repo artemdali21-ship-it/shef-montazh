@@ -57,10 +57,41 @@ export default function WorkerProfilePage() {
       }
 
       if (!userData) {
-        throw new Error('Данные пользователя не найдены')
-      }
+        console.log('[Profile] No user data found, creating user record...')
 
-      setUser(userData)
+        // User exists in auth but not in public.users - create it
+        const { error: createError } = await supabase
+          .from('users')
+          .insert({
+            id: authUser.id,
+            email: authUser.email,
+            full_name: authUser.email?.split('@')[0] || 'User',
+            role: 'worker',
+            roles: ['worker'],
+            current_role: 'worker',
+            profile_completed: false,
+          })
+
+        if (createError) {
+          console.error('[Profile] Error creating user:', createError)
+          throw new Error(`Не удалось создать пользователя: ${createError.message}`)
+        }
+
+        // Try to load again
+        const { data: newUserData } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', authUser.id)
+          .single()
+
+        if (!newUserData) {
+          throw new Error('Не удалось загрузить данные после создания')
+        }
+
+        setUser(newUserData)
+      } else {
+        setUser(userData)
+      }
 
       // Load worker categories from worker_profiles
       const { data: workerProfile, error: profileError } = await supabase

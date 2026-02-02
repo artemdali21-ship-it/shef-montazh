@@ -23,10 +23,15 @@ export default function DebugPage() {
       // 1. Check Telegram
       debugInfo.telegram = {
         available: !!tg,
+        webAppAvailable: typeof window !== 'undefined' && !!(window as any).Telegram?.WebApp,
         userId: tg?.user?.id || null,
         username: tg?.user?.username || null,
         firstName: tg?.user?.first_name || null,
         lastName: tg?.user?.last_name || null,
+        initDataUnsafe: tg?.initDataUnsafe || null,
+        platform: tg?.platform || null,
+        version: tg?.version || null,
+        fullTgObject: typeof window !== 'undefined' ? (window as any).Telegram?.WebApp : null,
       }
 
       // 2. Check Auth User
