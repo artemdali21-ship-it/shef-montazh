@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase-server'
+import { createServerClient } from '@/lib/supabase-server'
 import type { CompleteOnboardingResponse } from '@/types/session'
 
 export async function PATCH(request: NextRequest) {
@@ -13,7 +13,7 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
-    const supabase = createClient()
+    const supabase = createServerClient()
 
     // Update user onboarding status
     const { error } = await supabase

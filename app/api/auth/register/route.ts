@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase-server'
+import { createServerClient } from '@/lib/supabase-server'
 import type { RegisterResponse, UserRole } from '@/types/session'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = createClient()
+    const supabase = createServerClient()
 
     // Check if user already exists
     const { data: existingUser } = await supabase
