@@ -80,12 +80,11 @@ export default function RoleSelector() {
 
       toast.success('Регистрация успешна!')
 
-      // Small delay to show success message
-      await new Promise(resolve => setTimeout(resolve, 500))
+      // Clear and refresh session to get new role
+      console.log('[RoleSelector] Clearing old session and reloading...')
 
-      // Redirect to onboarding
-      console.log('[RoleSelector] Redirecting to onboarding:', `/onboarding/${role}`)
-      router.push(`/onboarding/${role}`)
+      // Force reload to refresh session with new role
+      window.location.href = `/onboarding/${role}`
     } catch (error: any) {
       console.error('[RoleSelector] Error:', error)
       toast.error('Ошибка подключения: ' + (error.message || 'Неизвестная ошибка'))

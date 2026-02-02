@@ -52,13 +52,30 @@ export default function HomePage() {
   // Show loading while checking session
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center z-50">
+      <div
+        className="fixed inset-0 bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center z-50"
+        style={{
+          opacity: 1,
+          transition: 'opacity 0.3s ease-in-out',
+          animation: 'fadeIn 0.3s ease-in-out'
+        }}
+      >
+        <style>{`
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+          }
+        `}</style>
         <div className="text-center">
-          <div className="mb-6">
+          <div className="mb-6" style={{ animation: 'pulse 2s ease-in-out infinite' }}>
             <Logo size="lg" showText={true} />
           </div>
-          <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white text-lg font-medium">Загрузка...</p>
+          <div className="w-16 h-16 border-4 border-orange-500/30 border-t-orange-500 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white text-lg font-medium opacity-70">Загрузка...</p>
         </div>
       </div>
     )

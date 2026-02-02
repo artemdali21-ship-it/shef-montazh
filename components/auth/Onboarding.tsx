@@ -107,14 +107,17 @@ export default function Onboarding({ role }: OnboardingProps) {
         return
       }
 
-      // Redirect to role-specific dashboard
+      // Redirect to role-specific dashboard with force reload to refresh session
       const dashboardPaths = {
         worker: '/worker/shifts',
         client: '/client/shifts',
         shef: '/shef/dashboard',
       }
 
-      router.push(dashboardPaths[role])
+      console.log('[Onboarding] Redirecting to:', dashboardPaths[role])
+
+      // Force reload to ensure session is refreshed with new role
+      window.location.href = dashboardPaths[role]
     } catch (error) {
       console.error('[Onboarding] Error:', error)
       toast.error('Ошибка подключения')

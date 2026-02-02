@@ -15,21 +15,21 @@ type Role = 'worker' | 'client' | 'shef'
 const roles = [
   {
     value: 'worker' as Role,
-    label: 'Работник',
-    description: 'Ищу работу на смены',
+    label: 'Специалист',
+    description: 'Работаю руками, выхожу на смены',
     icon: HardHat,
   },
   {
-    value: 'client' as Role,
-    label: 'Заказчик',
-    description: 'Нужны работники',
-    icon: Building,
+    value: 'shef' as Role,
+    label: 'Шеф-монтаж',
+    description: 'Управляю командой и отвечаю за монтаж',
+    icon: Briefcase,
   },
   {
-    value: 'shef' as Role,
-    label: 'Шеф',
-    description: 'Управляю бригадами',
-    icon: Briefcase,
+    value: 'client' as Role,
+    label: 'Компания',
+    description: 'Нанимаю специалистов и организую проекты',
+    icon: Building,
   },
 ]
 
