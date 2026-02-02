@@ -49,11 +49,10 @@ export default function RoleSelector() {
       console.log('[RoleSelector] Telegram ID:', telegramId)
       console.log('[RoleSelector] Telegram user:', tg?.user)
 
-      // If no Telegram ID (testing/dev mode), redirect to email login
       if (!telegramId) {
-        console.warn('[RoleSelector] No Telegram ID found - redirecting to email login')
-        // Redirect to email-based login/registration
-        router.push(`/auth/register?role=${role}`)
+        console.error('[RoleSelector] No Telegram ID found!')
+        toast.error('Telegram ID не найден. Откройте приложение через Telegram.')
+        setLoading(false)
         return
       }
 
