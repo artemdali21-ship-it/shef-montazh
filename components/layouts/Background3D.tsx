@@ -72,8 +72,8 @@ function generateRandomElement(id: number): FloatingElement {
     duration: Math.floor(Math.random() * 15) + 15,
     // Blur for depth effect (0-3px)
     blur: Math.random() * 3,
-    // Random opacity for depth
-    opacity: 0.15 + Math.random() * 0.25,
+    // Random opacity for depth - STANDARDIZED to 0.5-0.7 per design guide
+    opacity: 0.5 + Math.random() * 0.2,
   }
 }
 

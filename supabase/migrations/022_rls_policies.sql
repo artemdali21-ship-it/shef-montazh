@@ -88,10 +88,16 @@ CREATE POLICY "Users can view own data"
   ON users FOR SELECT
   USING (id = auth.uid() OR is_admin());
 
--- UPDATE: только admin (роли не меняют сами)
-CREATE POLICY "Only admins can update users"
+-- UPDATE: сам пользователь (свои данные) или admin
+CREATE POLICY "Users can update own data"
   ON users FOR UPDATE
-  USING (is_admin());
+  USING (
+    id = auth.uid() OR is_admin()
+  )
+  WITH CHECK (
+    -- User может обновлять только свои данные
+    id = auth.uid() OR is_admin()
+  );
 
 -- INSERT: при регистрации (через Supabase Auth)
 CREATE POLICY "Users can insert own data"
@@ -117,16 +123,15 @@ CREATE POLICY "Workers can create own profile"
   ON worker_profiles FOR INSERT
   WITH CHECK (user_id = auth.uid());
 
--- UPDATE: сам worker (кроме rating, total_shifts) или admin
+-- UPDATE: сам worker или admin
 CREATE POLICY "Workers can update own profile"
   ON worker_profiles FOR UPDATE
   USING (
     user_id = auth.uid() OR is_admin()
   )
   WITH CHECK (
-    -- Нельзя менять rating и total_shifts (только система)
-    (user_id = auth.uid() AND rating = OLD.rating AND total_shifts = OLD.total_shifts)
-    OR is_admin()
+    -- Worker может менять любые свои данные
+    user_id = auth.uid() OR is_admin()
   );
 
 -- DELETE: только admin
@@ -148,15 +153,15 @@ CREATE POLICY "Clients can create own profile"
   ON client_profiles FOR INSERT
   WITH CHECK (user_id = auth.uid());
 
--- UPDATE: сам client (кроме rating, trust_score) или admin
+-- UPDATE: сам client или admin
 CREATE POLICY "Clients can update own profile"
   ON client_profiles FOR UPDATE
   USING (
     user_id = auth.uid() OR is_admin()
   )
   WITH CHECK (
-    (user_id = auth.uid() AND rating = OLD.rating AND trust_score = OLD.trust_score)
-    OR is_admin()
+    -- Client может менять любые свои данные
+    user_id = auth.uid() OR is_admin()
   );
 
 -- DELETE: только admin

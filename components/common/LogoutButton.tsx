@@ -51,8 +51,12 @@ export default function LogoutButton({ variant = 'button', className = '' }: Log
 
       toast.success('Вы вышли из системы')
 
-      // Redirect to home
-      router.push('/')
+      // If multiple roles, show role picker. Otherwise go to home
+      if (data.multipleRoles) {
+        router.push(`/role-picker?telegramId=${telegramId}`)
+      } else {
+        router.push('/')
+      }
     } catch (error) {
       console.error('[LogoutButton] Error:', error)
       toast.error('Ошибка подключения')

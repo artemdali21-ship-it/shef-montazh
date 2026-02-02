@@ -130,11 +130,22 @@ export default function TelegramAutoLogin() {
         return
       }
 
-      // User exists and profile completed - auto sign in
+      // User exists and profile completed - check if multiple roles
+      console.log('[TelegramAutoLogin] User has roles:', existingUser.roles)
+
+      // If multiple roles - show role picker
+      if (existingUser.roles && existingUser.roles.length > 1) {
+        console.log('[TelegramAutoLogin] Multiple roles found, redirecting to role-picker')
+        await signInUserByTelegramId(existingUser)
+        router.push(`/role-picker?telegramId=${existingUser.telegram_id}`)
+        return
+      }
+
+      // Single role - auto sign in and redirect to dashboard
       console.log('[TelegramAutoLogin] Auto-signing in user...')
       await signInUserByTelegramId(existingUser)
 
-      // Redirect based on current_role
+      // Redirect based on current_role or first role
       const role = existingUser.current_role || existingUser.roles?.[0] || 'worker'
       console.log('[TelegramAutoLogin] Redirecting to dashboard for role:', role)
 

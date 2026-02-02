@@ -74,18 +74,42 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
         avatarUrl = data.publicUrl
       }
 
-      // Update profile
-      const { error } = await supabase
+      // Update user basic info in users table
+      const { error: userError } = await supabase
         .from('users')
         .update({
           full_name: formData.full_name,
-          bio: formData.bio,
-          phone: formData.phone,
           avatar_url: avatarUrl
         })
         .eq('id', user.id)
 
-      if (error) throw error
+      if (userError) throw userError
+
+      // Update worker profile with bio and phone in worker_profiles table
+      const { error: profileError } = await supabase
+        .from('worker_profiles')
+        .update({
+          bio: formData.bio,
+          phone: formData.phone,
+          avatar_url: avatarUrl
+        })
+        .eq('user_id', user.id)
+
+      // If worker profile doesn't exist, insert it
+      if (profileError?.code === 'PGRST116') {
+        const { error: insertError } = await supabase
+          .from('worker_profiles')
+          .insert({
+            user_id: user.id,
+            bio: formData.bio,
+            phone: formData.phone,
+            avatar_url: avatarUrl
+          })
+
+        if (insertError) throw insertError
+      } else if (profileError) {
+        throw profileError
+      }
 
       toast.success('Профиль обновлён!')
       onSave()
