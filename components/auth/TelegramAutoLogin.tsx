@@ -22,7 +22,7 @@ export default function TelegramAutoLogin() {
 
   useEffect(() => {
     // Skip auto-login on certain pages
-    const skipPages = ['/auth/login', '/auth/register', '/auth/welcome']
+    const skipPages = ['/', '/auth/login', '/auth/register', '/auth/welcome', '/onboarding']
     if (skipPages.some(page => pathname?.startsWith(page))) {
       setIsChecking(false)
       return
@@ -35,73 +35,21 @@ export default function TelegramAutoLogin() {
     try {
       // Check if already authenticated via Supabase
       const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
+
+      if (session?.user) {
+        console.log('[TelegramAutoLogin] Active session found, user already authenticated')
         setIsChecking(false)
         return
       }
 
-      // Get Telegram user data
-      if (!tg?.user?.id) {
-        console.log('[TelegramAutoLogin] No Telegram user data, skipping auto-login')
-        setIsChecking(false)
-        return
-      }
+      // If no session, redirect to welcome page for login/registration
+      console.log('[TelegramAutoLogin] No active session, redirecting to welcome')
+      router.push('/auth/welcome')
 
-      const telegramId = tg.user.id
-      console.log('[TelegramAutoLogin] Checking for user with telegram_id:', telegramId)
-
-      // Check if user exists
-      const { data: existingUser } = await supabase
-        .from('users')
-        .select('*')
-        .eq('telegram_id', telegramId)
-        .single()
-
-      if (existingUser) {
-        console.log('[TelegramAutoLogin] User found, auto-logging in...')
-
-        // Create a magic link session or custom auth
-        // For now, we'll use email auth with a placeholder
-        const email = `${telegramId}@telegram.user`
-
-        // Try to sign in (user should already exist in auth.users)
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password: `telegram_${telegramId}_autologin`
-        })
-
-        if (signInError) {
-          console.error('[TelegramAutoLogin] Sign-in error:', signInError)
-          // If sign-in fails, redirect to login
-          router.push('/auth/welcome')
-        } else {
-          console.log('[TelegramAutoLogin] Auto-login successful')
-
-          // Redirect based on role
-          switch (existingUser.role) {
-            case 'worker':
-              router.push('/worker/shifts')
-              break
-            case 'client':
-              router.push('/client/shifts')
-              break
-            case 'shef':
-              router.push('/shef/dashboard')
-              break
-            case 'admin':
-              router.push('/admin')
-              break
-            default:
-              router.push('/role-select')
-          }
-        }
-      } else {
-        console.log('[TelegramAutoLogin] User not found, redirecting to welcome')
-        // User doesn't exist, redirect to welcome/registration
-        router.push('/auth/welcome')
-      }
     } catch (error) {
       console.error('[TelegramAutoLogin] Error:', error)
+      // On error, redirect to welcome page
+      router.push('/auth/welcome')
     } finally {
       setIsChecking(false)
     }

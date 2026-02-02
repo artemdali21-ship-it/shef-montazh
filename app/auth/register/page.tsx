@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Mail, Lock, User, Briefcase, Building, HardHat, AlertCircle, CheckCircle, Check, X } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase-client'
 import toast from 'react-hot-toast'
 import { Logo } from '@/components/ui/Logo'
 import { useTelegram } from '@/lib/telegram'
@@ -37,6 +37,7 @@ function RegisterForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const tg = useTelegram()
+  const supabase = createClient()
 
   // Form refs for auto-focus
   const fullNameRef = useRef<HTMLInputElement>(null)

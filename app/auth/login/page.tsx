@@ -5,12 +5,13 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Mail, Lock, LogIn, AlertCircle } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase-client'
 import toast from 'react-hot-toast'
 import { Logo } from '@/components/ui/Logo'
 
 export default function LoginPage() {
   const router = useRouter()
+  const supabase = createClient()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
