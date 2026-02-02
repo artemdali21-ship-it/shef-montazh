@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase-server'
+import { createServerClient as createClient } from '@/lib/supabase-server'
 
 /**
  * Action types for audit logging

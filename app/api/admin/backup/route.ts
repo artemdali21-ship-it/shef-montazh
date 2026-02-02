@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase-server';
+import { createServerClient as createClient } from '@/lib/supabase-server';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase-server'
+import { createServerClient as createClient } from '@/lib/supabase-server'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { ArrowLeft, Users, MessageCircle } from 'lucide-react'

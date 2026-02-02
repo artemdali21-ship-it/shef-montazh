@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase-server'
+import { createServerClient as createClient } from '@/lib/supabase-server'
 import { Users, Calendar, DollarSign, TrendingUp, CheckCircle, Clock, XCircle } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'

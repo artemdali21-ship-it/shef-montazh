@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase-server'
+import { createServerClient as createClient } from '@/lib/supabase-server'
 
 const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0'
 const START_TIME = Date.now()

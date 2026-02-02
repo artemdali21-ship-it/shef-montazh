@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase-server';
+import { createServerClient as createClient } from '@/lib/supabase-server';
 import * as OTPAuth from 'otpauth';
 
 export async function POST(req: NextRequest) {

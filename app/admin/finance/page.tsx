@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase-server'
+import { createServerClient as createClient } from '@/lib/supabase-server'
 import { DollarSign, TrendingUp, ArrowUpRight, Download } from 'lucide-react'
 import RevenueChart from '@/components/admin/RevenueChart'
 import TransactionsTable from '@/components/admin/TransactionsTable'

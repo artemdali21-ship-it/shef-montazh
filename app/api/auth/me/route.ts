@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase-server'
+import { createServerClient } from '@/lib/supabase-server'
 
 /**
  * Get Current User Info
@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase-server'
  */
 export async function GET() {
   try {
-    const supabase = await createClient()
+    const supabase = createServerClient()
 
     // Get current session
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()

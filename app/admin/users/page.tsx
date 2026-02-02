@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase-server'
+import { createServerClient as createClient } from '@/lib/supabase-server'
 import UserTable from '@/components/admin/UserTable'
 import UserFilters from '@/components/admin/UserFilters'
 

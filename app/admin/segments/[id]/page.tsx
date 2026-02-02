@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase-server'
+import { createServerClient as createClient } from '@/lib/supabase-server'
 import { ArrowLeft, Download, Send, Users as UsersIcon } from 'lucide-react'
 import Link from 'next/link'
 import ExportSegmentButton from '@/components/admin/ExportSegmentButton'

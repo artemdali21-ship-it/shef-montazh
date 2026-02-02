@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase-server'
+import { createServerClient as createClient } from '@/lib/supabase-server'
 import { AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 import DisputeCard from '@/components/disputes/DisputeCard'
