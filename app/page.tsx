@@ -12,30 +12,35 @@ export default function HomePage() {
   const { session, loading } = useTelegramSession()
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [showRoleSelector, setShowRoleSelector] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
 
   useEffect(() => {
     if (loading) return
 
     if (session) {
       console.log('[HomePage] Session found:', session)
+      setIsRedirecting(true)
 
-      // User is logged in - redirect to dashboard
-      if (session.hasSeenOnboarding) {
-        const dashboardPaths = {
-          worker: '/worker/shifts',
-          client: '/client/shifts',
-          shef: '/shef/dashboard',
+      // Add small delay for smooth transition
+      setTimeout(() => {
+        // User is logged in - redirect to dashboard
+        if (session.hasSeenOnboarding) {
+          const dashboardPaths = {
+            worker: '/worker/shifts',
+            client: '/client/shifts',
+            shef: '/shef/dashboard',
+          }
+
+          const path = dashboardPaths[session.role]
+          console.log('[HomePage] Redirecting to:', path)
+          router.push(path)
+        } else {
+          // Onboarding not complete - redirect to onboarding
+          const onboardingPath = `/onboarding/${session.role}`
+          console.log('[HomePage] Redirecting to onboarding:', onboardingPath)
+          router.push(onboardingPath)
         }
-
-        const path = dashboardPaths[session.role]
-        console.log('[HomePage] Redirecting to:', path)
-        router.push(path)
-      } else {
-        // Onboarding not complete - redirect to onboarding
-        const onboardingPath = `/onboarding/${session.role}`
-        console.log('[HomePage] Redirecting to onboarding:', onboardingPath)
-        router.push(onboardingPath)
-      }
+      }, 300)
     } else {
       // No session - show initial onboarding slides
       console.log('[HomePage] No session - showing initial onboarding')
@@ -49,33 +54,30 @@ export default function HomePage() {
     setShowRoleSelector(true)
   }
 
-  // Show loading while checking session
-  if (loading) {
+  // Show loading while checking session or redirecting
+  if (loading || isRedirecting) {
     return (
       <div
         className="fixed inset-0 bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center z-50"
         style={{
           opacity: 1,
-          transition: 'opacity 0.3s ease-in-out',
-          animation: 'fadeIn 0.3s ease-in-out'
+          transition: 'opacity 0.5s ease-in-out',
         }}
       >
         <style>{`
-          @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-          }
-          @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+          @keyframes smoothPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.98); }
           }
         `}</style>
         <div className="text-center">
-          <div className="mb-6" style={{ animation: 'pulse 2s ease-in-out infinite' }}>
+          <div className="mb-6" style={{ animation: 'smoothPulse 2.5s ease-in-out infinite' }}>
             <Logo size="lg" showText={true} />
           </div>
-          <div className="w-16 h-16 border-4 border-orange-500/30 border-t-orange-500 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white text-lg font-medium opacity-70">Загрузка...</p>
+          <div className="w-16 h-16 border-4 border-orange-500/30 border-t-orange-500 rounded-full animate-spin mx-auto mb-4" style={{ animationDuration: '1s' }}></div>
+          <p className="text-white text-lg font-medium opacity-70">
+            {isRedirecting ? 'Входим...' : 'Загрузка...'}
+          </p>
         </div>
       </div>
     )

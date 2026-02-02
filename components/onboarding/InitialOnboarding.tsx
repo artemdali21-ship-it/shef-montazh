@@ -157,15 +157,16 @@ export default function InitialOnboarding({ onComplete }: InitialOnboardingProps
           <div className="mb-8 flex-1 flex flex-col justify-center">
             {/* SLIDE IMAGE */}
             <div className="relative rounded-2xl overflow-hidden mb-6 shadow-lg flex-shrink-0 mx-auto" style={{
-              width: '200px',
-              height: '200px',
+              width: '320px',
+              height: '180px',
+              maxWidth: '90vw',
               boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
               backgroundColor: '#333333',
             }}>
               <img
                 src={slides[currentSlide].image}
                 alt={slides[currentSlide].title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
                 style={{ filter: 'brightness(1.05) contrast(1.05)' }}
               />
             </div>

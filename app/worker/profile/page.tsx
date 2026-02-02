@@ -10,11 +10,13 @@ import { createClient } from '@/lib/supabase-client'
 import { useToast } from '@/components/ui/ToastProvider'
 import SkeletonProfile from '@/components/ui/SkeletonProfile'
 import { Logo } from '@/components/ui/Logo'
+import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
 
 export default function WorkerProfilePage() {
   const router = useRouter()
   const supabase = createClient()
   const toast = useToast()
+  const { session, loading: sessionLoading } = useTelegramSession()
 
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -23,8 +25,10 @@ export default function WorkerProfilePage() {
   const [savedCategories, setSavedCategories] = useState<string[]>([])
 
   useEffect(() => {
-    loadProfile()
-  }, [])
+    if (!sessionLoading) {
+      loadProfile()
+    }
+  }, [sessionLoading, session])
 
   const loadProfile = async () => {
     try {
@@ -32,21 +36,20 @@ export default function WorkerProfilePage() {
 
       console.log('[Profile] Loading profile...')
 
-      // Get current user
-      const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
-      console.log('[Profile] Auth user:', authUser?.id, 'Error:', authError)
-
-      if (!authUser) {
-        console.log('[Profile] No auth user, redirecting to login')
-        router.push('/auth/login')
+      // Check Telegram session
+      if (!session) {
+        console.log('[Profile] No session, redirecting to home')
+        router.push('/')
         return
       }
 
-      // Load user profile
+      console.log('[Profile] Session found:', session)
+
+      // Load user profile by user ID
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('*')
-        .eq('id', authUser.id)
+        .eq('id', session.userId)
         .single()
 
       console.log('[Profile] User data:', userData, 'Error:', userError)
@@ -57,47 +60,16 @@ export default function WorkerProfilePage() {
       }
 
       if (!userData) {
-        console.log('[Profile] No user data found, creating user record...')
-
-        // User exists in auth but not in public.users - create it
-        const { error: createError } = await supabase
-          .from('users')
-          .insert({
-            id: authUser.id,
-            email: authUser.email,
-            full_name: authUser.email?.split('@')[0] || 'User',
-            role: 'worker',
-            roles: ['worker'],
-            current_role: 'worker',
-            profile_completed: false,
-          })
-
-        if (createError) {
-          console.error('[Profile] Error creating user:', createError)
-          throw new Error(`Не удалось создать пользователя: ${createError.message}`)
-        }
-
-        // Try to load again
-        const { data: newUserData } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', authUser.id)
-          .single()
-
-        if (!newUserData) {
-          throw new Error('Не удалось загрузить данные после создания')
-        }
-
-        setUser(newUserData)
-      } else {
-        setUser(userData)
+        throw new Error('Пользователь не найден')
       }
+
+      setUser(userData)
 
       // Load worker categories from worker_profiles
       const { data: workerProfile, error: profileError } = await supabase
         .from('worker_profiles')
         .select('categories')
-        .eq('user_id', authUser.id)
+        .eq('user_id', session.userId)
         .maybeSingle()
 
       console.log('[Profile] Worker profile:', workerProfile, 'Error:', profileError)
@@ -113,7 +85,7 @@ export default function WorkerProfilePage() {
         // Create worker profile if doesn't exist
         const { error: createError } = await supabase
           .from('worker_profiles')
-          .insert({ user_id: authUser.id })
+          .insert({ user_id: session.userId })
 
         if (createError) {
           console.error('[Profile] Error creating worker profile:', createError)
@@ -138,8 +110,14 @@ export default function WorkerProfilePage() {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut()
-      router.push('/auth/login')
+      // Call logout API to clear Telegram CloudStorage
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      // Force reload to clear session
+      window.location.href = '/'
       toast.success('Вы вышли из системы')
     } catch (error) {
       toast.error('Ошибка при выходе')
@@ -148,14 +126,13 @@ export default function WorkerProfilePage() {
 
   const handleSaveCategories = async () => {
     try {
-      const { data: { user: authUser } } = await supabase.auth.getUser()
-      if (!authUser) return
+      if (!session) return
 
       // Update worker_profiles with selected categories
       const { error } = await supabase
         .from('worker_profiles')
         .update({ categories })
-        .eq('user_id', authUser.id)
+        .eq('user_id', session.userId)
 
       if (error) throw error
 
@@ -169,7 +146,7 @@ export default function WorkerProfilePage() {
     }
   }
 
-  if (loading) {
+  if (sessionLoading || loading) {
     return (
       <div className="min-h-screen pb-20 overflow-y-auto">
         <header className="sticky top-0 bg-white/10 backdrop-blur-xl border-b border-white/20 z-20 p-4">
@@ -182,7 +159,9 @@ export default function WorkerProfilePage() {
     )
   }
 
-  if (!user) return null
+  if (!session || !user) {
+    return null
+  }
 
   return (
     <div className="min-h-screen pb-20 overflow-y-auto">
