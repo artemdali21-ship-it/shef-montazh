@@ -8,6 +8,8 @@ export default function RoleSelectScreen() {
   const router = useRouter()
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
 
+  console.log('[RoleSelect] Component mounted/re-rendered, selectedRole:', selectedRole)
+
   const roles = [
     {
       id: 'client',
@@ -39,8 +41,12 @@ export default function RoleSelectScreen() {
   ]
 
   const handleSelectRole = (roleId: string) => {
+    console.log('[RoleSelect] Button clicked for role:', roleId)
     setSelectedRole(roleId)
+    console.log('[RoleSelect] Selected role state updated to:', roleId)
     localStorage.setItem('userRole', roleId)
+    console.log('[RoleSelect] Stored role in localStorage:', roleId)
+    console.log('[RoleSelect] About to redirect to:', `/auth/register?role=${roleId}`)
     router.push(`/auth/register?role=${roleId}`)
   }
 
@@ -139,7 +145,10 @@ export default function RoleSelectScreen() {
             return (
               <button
                 key={role.id}
-                onClick={() => handleSelectRole(role.id)}
+                onClick={() => {
+                  console.log('[RoleSelect] onClick fired for role:', role.id)
+                  handleSelectRole(role.id)
+                }}
                 disabled={selectedRole !== null && selectedRole !== role.id}
                 className="relative group w-full flex items-start gap-4 p-6 rounded-2xl transition-all duration-300 text-left overflow-hidden"
                 style={{
