@@ -74,51 +74,25 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
         console.log('[EditProfileModal] Avatar uploaded:', avatarUrl)
       }
 
-      // Update user basic info in users table
-      console.log('[EditProfileModal] Updating user profile...')
-      const { error: userError } = await supabase
-        .from('users')
-        .update({
-          full_name: formData.full_name,
-          avatar_url: avatarUrl
-        })
-        .eq('id', user.id)
-
-      if (userError) {
-        console.error('[EditProfileModal] User update error:', userError)
-        throw userError
-      }
-
-      // Update worker profile with bio and phone
-      console.log('[EditProfileModal] Updating worker profile...')
-      const { error: profileError } = await supabase
-        .from('worker_profiles')
-        .update({
+      // Call update-profile API to handle all updates
+      console.log('[EditProfileModal] Calling update-profile API...')
+      const updateResponse = await fetch('/api/update-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
           bio: formData.bio,
           phone: formData.phone,
-          avatar_url: avatarUrl
-        })
-        .eq('user_id', user.id)
+          avatarUrl: avatarUrl,
+        }),
+      })
 
-      if (profileError) {
-        console.error('[EditProfileModal] Profile update error:', profileError)
-        // Try to insert if update failed
-        if (profileError.code === 'PGRST116') {
-          const { error: insertError } = await supabase
-            .from('worker_profiles')
-            .insert({
-              user_id: user.id,
-              bio: formData.bio,
-              phone: formData.phone,
-              avatar_url: avatarUrl
-            })
-
-          if (insertError) throw insertError
-        } else {
-          throw profileError
-        }
+      if (!updateResponse.ok) {
+        const error = await updateResponse.json()
+        throw new Error(error.error || 'Failed to update profile')
       }
 
+      console.log('[EditProfileModal] ✅ Profile updated successfully')
       toast.success('Профиль обновлён!')
       onSave()
       onClose()
