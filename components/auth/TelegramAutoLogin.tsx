@@ -25,6 +25,7 @@ export default function TelegramAutoLogin() {
     // Skip auto-login on certain pages to avoid loops
     const skipPages = [
       '/auth/register',
+      '/auth/login',
       '/onboarding',
       '/auth/complete-profile',
       '/auth/welcome',
