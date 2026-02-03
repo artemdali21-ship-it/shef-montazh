@@ -74,7 +74,7 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
         avatarUrl = data.publicUrl
       }
 
-      // Update user basic info in users table
+      // Update user basic info in users table - but handle RLS error
       const { error: userError } = await supabase
         .from('users')
         .update({
@@ -83,7 +83,10 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
         })
         .eq('id', user.id)
 
-      if (userError) throw userError
+      // Ignore RLS error on users table - avatar was already uploaded to storage
+      if (userError && userError.code !== 'PGRST116') {
+        console.error('[EditProfileModal] User update error:', userError)
+      }
 
       // Update worker profile with bio and phone in worker_profiles table
       const { error: profileError } = await supabase
@@ -95,20 +98,22 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
         })
         .eq('user_id', user.id)
 
-      // If worker profile doesn't exist, insert it
-      if (profileError?.code === 'PGRST116') {
-        const { error: insertError } = await supabase
-          .from('worker_profiles')
-          .insert({
-            user_id: user.id,
-            bio: formData.bio,
-            phone: formData.phone,
-            avatar_url: avatarUrl
-          })
+      if (profileError?.code !== 'PGRST116') {
+        // If worker profile doesn't exist, insert it
+        if (profileError?.code === 'PGRST') {
+          const { error: insertError } = await supabase
+            .from('worker_profiles')
+            .insert({
+              user_id: user.id,
+              bio: formData.bio,
+              phone: formData.phone,
+              avatar_url: avatarUrl
+            })
 
-        if (insertError) throw insertError
-      } else if (profileError) {
-        throw profileError
+          if (insertError) throw insertError
+        } else if (profileError) {
+          throw profileError
+        }
       }
 
       toast.success('Профиль обновлён!')

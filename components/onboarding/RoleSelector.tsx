@@ -3,7 +3,7 @@ import { Wrench, Briefcase, Users } from 'lucide-react'
 const roles = [
   {
     id: 'worker',
-    title: 'Исполнитель',
+    title: 'Специалист',
     description: 'Ищу работу на сменах',
     icon: Wrench,
     color: 'blue'

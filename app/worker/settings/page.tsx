@@ -9,14 +9,13 @@ import {
   Shield,
   Info,
   Trash2,
-  LogOut,
   MapPin,
   Globe,
   Palette
 } from 'lucide-react'
 import SettingsSection from '@/components/settings/SettingsSection'
 import SettingRow from '@/components/settings/SettingRow'
-import ToggleSwitch from '@/components/settings/ToggleSwitch'
+import LogoutButton from '@/components/common/LogoutButton'
 import { createClient } from '@/lib/supabase-client'
 import { useToast } from '@/components/ui/ToastProvider'
 import ErrorState from '@/components/ui/ErrorState'
@@ -38,7 +37,7 @@ export default function WorkerSettingsPage() {
     try {
       const { data: { user: authUser } } = await supabase.auth.getUser()
       if (!authUser) {
-        router.push('/auth/login')
+        router.push('/')
         return
       }
 
@@ -53,16 +52,6 @@ export default function WorkerSettingsPage() {
       console.error('Error loading user:', error)
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut()
-      router.push('/auth/login')
-      toast.success('Вы вышли из системы')
-    } catch (error) {
-      toast.error('Ошибка при выходе')
     }
   }
 
@@ -88,7 +77,7 @@ export default function WorkerSettingsPage() {
       await supabase.auth.signOut()
 
       toast.success('Аккаунт удалён')
-      router.push('/auth/login')
+      router.push('/')
     } catch (error: any) {
       toast.error(error.message || 'Не удалось удалить аккаунт')
     } finally {
@@ -134,9 +123,9 @@ export default function WorkerSettingsPage() {
           <SettingRow
             label="Профиль"
             value={user.full_name}
-            onClick={() => router.push('/profile')}
+            onClick={() => router.push('/worker/profile')}
           />
-          <SettingRow label="Email" value={user.email} />
+          <SettingRow label="ID" value={user.telegram_id} />
           <SettingRow label="Телефон" value={user.phone || 'Не указан'} />
         </SettingsSection>
 
@@ -177,17 +166,7 @@ export default function WorkerSettingsPage() {
         </SettingsSection>
 
         {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="
-            w-full flex items-center justify-center gap-2 py-3
-            bg-white/5 border border-white/10 rounded-xl
-            text-white font-medium hover:bg-white/10 transition
-          "
-        >
-          <LogOut className="w-5 h-5" />
-          Выйти из аккаунта
-        </button>
+        <LogoutButton className="w-full" />
 
         {/* Danger Zone */}
         <SettingsSection title="Опасная зона" icon={Trash2}>

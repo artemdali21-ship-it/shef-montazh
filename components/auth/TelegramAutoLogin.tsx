@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useTelegram } from '@/lib/telegram'
+import { createClient } from '@/lib/supabase-client'
 
 /**
  * TelegramAutoLogin Component
@@ -17,6 +18,7 @@ export default function TelegramAutoLogin() {
   const router = useRouter()
   const pathname = usePathname()
   const tg = useTelegram()
+  const supabase = createClient()
   const [isChecking, setIsChecking] = useState(true)
 
   useEffect(() => {
@@ -46,58 +48,66 @@ export default function TelegramAutoLogin() {
     try {
       console.log('[TelegramAutoLogin] Starting auth check...')
 
-      // Check if already authenticated via /api/auth/me
-      const response = await fetch('/api/auth/me')
+      // Step 1: Check if there's active Supabase session
+      const { data: { session } } = await supabase.auth.getSession()
 
-      if (response.ok) {
-        const data = await response.json()
-        const user = data.user
+      if (session?.user) {
+        console.log('[TelegramAutoLogin] ✅ Active Supabase session found, user:', session.user.id)
 
-        console.log('[TelegramAutoLogin] User authenticated:', user.id)
+        // Step 2: Check if API endpoint recognizes this session
+        const apiResponse = await fetch('/api/auth/me')
 
-        // User is authenticated
-        if (!user.roles || user.roles.length === 0) {
-          console.log('[TelegramAutoLogin] No roles found, redirecting to role-select')
-          router.push('/role-select')
+        if (apiResponse.ok) {
+          const data = await apiResponse.json()
+          const user = data.user
+
+          console.log('[TelegramAutoLogin] User authenticated via API:', user.id)
+
+          // User is authenticated
+          if (!user.roles || user.roles.length === 0) {
+            console.log('[TelegramAutoLogin] No roles found, redirecting to role-select')
+            router.push('/role-select')
+            setIsChecking(false)
+            return
+          }
+
+          // If multiple roles, show role picker
+          if (user.roles.length > 1) {
+            console.log('[TelegramAutoLogin] Multiple roles, showing role picker')
+            router.push(`/role-picker?telegramId=${user.telegram_id}`)
+            setIsChecking(false)
+            return
+          }
+
+          // Single role - redirect to dashboard
+          const role = user.current_role || user.roles[0]
+          const dashboardPaths: Record<string, string> = {
+            worker: '/worker/shifts',
+            client: '/client/shifts',
+            shef: '/shef/dashboard',
+          }
+
+          console.log('[TelegramAutoLogin] Authenticated with role:', role)
+          router.push(dashboardPaths[role] || '/worker/shifts')
+          setIsChecking(false)
+          return
+        } else {
+          console.log('[TelegramAutoLogin] API rejected session, signing out and redirecting...')
+          // Session exists but API doesn't recognize it - sign out and go to welcome
+          await supabase.auth.signOut()
+          router.push('/auth/welcome')
+          setIsChecking(false)
           return
         }
-
-        // If multiple roles, show role picker
-        if (user.roles.length > 1) {
-          console.log('[TelegramAutoLogin] Multiple roles, showing role picker')
-          router.push(`/role-picker?telegramId=${user.telegram_id}`)
-          return
-        }
-
-        // Single role - redirect to dashboard
-        const role = user.current_role || user.roles[0]
-        const dashboardPaths: Record<string, string> = {
-          worker: '/worker/shifts',
-          client: '/client/shifts',
-          shef: '/shef/dashboard',
-        }
-
-        console.log('[TelegramAutoLogin] Authenticated with role:', role)
-        router.push(dashboardPaths[role] || '/worker/shifts')
-        return
       }
 
-      // Not authenticated - check if Telegram ID available
-      const telegramId = tg?.user?.id
-
-      if (!telegramId) {
-        console.log('[TelegramAutoLogin] No Telegram ID, redirecting to welcome')
-        router.push('/auth/welcome')
-        setIsChecking(false)
-        return
-      }
-
-      console.log('[TelegramAutoLogin] Not authenticated, redirecting to welcome')
+      // No active Supabase session - redirect to welcome
+      console.log('[TelegramAutoLogin] No active session, redirecting to welcome')
       router.push('/auth/welcome')
+      setIsChecking(false)
     } catch (error) {
       console.error('[TelegramAutoLogin] Error:', error)
       router.push('/auth/welcome')
-    } finally {
       setIsChecking(false)
     }
   }

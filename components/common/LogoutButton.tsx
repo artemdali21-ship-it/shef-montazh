@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { LogOut } from 'lucide-react'
 import { useTelegram } from '@/lib/telegram'
 import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
+import { createClient } from '@/lib/supabase-client'
 import toast from 'react-hot-toast'
 
 interface LogoutButtonProps {
@@ -16,6 +17,7 @@ export default function LogoutButton({ variant = 'button', className = '' }: Log
   const router = useRouter()
   const tg = useTelegram()
   const { clearSession } = useTelegramSession()
+  const supabase = createClient()
   const [loading, setLoading] = useState(false)
 
   const handleLogout = async () => {
@@ -32,12 +34,21 @@ export default function LogoutButton({ variant = 'button', className = '' }: Log
         return
       }
 
-      // Clear CloudStorage ПЕРВЫМ делом
-      console.log('[Logout] 🔴 Clearing session from CloudStorage...')
+      // Step 1: Clear CloudStorage ПЕРВЫМ делом
+      console.log('[Logout] 🔴 Step 1: Clearing session from CloudStorage...')
       await clearSession()
 
-      // Вызываем logout API для очистки DB
-      console.log('[Logout] 🔴 Calling logout API...')
+      // Step 2: Sign out from Supabase Auth (КРИТИЧНО!)
+      console.log('[Logout] 🔴 Step 2: Signing out from Supabase Auth...')
+      const { error: signOutError } = await supabase.auth.signOut()
+      if (signOutError) {
+        console.error('[Logout] Sign out error:', signOutError)
+      } else {
+        console.log('[Logout] ✅ Supabase Auth signed out')
+      }
+
+      // Step 3: Call logout API для очистки DB
+      console.log('[Logout] 🔴 Step 3: Calling logout API...')
       const response = await fetch('/api/auth/logout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -47,20 +58,15 @@ export default function LogoutButton({ variant = 'button', className = '' }: Log
       const data = await response.json()
 
       if (!response.ok || !data.success) {
-        toast.error(data.error || 'Ошибка выхода')
-        return
+        console.error('[Logout] API error:', data.error)
+        // Продолжаем даже если API ошибка
       }
 
       toast.success('Вы вышли из системы')
 
-      // ВСЕГДА редирект на главную страницу (где будет TelegramAutoLogin)
-      console.log('[Logout] 📍 Redirecting to home page...')
-      router.push('/')
-      
-      // Force reload to ensure Telegram state is reset
-      setTimeout(() => {
-        window.location.href = '/'
-      }, 500)
+      // Step 4: ПОЛНАЯ перезагрузка страницы с редиректом на главную
+      console.log('[Logout] 📍 Step 4: Full page reload and redirect...')
+      window.location.href = '/'
     } catch (error) {
       console.error('[LogoutButton] Error:', error)
       toast.error('Ошибка подключения')
