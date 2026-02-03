@@ -44,6 +44,5 @@ export type SwitchRoleResponse = {
 
 export type LogoutResponse = {
   success: boolean
-  multipleRoles?: boolean // Whether user has multiple roles
   error?: string
 }

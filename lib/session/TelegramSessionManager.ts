@@ -13,55 +13,23 @@ export function useTelegramSession() {
   const tg = useTelegram()
 
   useEffect(() => {
-    console.log('[DEBUG] useTelegramSession useEffect triggered')
-    console.log('[DEBUG] tg ready:', !!tg)
-    console.log('[DEBUG] tg?.user:', tg?.user)
-
-    // Ждём готовности Telegram WebApp
     if (typeof window !== 'undefined' && (window as any).Telegram?.WebApp) {
       const webApp = (window as any).Telegram.WebApp
 
-      console.log('[DEBUG] WebApp found:', !!webApp)
-      console.log('[DEBUG] WebApp.initDataUnsafe:', webApp.initDataUnsafe)
-      console.log('[DEBUG] WebApp.initDataUnsafe.user:', webApp.initDataUnsafe?.user)
-
       // Если уже готов и есть user ID
       if (webApp.initDataUnsafe?.user?.id) {
-        console.log('[DEBUG] WebApp ready, loading session immediately')
         loadSession()
       } else {
-        console.log('[DEBUG] WebApp not ready yet, waiting for ready event')
-        // Ждём события ready
-        const handleReady = () => {
-          console.log('[DEBUG] WebApp ready event fired!')
-          loadSession()
-        }
-
-        if (webApp.onEvent) {
-          webApp.onEvent('viewportChanged', handleReady)
-          // Также пробуем загрузить через таймаут как fallback
-          setTimeout(() => {
-            if (webApp.initDataUnsafe?.user?.id) {
-              console.log('[DEBUG] WebApp ready after timeout')
-              loadSession()
-            } else {
-              console.log('[DEBUG] No Telegram user after timeout')
-              setLoading(false)
-            }
-          }, 1000)
-        } else {
-          // Fallback если onEvent не поддерживается
-          setTimeout(loadSession, 500)
-        }
-
-        return () => {
-          if (webApp.offEvent) {
-            webApp.offEvent('viewportChanged', handleReady)
+        // Fallback: загружаем через таймаут
+        setTimeout(() => {
+          if (webApp.initDataUnsafe?.user?.id) {
+            loadSession()
+          } else {
+            setLoading(false)
           }
-        }
+        }, 1000)
       }
     } else {
-      console.log('[DEBUG] No Telegram WebApp available')
       setLoading(false)
     }
   }, [])
@@ -70,67 +38,49 @@ export function useTelegramSession() {
     try {
       setLoading(true)
 
-      // Получаем Telegram ID из WebApp напрямую
       const webApp = (window as any).Telegram?.WebApp
       const telegramId = webApp?.initDataUnsafe?.user?.id
 
-      console.log('[Session] loadSession called')
-      console.log('[Session] Telegram ID:', telegramId)
-
       if (!telegramId) {
-        console.log('[Session] No Telegram ID available')
         setSession(null)
         setLoading(false)
         return
       }
 
-      // Step 1: Check CloudStorage first
+      // Step 1: Check CloudStorage
       const storageSession = await getSessionFromStorage()
-      console.log('[Session] CloudStorage session:', storageSession)
 
       if (storageSession && !isSessionExpired(storageSession)) {
-        console.log('[Session] Valid session found in CloudStorage')
-        console.log('[DEBUG] session:', storageSession)
-        console.log('[DEBUG] hasSeenOnboarding:', storageSession.hasSeenOnboarding)
+        console.log('[Session] ✅ Valid session found in CloudStorage')
         setSession(storageSession)
         setLoading(false)
         return
       }
 
-      // Step 2: Session expired or not found - check database
-      console.log('[Session] No valid session in CloudStorage, checking database...')
-      const dbUser = await fetchUserByTelegramId(telegramId)
-      console.log('[Session] Database user:', dbUser)
+      // Step 2: Session expired or not found - fetch from API
+      console.log('[Session] Loading session from API...')
+      const apiResponse = await fetch('/api/auth/me')
+      
+      if (apiResponse.ok) {
+        const data = await apiResponse.json()
+        const userRoles = data.user?.roles || []
+        const currentRole = data.user?.current_role
 
-      if (dbUser) {
-        console.log('[Session] User found in database')
-        console.log('[Session] has_completed_onboarding:', dbUser.has_completed_onboarding)
-
-        // КРИТИЧНО: Если пользователь не прошел onboarding - НЕ создаем сессию
-        // Редирект на onboarding должен быть в роутере
-        if (dbUser.has_completed_onboarding === false) {
-          console.log('[Session] User has not seen onboarding, NOT creating session')
-          setSession(null)
-          setLoading(false)
-          return
-        }
-
-        // Create new session только если onboarding пройден
+        // Create new session with multi-role support
         const newSession: Session = {
-          userId: dbUser.id,
+          userId: data.user.id,
           telegramId: telegramId,
-          role: dbUser.role as UserRole,
+          role: currentRole || (userRoles[0] as UserRole) || 'worker',
+          roles: userRoles,
           hasSeenOnboarding: true,
           expiresAt: Date.now() + SESSION_DURATION,
         }
 
-        console.log('[Session] Creating new session:', newSession)
-
-        // Save to CloudStorage
+        console.log('[Session] ✅ Created new session:', newSession)
         await saveSessionToStorage(newSession)
         setSession(newSession)
       } else {
-        console.log('[Session] User not found in database')
+        console.log('[Session] API returned error, no session')
         setSession(null)
       }
     } catch (error) {
@@ -141,12 +91,9 @@ export function useTelegramSession() {
     }
   }
 
-  const refreshSession = async () => {
-    await loadSession()
-  }
-
   const clearSession = async () => {
     try {
+      console.log('[Session] 🔴 Clearing session...')
       await clearSessionFromStorage()
       setSession(null)
     } catch (error) {
@@ -157,7 +104,6 @@ export function useTelegramSession() {
   return {
     session,
     loading,
-    refreshSession,
     clearSession,
   }
 }
@@ -167,7 +113,6 @@ async function getSessionFromStorage(): Promise<Session | null> {
   return new Promise((resolve) => {
     try {
       if (typeof window === 'undefined' || !(window as any).Telegram?.WebApp?.CloudStorage) {
-        console.log('[Session] CloudStorage not available')
         resolve(null)
         return
       }
@@ -176,28 +121,26 @@ async function getSessionFromStorage(): Promise<Session | null> {
 
       cloudStorage.getItem(SESSION_KEY, (error: any, value: string) => {
         if (error) {
-          console.error('[Session] CloudStorage getItem error:', error)
+          console.error('[Session] CloudStorage error:', error)
           resolve(null)
           return
         }
 
         if (!value) {
-          console.log('[Session] No session found in CloudStorage')
           resolve(null)
           return
         }
 
         try {
           const session = JSON.parse(value) as Session
-          console.log('[Session] Session retrieved from CloudStorage:', session)
           resolve(session)
         } catch (parseError) {
-          console.error('[Session] Error parsing session:', parseError)
+          console.error('[Session] Parse error:', parseError)
           resolve(null)
         }
       })
     } catch (error) {
-      console.error('[Session] Error accessing CloudStorage:', error)
+      console.error('[Session] CloudStorage access error:', error)
       resolve(null)
     }
   })
@@ -207,7 +150,6 @@ async function saveSessionToStorage(session: Session): Promise<void> {
   return new Promise((resolve, reject) => {
     try {
       if (typeof window === 'undefined' || !(window as any).Telegram?.WebApp?.CloudStorage) {
-        console.log('[Session] CloudStorage not available for saving')
         resolve()
         return
       }
@@ -216,22 +158,16 @@ async function saveSessionToStorage(session: Session): Promise<void> {
       const sessionJson = JSON.stringify(session)
 
       cloudStorage.setItem(SESSION_KEY, sessionJson, (error: any, success: boolean) => {
-        if (error) {
-          console.error('[Session] CloudStorage setItem error:', error)
+        if (error || !success) {
+          console.error('[Session] CloudStorage save error:', error)
           reject(error)
-          return
-        }
-
-        if (success) {
-          console.log('[Session] Session saved to CloudStorage successfully')
-          resolve()
         } else {
-          console.error('[Session] Failed to save session to CloudStorage')
-          reject(new Error('Failed to save session'))
+          console.log('[Session] ✅ Saved to CloudStorage')
+          resolve()
         }
       })
     } catch (error) {
-      console.error('[Session] Error saving to CloudStorage:', error)
+      console.error('[Session] Save error:', error)
       reject(error)
     }
   })
@@ -241,7 +177,6 @@ async function clearSessionFromStorage(): Promise<void> {
   return new Promise((resolve) => {
     try {
       if (typeof window === 'undefined' || !(window as any).Telegram?.WebApp?.CloudStorage) {
-        console.log('[Session] CloudStorage not available for clearing')
         resolve()
         return
       }
@@ -250,57 +185,19 @@ async function clearSessionFromStorage(): Promise<void> {
 
       cloudStorage.removeItem(SESSION_KEY, (error: any, success: boolean) => {
         if (error) {
-          console.error('[Session] CloudStorage removeItem error:', error)
+          console.error('[Session] CloudStorage remove error:', error)
         } else if (success) {
-          console.log('[Session] Session cleared from CloudStorage')
+          console.log('[Session] ✅ Cleared from CloudStorage')
         }
         resolve()
       })
     } catch (error) {
-      console.error('[Session] Error clearing CloudStorage:', error)
+      console.error('[Session] Clear error:', error)
       resolve()
     }
   })
 }
 
 function isSessionExpired(session: Session): boolean {
-  const expired = Date.now() > session.expiresAt
-  if (expired) {
-    console.log('[Session] Session expired')
-  }
-  return expired
-}
-
-async function fetchUserByTelegramId(telegramId: number): Promise<any | null> {
-  try {
-    console.log('[Session] Fetching user by Telegram ID:', telegramId)
-    const response = await fetch('/api/auth/user-by-telegram', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ telegramId }),
-    })
-
-    console.log('[Session] Fetch response status:', response.status)
-
-    if (!response.ok) {
-      console.error('[Session] Failed to fetch user:', response.statusText)
-      return null
-    }
-
-    const data = await response.json()
-    console.log('[Session] Fetch response data:', data)
-
-    if (data.exists) {
-      return {
-        id: data.id,
-        role: data.role,
-        has_completed_onboarding: data.hasSeenOnboarding,
-      }
-    }
-
-    return null
-  } catch (error) {
-    console.error('[Session] Error fetching user by telegram ID:', error)
-    return null
-  }
+  return Date.now() > session.expiresAt
 }

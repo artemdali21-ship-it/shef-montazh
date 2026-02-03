@@ -49,7 +49,7 @@ export default function TelegramAutoLogin() {
       const { data: { session } } = await supabase.auth.getSession()
 
       if (session?.user) {
-        console.log('[TelegramAutoLogin] ✅ Active session found')
+        console.log('[TelegramAutoLogin] ✅ Active Supabase session found')
 
         // Check if profile is completed
         const { data: userData } = await supabase
@@ -73,11 +73,68 @@ export default function TelegramAutoLogin() {
       const telegramId = tg?.user?.id
 
       if (!telegramId) {
-        console.log('[TelegramAutoLogin] No Telegram ID available')
+        console.log('[TelegramAutoLogin] No Telegram ID available, redirecting to welcome')
         router.push('/auth/welcome')
         setIsChecking(false)
         return
       }
+
+      console.log('[TelegramAutoLogin] Checking for user with Telegram ID:', telegramId)
+
+      // Try to get user from API
+      const response = await fetch('/api/auth/me')
+      
+      if (!response.ok) {
+        console.log('[TelegramAutoLogin] No authenticated session, redirecting to welcome')
+        router.push('/auth/welcome')
+        setIsChecking(false)
+        return
+      }
+
+      const data = await response.json()
+      const user = data.user
+
+      if (!user) {
+        console.log('[TelegramAutoLogin] User not found, redirecting to welcome')
+        router.push('/auth/welcome')
+        setIsChecking(false)
+        return
+      }
+
+      console.log('[TelegramAutoLogin] User found, roles:', user.roles)
+
+      // User exists and is authenticated
+      if (!user.roles || user.roles.length === 0) {
+        console.log('[TelegramAutoLogin] User has no roles, redirecting to role selection')
+        router.push('/role-select')
+        return
+      }
+
+      // If multiple roles, show role picker
+      if (user.roles.length > 1) {
+        console.log('[TelegramAutoLogin] Multiple roles found, showing role picker')
+        router.push(`/role-picker?telegramId=${telegramId}`)
+        return
+      }
+
+      // Single role - redirect to dashboard
+      const role = user.current_role || user.roles[0]
+      const dashboardPaths: Record<string, string> = {
+        worker: '/worker/shifts',
+        client: '/client/shifts',
+        shef: '/shef/dashboard',
+      }
+
+      console.log('[TelegramAutoLogin] Single role found:', role)
+      console.log('[TelegramAutoLogin] Redirecting to:', dashboardPaths[role])
+      router.push(dashboardPaths[role] || '/worker/shifts')
+    } catch (error) {
+      console.error('[TelegramAutoLogin] Error:', error)
+      router.push('/auth/welcome')
+    } finally {
+      setIsChecking(false)
+    }
+  }
 
       console.log('[TelegramAutoLogin] Checking for user with Telegram ID:', telegramId)
 

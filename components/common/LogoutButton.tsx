@@ -32,7 +32,12 @@ export default function LogoutButton({ variant = 'button', className = '' }: Log
         return
       }
 
-      // Call logout API
+      // Clear CloudStorage ПЕРВЫМ делом
+      console.log('[Logout] 🔴 Clearing session from CloudStorage...')
+      await clearSession()
+
+      // Вызываем logout API для очистки DB
+      console.log('[Logout] 🔴 Calling logout API...')
       const response = await fetch('/api/auth/logout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -46,17 +51,16 @@ export default function LogoutButton({ variant = 'button', className = '' }: Log
         return
       }
 
-      // Clear session from CloudStorage
-      await clearSession()
-
       toast.success('Вы вышли из системы')
 
-      // If multiple roles, show role picker. Otherwise go to home
-      if (data.multipleRoles) {
-        router.push(`/role-picker?telegramId=${telegramId}`)
-      } else {
-        router.push('/')
-      }
+      // ВСЕГДА редирект на главную страницу (где будет TelegramAutoLogin)
+      console.log('[Logout] 📍 Redirecting to home page...')
+      router.push('/')
+      
+      // Force reload to ensure Telegram state is reset
+      setTimeout(() => {
+        window.location.href = '/'
+      }, 500)
     } catch (error) {
       console.error('[LogoutButton] Error:', error)
       toast.error('Ошибка подключения')
