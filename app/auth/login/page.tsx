@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronLeft, HardHat, Building2, Wrench } from 'lucide-react'
-import { createClient } from '@/lib/supabase-client'
 import { useTelegram } from '@/lib/telegram'
 import toast from 'react-hot-toast'
 import { Logo } from '@/components/ui/Logo'
+import TelegramGuard from '@/components/auth/TelegramGuard'
 
 type UserRole = 'worker' | 'client' | 'shef'
 
@@ -28,46 +28,50 @@ const roleInfo: Record<UserRole, { icon: React.ReactNode; title: string; descrip
   },
 }
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter()
-  const supabase = createClient()
   const tg = useTelegram()
   
   const [loading, setLoading] = useState(true)
   const [signingIn, setSigningIn] = useState(false)
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null)
   const [roles, setRoles] = useState<UserRole[]>([])
-  const [currentRole, setCurrentRole] = useState<UserRole | null>(null)
 
   useEffect(() => {
-    loadUserRoles()
-  }, [])
+    if (tg?.user?.id) {
+      loadUserRoles()
+    }
+  }, [tg?.user?.id])
 
   const loadUserRoles = async () => {
     try {
-      // Get Telegram ID
-      const webapp = (window as any).Telegram?.WebApp
-      const telegramId = webapp?.initDataUnsafe?.user?.id
-
-      if (!telegramId) {
-        console.error('[LoginPage] No Telegram ID')
+      if (!tg?.user?.id) {
         setLoading(false)
         return
       }
 
-      console.log('[LoginPage] Loading roles for Telegram ID:', telegramId)
+      console.log('[LoginPage] Loading roles for Telegram ID:', tg.user.id)
 
-      // Fetch roles from API
-      const response = await fetch(`/api/user/roles?telegramId=${telegramId}`)
+      // Fetch user data from NEW API
+      const response = await fetch(`/api/auth/user?telegramId=${tg.user.id}`)
+
+      if (response.status === 404) {
+        console.log('[LoginPage] User not registered, redirect to register')
+        router.push('/auth/register')
+        return
+      }
+
+      if (!response.ok) {
+        throw new Error('Failed to load roles')
+      }
+
       const data = await response.json()
 
-      if (data.success && data.roles && data.roles.length > 0) {
-        console.log('[LoginPage] Found roles:', data.roles)
-        setRoles(data.roles)
-        setCurrentRole(data.currentRole || null)
+      if (data.user?.roles && data.user.roles.length > 0) {
+        console.log('[LoginPage] Found roles:', data.user.roles)
+        setRoles(data.user.roles)
       } else {
-        console.log('[LoginPage] No roles found, user needs to register')
-        // No roles - user should register
+        console.log('[LoginPage] No roles, redirecting to register')
         router.push('/auth/register')
         return
       }
@@ -85,10 +89,7 @@ export default function LoginPage() {
     setSigningIn(true)
 
     try {
-      const webapp = (window as any).Telegram?.WebApp
-      const telegramId = webapp?.initDataUnsafe?.user?.id
-
-      if (!telegramId) {
+      if (!tg?.user?.id) {
         toast.error('Telegram ID не найден')
         setSigningIn(false)
         return
@@ -96,27 +97,26 @@ export default function LoginPage() {
 
       console.log('[LoginPage] Signing in with role:', role)
 
-      // Call login API
-      const response = await fetch('/api/auth/login', {
+      // Call switch-role API
+      const response = await fetch('/api/auth/switch-role', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          telegramId,
+          telegramId: tg.user.id,
           role,
         }),
       })
 
-      const data = await response.json()
-
-      if (!response.ok || !data.success) {
+      if (!response.ok) {
+        const data = await response.json()
         toast.error(data.error || 'Ошибка входа')
         setSigningIn(false)
         setSelectedRole(null)
         return
       }
 
-      console.log('[LoginPage] Sign in successful!')
-      toast.success('Вы вошли!')
+      console.log('[LoginPage] ✅ Sign in successful!')
+      toast.success('Добро пожаловать!')
 
       // Redirect to dashboard
       const dashboardPaths: Record<UserRole, string> = {
@@ -145,7 +145,7 @@ export default function LoginPage() {
     )
   }
 
-  // If no roles found, redirect to register (should happen above)
+  // If no roles found, should have redirected to register above
   if (roles.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col items-center justify-center p-4">
@@ -241,5 +241,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <TelegramGuard>
+      <LoginPageContent />
+    </TelegramGuard>
   )
 }
