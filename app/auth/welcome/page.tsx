@@ -81,10 +81,10 @@ export default function AuthWelcomePage() {
               hapticLight()
               router.push('/auth/login')
             }}
-            className="w-full py-4 bg-[#E85D2F] hover:bg-[#D04D1F] text-white rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all duration-200 shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 active:scale-95"
+            className="w-full py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-xl transition-all transform hover:scale-105 flex items-center justify-center gap-2 shadow-lg"
           >
-            <LogIn className="w-6 h-6" />
-            Войти
+            <LogIn className="w-5 h-5" />
+            Войти в аккаунт
           </button>
 
           {/* Register button */}

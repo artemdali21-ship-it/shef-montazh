@@ -64,9 +64,9 @@ export default function LogoutButton({ variant = 'button', className = '' }: Log
 
       toast.success('Вы вышли из системы')
 
-      // Step 4: ПОЛНАЯ перезагрузка страницы с редиректом на главную
-      console.log('[Logout] 📍 Step 4: Full page reload and redirect...')
-      window.location.href = '/'
+      // Step 4: Редирект на страницу входа (не на главную, чтобы избежать auto-login)
+      console.log('[Logout] 📍 Step 4: Redirecting to welcome page...')
+      window.location.href = '/auth/welcome'
     } catch (error) {
       console.error('[LogoutButton] Error:', error)
       toast.error('Ошибка подключения')

@@ -1,57 +1,74 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createServerClient } from '@/lib/supabase-server'
+import type { UserRole } from '@/types/session'
 
 export async function POST(request: NextRequest) {
   try {
-    const { phone, password } = await request.json()
+    const { telegramId, role } = await request.json()
 
-    if (!phone || !password) {
+    if (!telegramId || !role) {
       return NextResponse.json(
-        { message: 'Номер телефона и пароль обязательны' },
+        { success: false, error: 'Telegram ID and role are required' },
         { status: 400 }
       )
     }
 
-    // Mock authentication - for testing with demo credentials
-    // In production, this would verify against actual database/auth system
-    const validPhones: { [key: string]: string } = {
-      '+79001234567': 'password123',
-      '+79009876543': 'demo123',
-    }
+    const supabase = createServerClient()
 
-    const storedPassword = validPhones[phone]
+    console.log('[API] Logging in user:', { telegramId, role })
 
-    if (!storedPassword) {
-      // User not found
+    // Get user by telegram_id
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('id, roles, current_role')
+      .eq('telegram_id', telegramId)
+      .single()
+
+    if (userError || !user) {
+      console.error('[API] User not found:', userError)
       return NextResponse.json(
-        { message: 'Пользователь не найден' },
+        { success: false, error: 'User not found' },
         { status: 404 }
       )
     }
 
-    if (password !== storedPassword) {
-      // Wrong password
+    // Check if user has this role
+    if (!user.roles || !user.roles.includes(role)) {
+      console.error('[API] User does not have this role')
       return NextResponse.json(
-        { message: 'Неверный пароль' },
-        { status: 401 }
+        { success: false, error: 'User does not have this role' },
+        { status: 403 }
       )
     }
 
-    // Success - return user data
-    return NextResponse.json(
-      {
-        success: true,
-        user: {
-          id: phone,
-          phone,
-          role: 'worker',
-        },
-      },
-      { status: 200 }
-    )
+    // Update current_role in database
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({ current_role: role })
+      .eq('id', user.id)
+
+    if (updateError) {
+      console.error('[API] Error updating current_role:', updateError)
+      return NextResponse.json(
+        { success: false, error: 'Failed to update role' },
+        { status: 500 }
+      )
+    }
+
+    console.log('[API] ✅ Login successful for user:', telegramId)
+
+    return NextResponse.json({
+      success: true,
+      user: {
+        id: user.id,
+        telegramId,
+        role,
+      }
+    })
   } catch (error) {
-    console.error('[v0] Login API error:', error)
+    console.error('[API] Error in login:', error)
     return NextResponse.json(
-      { message: 'Внутренняя ошибка сервера' },
+      { success: false, error: 'Internal server error' },
       { status: 500 }
     )
   }

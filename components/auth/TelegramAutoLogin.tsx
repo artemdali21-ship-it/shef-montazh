@@ -24,7 +24,6 @@ export default function TelegramAutoLogin() {
   useEffect(() => {
     // Skip auto-login on certain pages to avoid loops
     const skipPages = [
-      '/',
       '/auth/register',
       '/onboarding',
       '/auth/complete-profile',
@@ -36,6 +35,13 @@ export default function TelegramAutoLogin() {
 
     if (skipPages.some(page => pathname?.startsWith(page))) {
       console.log('[TelegramAutoLogin] Skipping on page:', pathname)
+      setIsChecking(false)
+      return
+    }
+
+    // На главной странице - не делаем auto-login, оставляем как есть
+    if (pathname === '/') {
+      console.log('[TelegramAutoLogin] On home page, skipping auto-login')
       setIsChecking(false)
       return
     }

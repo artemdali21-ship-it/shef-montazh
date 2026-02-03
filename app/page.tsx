@@ -2,64 +2,61 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
-import RoleSelector from '@/components/auth/RoleSelector'
-import InitialOnboarding from '@/components/onboarding/InitialOnboarding'
+import { createClient } from '@/lib/supabase-client'
 import { Logo } from '@/components/ui/Logo'
+import { LogIn, UserPlus } from 'lucide-react'
 
 export default function HomePage() {
   const router = useRouter()
-  const { session, loading: sessionLoading } = useTelegramSession()
-  const [onboardingComplete, setOnboardingComplete] = useState(false)
-  const [isRedirecting, setIsRedirecting] = useState(false)
+  const supabase = createClient()
+  const [loading, setLoading] = useState(true)
+  const [hasSession, setHasSession] = useState(false)
 
-  // Проверяем session только после завершения onboarding
   useEffect(() => {
-    // Если onboarding еще не завершен - ничего не делаем
-    if (!onboardingComplete) return
+    checkAuth()
+  }, [])
 
-    // Если session еще загружается - ждем
-    if (sessionLoading) return
+  const checkAuth = async () => {
+    try {
+      // Check if user has active Supabase session
+      const { data: { session } } = await supabase.auth.getSession()
 
-    // Onboarding завершен и session загружена
-    if (session) {
-      console.log('[HomePage] Session found after onboarding:', session)
-      setIsRedirecting(true)
-
-      // User is logged in - redirect to dashboard directly (no second onboarding!)
-      const dashboardPaths = {
-        worker: '/worker/shifts',
-        client: '/client/shifts',
-        shef: '/shef/dashboard',
+      if (session?.user) {
+        console.log('[HomePage] Active session found, checking API...')
+        
+        // Verify with API
+        const apiResponse = await fetch('/api/auth/me')
+        
+        if (apiResponse.ok) {
+          const data = await apiResponse.json()
+          console.log('[HomePage] API confirmed, redirecting to dashboard...')
+          
+          // Redirect to dashboard
+          const dashboardPaths: Record<string, string> = {
+            worker: '/worker/shifts',
+            client: '/client/shifts',
+            shef: '/shef/dashboard',
+          }
+          
+          const role = data.user?.current_role || data.user?.roles?.[0]
+          router.push(dashboardPaths[role] || '/worker/shifts')
+          return
+        }
       }
 
-      const path = dashboardPaths[session.role]
-      console.log('[HomePage] Redirecting to:', path)
-      router.push(path)
+      console.log('[HomePage] No active session, showing welcome screen')
+      setHasSession(false)
+      setLoading(false)
+    } catch (error) {
+      console.error('[HomePage] Error checking auth:', error)
+      setHasSession(false)
+      setLoading(false)
     }
-    // Если session нет - просто показываем RoleSelector (ниже)
-  }, [onboardingComplete, sessionLoading, session, router])
-
-  const handleOnboardingComplete = () => {
-    console.log('[HomePage] Initial onboarding complete')
-    setOnboardingComplete(true)
   }
 
-  // Сразу показываем onboarding (session грузится параллельно в фоне)
-  if (!onboardingComplete) {
-    return <InitialOnboarding onComplete={handleOnboardingComplete} />
-  }
-
-  // Onboarding завершен, но session еще загружается или происходит редирект
-  if (sessionLoading || isRedirecting) {
+  if (loading) {
     return (
-      <div
-        className="fixed inset-0 bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center z-50"
-        style={{
-          opacity: 1,
-          transition: 'opacity 0.3s ease-in-out',
-        }}
-      >
+      <div className="fixed inset-0 bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center z-50">
         <div className="text-center">
           <div className="mb-6 opacity-90">
             <Logo size="lg" showText={true} />
@@ -70,6 +67,50 @@ export default function HomePage() {
     )
   }
 
-  // Onboarding завершен, session загружена (или нет) - показываем RoleSelector
-  return <RoleSelector />
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-md text-center space-y-8">
+        {/* Logo */}
+        <div className="flex justify-center">
+          <Logo size="lg" showText={true} />
+        </div>
+
+        {/* Welcome Text */}
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">
+            Добро пожаловать!
+          </h1>
+          <p className="text-gray-400 text-base">
+            Выберите, что вы хотите сделать
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="space-y-3">
+          {/* Login Button */}
+          <button
+            onClick={() => router.push('/auth/welcome')}
+            className="w-full py-4 px-6 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-xl transition-all transform hover:scale-105 flex items-center justify-center gap-3 group shadow-lg"
+          >
+            <LogIn className="w-5 h-5 group-hover:animate-pulse" />
+            <span>Вход в аккаунт</span>
+          </button>
+
+          {/* Register Button */}
+          <button
+            onClick={() => router.push('/auth/register')}
+            className="w-full py-4 px-6 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold rounded-xl transition-all transform hover:scale-105 flex items-center justify-center gap-3 group"
+          >
+            <UserPlus className="w-5 h-5 group-hover:animate-pulse" />
+            <span>Создать аккаунт</span>
+          </button>
+        </div>
+
+        {/* Footer Text */}
+        <p className="text-xs text-gray-500 text-center">
+          Приложение работает только в Telegram Mini App
+        </p>
+      </div>
+    </div>
+  )
 }

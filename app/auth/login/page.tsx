@@ -2,257 +2,244 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { Mail, Lock, LogIn, AlertCircle, Info } from 'lucide-react'
+import { ChevronLeft, HardHat, Building2, Wrench } from 'lucide-react'
 import { createClient } from '@/lib/supabase-client'
 import { useTelegram } from '@/lib/telegram'
 import toast from 'react-hot-toast'
 import { Logo } from '@/components/ui/Logo'
 
+type UserRole = 'worker' | 'client' | 'shef'
+
+const roleInfo: Record<UserRole, { icon: React.ReactNode; title: string; description: string }> = {
+  worker: {
+    icon: <HardHat className="w-8 h-8" />,
+    title: 'Специалист',
+    description: 'Работайте на сменах',
+  },
+  shef: {
+    icon: <Wrench className="w-8 h-8" />,
+    title: 'Шеф-монтажник',
+    description: 'Управляйте командой',
+  },
+  client: {
+    icon: <Building2 className="w-8 h-8" />,
+    title: 'Компания',
+    description: 'Нанимайте специалистов',
+  },
+}
+
 export default function LoginPage() {
   const router = useRouter()
   const supabase = createClient()
   const tg = useTelegram()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  
+  const [loading, setLoading] = useState(true)
+  const [signingIn, setSigningIn] = useState(false)
+  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null)
+  const [roles, setRoles] = useState<UserRole[]>([])
+  const [currentRole, setCurrentRole] = useState<UserRole | null>(null)
 
-  // Check if user is from Telegram
-  const isFromTelegram = Boolean(tg?.user?.id)
+  useEffect(() => {
+    loadUserRoles()
+  }, [])
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-
-    if (!email || !password) {
-      setError('Пожалуйста, заполните все поля')
-      return
-    }
-
+  const loadUserRoles = async () => {
     try {
-      setLoading(true)
+      // Get Telegram ID
+      const webapp = (window as any).Telegram?.WebApp
+      const telegramId = webapp?.initDataUnsafe?.user?.id
 
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (signInError) {
-        // Handle specific errors
-        if (signInError.message.includes('Invalid login credentials')) {
-          throw new Error('Неверный email или пароль')
-        }
-        if (signInError.message.includes('Email not confirmed')) {
-          throw new Error('Пожалуйста, подтвердите ваш email')
-        }
-        throw signInError
+      if (!telegramId) {
+        console.error('[LoginPage] No Telegram ID')
+        setLoading(false)
+        return
       }
 
-      if (data.user) {
-        // Fetch user role from users table
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('role')
-          .eq('id', data.user.id)
-          .single()
+      console.log('[LoginPage] Loading roles for Telegram ID:', telegramId)
 
-        if (userError) {
-          throw new Error('Не удалось загрузить профиль')
-        }
+      // Fetch roles from API
+      const response = await fetch(`/api/user/roles?telegramId=${telegramId}`)
+      const data = await response.json()
 
-        // Show success toast
-        toast.success('Вход выполнен успешно!')
-
-        // Redirect based on role
-        switch (userData.role) {
-          case 'worker':
-            router.push('/worker/shifts')
-            break
-          case 'client':
-            router.push('/client/shifts')
-            break
-          case 'shef':
-            router.push('/shef/dashboard')
-            break
-          default:
-            router.push('/')
-        }
+      if (data.success && data.roles && data.roles.length > 0) {
+        console.log('[LoginPage] Found roles:', data.roles)
+        setRoles(data.roles)
+        setCurrentRole(data.currentRole || null)
+      } else {
+        console.log('[LoginPage] No roles found, user needs to register')
+        // No roles - user should register
+        router.push('/auth/register')
+        return
       }
-    } catch (err: any) {
-      console.error('Login error:', err)
-      const errorMessage = err.message || 'Ошибка входа. Проверьте email и пароль.'
-      setError(errorMessage)
-      toast.error(errorMessage)
-    } finally {
+
+      setLoading(false)
+    } catch (error) {
+      console.error('[LoginPage] Error loading roles:', error)
+      toast.error('Ошибка загрузки ролей')
       setLoading(false)
     }
   }
 
-  return (
-    <div className="min-h-screen bg-dashboard flex items-start justify-center p-4 py-8 overflow-y-auto">
-      <motion.div
-        className="w-full max-w-md my-auto"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: 'easeOut' }}
-      >
-        {/* Logo/Title */}
-        <motion.div
-          className="text-center mb-8"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-        >
-          <div className="flex items-center justify-center mb-4">
-            <Logo size="lg" showText={true} />
+  const handleSelectRole = async (role: UserRole) => {
+    setSelectedRole(role)
+    setSigningIn(true)
+
+    try {
+      const webapp = (window as any).Telegram?.WebApp
+      const telegramId = webapp?.initDataUnsafe?.user?.id
+
+      if (!telegramId) {
+        toast.error('Telegram ID не найден')
+        setSigningIn(false)
+        return
+      }
+
+      console.log('[LoginPage] Signing in with role:', role)
+
+      // Call login API
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          telegramId,
+          role,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        toast.error(data.error || 'Ошибка входа')
+        setSigningIn(false)
+        setSelectedRole(null)
+        return
+      }
+
+      console.log('[LoginPage] Sign in successful!')
+      toast.success('Вы вошли!')
+
+      // Redirect to dashboard
+      const dashboardPaths: Record<UserRole, string> = {
+        worker: '/worker/shifts',
+        client: '/client/shifts',
+        shef: '/shef/dashboard',
+      }
+
+      window.location.href = dashboardPaths[role]
+    } catch (error: any) {
+      console.error('[LoginPage] Error:', error)
+      toast.error(error.message || 'Ошибка подключения')
+      setSigningIn(false)
+      setSelectedRole(null)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-orange-500/30 border-t-orange-500 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white">Проверка данных...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // If no roles found, redirect to register (should happen above)
+  if (roles.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-md text-center space-y-6">
+          <Logo size="lg" showText={true} />
+          <div>
+            <h1 className="text-2xl font-bold text-white mb-2">Аккаунт не найден</h1>
+            <p className="text-gray-400">
+              Это Telegram ID не зарегистрирован в системе
+            </p>
           </div>
-          <p className="text-gray-400">Войдите в свой аккаунт</p>
-        </motion.div>
+          <button
+            onClick={() => router.push('/auth/register')}
+            className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition"
+          >
+            Создать новый аккаунт
+          </button>
+        </div>
+      </div>
+    )
+  }
 
-        {/* Login Form */}
-        <motion.div
-          className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-        >
-          {/* Telegram User Message */}
-          {isFromTelegram ? (
-            <div className="space-y-6">
-              <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-6">
-                <div className="flex items-start gap-3 mb-4">
-                  <Info className="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="text-blue-400 font-semibold text-lg mb-2">
-                      Вход через Telegram
-                    </h3>
-                    <p className="text-blue-300 text-sm mb-3">
-                      Вы используете Telegram! Вход происходит автоматически.
-                    </p>
-                    <p className="text-blue-300 text-sm">
-                      Если у вас уже есть аккаунт - вы будете авторизованы автоматически.
-                    </p>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col">
+      {/* Header */}
+      <header className="sticky top-0 bg-white/10 backdrop-blur-xl border-b border-white/20">
+        <div className="max-w-md mx-auto px-4 py-3 flex items-center gap-3">
+          <button
+            onClick={() => router.push('/')}
+            className="w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-lg transition"
+          >
+            <ChevronLeft className="w-5 h-5 text-white" />
+          </button>
+          <h1 className="text-lg font-semibold text-white">Выберите роль</h1>
+        </div>
+      </header>
+
+      {/* Content */}
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-md space-y-4">
+          <div className="text-center mb-8">
+            <Logo size="md" showText={false} />
+            <p className="text-gray-400 mt-4">
+              Выберите роль для входа
+            </p>
+          </div>
+
+          {/* Role selection buttons */}
+          <div className="space-y-3">
+            {roles.map((role) => {
+              const info = roleInfo[role]
+              const isSelected = selectedRole === role
+              const isLoading = isSelected && signingIn
+
+              return (
+                <button
+                  key={role}
+                  onClick={() => !signingIn && handleSelectRole(role)}
+                  disabled={signingIn && !isSelected}
+                  className={`w-full p-4 rounded-xl border-2 transition-all text-left group ${
+                    isLoading
+                      ? 'border-gray-500 bg-gray-700 opacity-75'
+                      : 'border-gray-600 bg-gray-800 hover:border-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="text-gray-300 group-hover:text-white transition-colors mt-1">
+                      {info.icon}
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-semibold text-white group-hover:text-white transition-colors">
+                        {info.title}
+                      </div>
+                      <div className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">
+                        {info.description}
+                      </div>
+                    </div>
+                    {isLoading && <div className="text-gray-400 mt-1">...</div>}
                   </div>
-                </div>
-              </div>
+                </button>
+              )
+            })}
+          </div>
 
-              <button
-                onClick={() => window.location.href = '/'}
-                className="w-full py-3 bg-orange-500 hover:bg-orange-600 rounded-xl text-white font-bold transition shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
-              >
-                На главную
-              </button>
-
-              <div className="text-center">
-                <p className="text-gray-400 text-sm">
-                  Нет аккаунта? Зарегистрируйтесь на главной странице!
-                </p>
-              </div>
-            </div>
-          ) : (
-            <>
-              <form onSubmit={handleLogin} className="space-y-6">
-                {/* Error Message */}
-                {error && (
-                  <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-                    <p className="text-red-400 text-sm">{error}</p>
-                  </div>
-                )}
-
-            {/* Email Field */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="example@email.com"
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
-                  disabled={loading}
-                />
-              </div>
-            </div>
-
-            {/* Password Field */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                Пароль
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
-                  disabled={loading}
-                />
-              </div>
-            </div>
-
-            {/* Forgot Password Link */}
-            <div className="flex justify-end">
-              <Link
-                href="/auth/forgot-password"
-                className="text-sm text-orange-400 hover:text-orange-300 transition"
-              >
-                Забыли пароль?
-              </Link>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-500/50 disabled:cursor-not-allowed rounded-xl text-white font-bold transition shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Вход...
-                </>
-              ) : (
-                <>
-                  <LogIn className="w-5 h-5" />
-                  Войти
-                </>
-              )}
-              </button>
-            </form>
-
-            {/* Register Link - Only for non-Telegram users */}
-            <div className="mt-6 pt-6 border-t border-white/10 text-center">
-              <p className="text-gray-400 text-sm">
-                Нет аккаунта?{' '}
-                <Link href="/auth/register" className="text-orange-400 hover:text-orange-300 font-semibold transition">
-                  Зарегистрироваться
-                </Link>
-              </p>
-            </div>
-            </>
-          )}
-        </motion.div>
-
-        {/* Footer */}
-        <motion.p
-          className="text-center text-gray-500 text-xs mt-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
-        >
-          Входя в систему, вы соглашаетесь с условиями использования
-        </motion.p>
-      </motion.div>
+          {/* Back button */}
+          <button
+            onClick={() => router.push('/')}
+            disabled={signingIn}
+            className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-white transition mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Вернуться
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
