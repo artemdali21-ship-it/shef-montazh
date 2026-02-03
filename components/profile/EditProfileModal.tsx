@@ -53,28 +53,29 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
 
       // Upload avatar if changed
       if (avatar) {
-        const fileExt = avatar.name.split('.').pop()
-        const fileName = `${Date.now()}.${fileExt}`
-        const filePath = `${user.id}/${fileName}`
+        console.log('[EditProfileModal] Uploading avatar...')
+        
+        const formData = new FormData()
+        formData.append('file', avatar)
+        formData.append('userId', user.id)
 
-        const { error: uploadError } = await supabase.storage
-          .from('avatars')
-          .upload(filePath, avatar, {
-            upsert: true
-          })
+        const uploadResponse = await fetch('/api/upload-avatar', {
+          method: 'POST',
+          body: formData,
+        })
 
-        if (uploadError) {
-          throw uploadError
+        if (!uploadResponse.ok) {
+          const error = await uploadResponse.json()
+          throw new Error(error.error || 'Upload failed')
         }
 
-        const { data } = supabase.storage
-          .from('avatars')
-          .getPublicUrl(filePath)
-
-        avatarUrl = data.publicUrl
+        const uploadData = await uploadResponse.json()
+        avatarUrl = uploadData.url
+        console.log('[EditProfileModal] Avatar uploaded:', avatarUrl)
       }
 
-      // Update user basic info in users table - but handle RLS error
+      // Update user basic info in users table
+      console.log('[EditProfileModal] Updating user profile...')
       const { error: userError } = await supabase
         .from('users')
         .update({
@@ -83,12 +84,13 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
         })
         .eq('id', user.id)
 
-      // Ignore RLS error on users table - avatar was already uploaded to storage
-      if (userError && userError.code !== 'PGRST116') {
+      if (userError) {
         console.error('[EditProfileModal] User update error:', userError)
+        throw userError
       }
 
-      // Update worker profile with bio and phone in worker_profiles table
+      // Update worker profile with bio and phone
+      console.log('[EditProfileModal] Updating worker profile...')
       const { error: profileError } = await supabase
         .from('worker_profiles')
         .update({
@@ -98,9 +100,10 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
         })
         .eq('user_id', user.id)
 
-      if (profileError?.code !== 'PGRST116') {
-        // If worker profile doesn't exist, insert it
-        if (profileError?.code === 'PGRST') {
+      if (profileError) {
+        console.error('[EditProfileModal] Profile update error:', profileError)
+        // Try to insert if update failed
+        if (profileError.code === 'PGRST116') {
           const { error: insertError } = await supabase
             .from('worker_profiles')
             .insert({
@@ -111,7 +114,7 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
             })
 
           if (insertError) throw insertError
-        } else if (profileError) {
+        } else {
           throw profileError
         }
       }
@@ -120,7 +123,7 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
       onSave()
       onClose()
     } catch (error: any) {
-      console.error('Error updating profile:', error)
+      console.error('[EditProfileModal] Error:', error)
       toast.error(error.message || 'Не удалось обновить профиль')
     } finally {
       setLoading(false)
@@ -180,7 +183,7 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
           {/* Full Name */}
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-2">
-              Полное имя
+              Полное им��
             </label>
             <input
               type="text"
