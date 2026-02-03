@@ -176,21 +176,39 @@ async function saveSessionToStorage(session: Session): Promise<void> {
 async function clearSessionFromStorage(): Promise<void> {
   return new Promise((resolve) => {
     try {
-      if (typeof window === 'undefined' || !(window as any).Telegram?.WebApp?.CloudStorage) {
-        resolve()
-        return
+      console.log('[Session] 🔴 Clearing all session data...')
+      
+      // Step 1: Clear localStorage COMPLETELY
+      if (typeof window !== 'undefined') {
+        console.log('[Session] Clearing localStorage...')
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('shef-montazh') || key.includes('auth') || key.includes('session')) {
+            console.log('[Session] Removing from localStorage:', key)
+            localStorage.removeItem(key)
+          }
+        })
+        // Also clear Supabase specific keys
+        localStorage.removeItem('sb-vdpsjxkmbjwkqnlxzlhk-auth-token')
+        localStorage.removeItem('sb-vdpsjxkmbjwkqnlxzlhk-auth-token-code-verifier')
+        console.log('[Session] ✅ localStorage cleared')
       }
 
-      const cloudStorage = (window as any).Telegram.WebApp.CloudStorage
+      // Step 2: Clear Telegram CloudStorage
+      if (typeof window !== 'undefined' && (window as any).Telegram?.WebApp?.CloudStorage) {
+        console.log('[Session] Clearing Telegram CloudStorage...')
+        const cloudStorage = (window as any).Telegram.WebApp.CloudStorage
 
-      cloudStorage.removeItem(SESSION_KEY, (error: any, success: boolean) => {
-        if (error) {
-          console.error('[Session] CloudStorage remove error:', error)
-        } else if (success) {
-          console.log('[Session] ✅ Cleared from CloudStorage')
-        }
+        cloudStorage.removeItem(SESSION_KEY, (error: any, success: boolean) => {
+          if (error) {
+            console.error('[Session] CloudStorage remove error:', error)
+          } else if (success) {
+            console.log('[Session] ✅ CloudStorage cleared')
+          }
+          resolve()
+        })
+      } else {
         resolve()
-      })
+      }
     } catch (error) {
       console.error('[Session] Clear error:', error)
       resolve()

@@ -31,24 +31,28 @@ export default function LogoutButton({ variant = 'button', className = '' }: Log
       const telegramId = tg?.user?.id
       if (!telegramId) {
         toast.error('Telegram ID не найден')
+        setLoading(false)
         return
       }
 
-      // Step 1: Clear CloudStorage ПЕРВЫМ делом
-      console.log('[Logout] 🔴 Step 1: Clearing session from CloudStorage...')
+      console.log('[Logout] 🔴 STARTING LOGOUT PROCESS for Telegram ID:', telegramId)
+
+      // Step 1: Clear CloudStorage and localStorage ПЕРВЫМ делом
+      console.log('[Logout] Step 1: Clearing session from memory and storage...')
       await clearSession()
+      console.log('[Logout] ✅ Session cleared')
 
       // Step 2: Sign out from Supabase Auth (КРИТИЧНО!)
-      console.log('[Logout] 🔴 Step 2: Signing out from Supabase Auth...')
+      console.log('[Logout] Step 2: Signing out from Supabase Auth...')
       const { error: signOutError } = await supabase.auth.signOut()
       if (signOutError) {
-        console.error('[Logout] Sign out error:', signOutError)
+        console.error('[Logout] ⚠️ Sign out error:', signOutError)
       } else {
         console.log('[Logout] ✅ Supabase Auth signed out')
       }
 
-      // Step 3: Call logout API для очистки DB
-      console.log('[Logout] 🔴 Step 3: Calling logout API...')
+      // Step 3: Call logout API для очистки DB (текущая роль и сессия)
+      console.log('[Logout] Step 3: Calling logout API to clear database...')
       const response = await fetch('/api/auth/logout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -58,19 +62,21 @@ export default function LogoutButton({ variant = 'button', className = '' }: Log
       const data = await response.json()
 
       if (!response.ok || !data.success) {
-        console.error('[Logout] API error:', data.error)
-        // Продолжаем даже если API ошибка
+        console.error('[Logout] ⚠️ API error:', data.error)
+      } else {
+        console.log('[Logout] ✅ API logout successful')
       }
 
       toast.success('Вы вышли из системы')
+      console.log('[Logout] Step 4: Redirecting to welcome page...')
 
-      // Step 4: Редирект на страницу входа (не на главную, чтобы избежать auto-login)
-      console.log('[Logout] 📍 Step 4: Redirecting to welcome page...')
-      window.location.href = '/auth/welcome'
+      // Step 4: HARD REDIRECT to welcome (не используем router.push чтобы избежать кэша)
+      setTimeout(() => {
+        window.location.href = '/auth/welcome'
+      }, 300)
     } catch (error) {
       console.error('[LogoutButton] Error:', error)
       toast.error('Ошибка подключения')
-    } finally {
       setLoading(false)
     }
   }
