@@ -42,6 +42,10 @@ export default function RoleSelector() {
     setLoading(true)
 
     try {
+      // Dev mode check
+      const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true'
+      const mockTelegramId = process.env.NEXT_PUBLIC_MOCK_TELEGRAM_ID || '123456789'
+
       // Wait for Telegram data to be available
       let telegramId: number | undefined
       let attempts = 0
@@ -50,7 +54,7 @@ export default function RoleSelector() {
       while (attempts < maxAttempts && !telegramId) {
         const webapp = (window as any).Telegram?.WebApp
         telegramId = webapp?.initDataUnsafe?.user?.id
-        
+
         if (telegramId) {
           console.log('[RoleSelector] Telegram user data found:', webapp?.initDataUnsafe?.user)
           break
@@ -58,6 +62,12 @@ export default function RoleSelector() {
 
         attempts++
         await new Promise(resolve => setTimeout(resolve, 100))
+      }
+
+      // Use mock ID in dev mode if no real ID found
+      if (!telegramId && isDevMode) {
+        console.warn('[RoleSelector] No Telegram ID, using MOCK for dev mode')
+        telegramId = parseInt(mockTelegramId)
       }
 
       if (!telegramId) {
@@ -69,7 +79,7 @@ export default function RoleSelector() {
       }
 
       const webapp = (window as any).Telegram?.WebApp
-      const userName = webapp?.initDataUnsafe?.user?.first_name || 'User'
+      const userName = webapp?.initDataUnsafe?.user?.first_name || 'Dev User'
 
       console.log('[RoleSelector] Starting registration...', { telegramId, role, fullName: userName })
 
