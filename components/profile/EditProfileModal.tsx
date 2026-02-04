@@ -91,8 +91,7 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
         .from('worker_profiles')
         .update({
           bio: formData.bio,
-          phone: formData.phone,
-          avatar_url: avatarUrl
+          phone: formData.phone
         })
         .eq('user_id', user.id)
 
@@ -103,8 +102,7 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
           .insert({
             user_id: user.id,
             bio: formData.bio,
-            phone: formData.phone,
-            avatar_url: avatarUrl
+            phone: formData.phone
           })
 
         if (insertError) throw insertError

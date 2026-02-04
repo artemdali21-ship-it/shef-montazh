@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json<UserByTelegramResponse>({
       exists: true,
       id: user.id,
-      role: user.current_role || user.role,
+      role: user.current_role, // No fallback to old role - respect logout!
       hasSeenOnboarding: user.has_completed_onboarding || false,
       telegramId: user.telegram_id,
     })
