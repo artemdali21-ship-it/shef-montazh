@@ -72,8 +72,8 @@ export default function RoleSelectScreen() {
   const handleSelectRole = async (roleId: string) => {
     console.log('[RoleSelect] ===== BUTTON CLICKED =====')
     console.log('[RoleSelect] Button clicked for role:', roleId)
-    console.log('[RoleSelect] Selected role:', roleId)
-    console.log('[RoleSelect] Current selectedRole state:', selectedRole)
+    console.log('[RoleSelect] telegramReady:', telegramReady)
+    console.log('[RoleSelect] loading:', loading)
 
     // Haptic feedback for iOS
     if (tg?.HapticFeedback) {
@@ -85,21 +85,31 @@ export default function RoleSelectScreen() {
 
     try {
       const telegramId = tg?.user?.id
-      console.log('[RoleSelect] Telegram object:', tg)
+      console.log('[RoleSelect] ===== GETTING TELEGRAM ID =====')
+      console.log('[RoleSelect] tg object exists:', !!tg)
+      console.log('[RoleSelect] tg.user exists:', !!tg?.user)
       console.log('[RoleSelect] Telegram ID:', telegramId)
-      console.log('[RoleSelect] Telegram user:', tg?.user)
+      console.log('[RoleSelect] Full tg.user:', tg?.user)
 
       if (!telegramId) {
-        console.error('[RoleSelect] No Telegram ID found!')
-        toast.error('Telegram ID не найден. Откройте приложение через Telegram.')
+        console.error('[RoleSelect] ❌ No Telegram ID found!')
+        console.error('[RoleSelect] tg:', tg)
+        console.error('[RoleSelect] process.env.NEXT_PUBLIC_DEV_MODE:', process.env.NEXT_PUBLIC_DEV_MODE)
+        toast.error('Telegram ID не найден. Проверьте консоль для отладки.')
         setLoading(false)
         setSelectedRole(null)
         return
       }
 
-      console.log('[RoleSelect] Starting registration...', { telegramId, role: roleId, fullName: tg?.user?.first_name })
+      console.log('[RoleSelect] ===== STARTING REGISTRATION =====')
+      console.log('[RoleSelect] Registration data:', {
+        telegramId,
+        role: roleId,
+        fullName: tg?.user?.first_name || 'User'
+      })
 
       // Register user with selected role via API
+      console.log('[RoleSelect] Calling API /api/auth/register...')
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -110,24 +120,28 @@ export default function RoleSelectScreen() {
         }),
       })
 
+      console.log('[RoleSelect] ===== API RESPONSE =====')
       console.log('[RoleSelect] Response status:', response.status)
+      console.log('[RoleSelect] Response ok:', response.ok)
 
       const data = await response.json()
       console.log('[RoleSelect] Response data:', data)
 
       if (!response.ok || !data.success) {
         const errorMsg = data.error || 'Ошибка регистрации'
-        console.error('[RoleSelect] Registration error:', errorMsg)
+        console.error('[RoleSelect] ❌ REGISTRATION FAILED:', errorMsg)
+        console.error('[RoleSelect] Full error data:', data)
         toast.error(errorMsg)
         setLoading(false)
         setSelectedRole(null)
         return
       }
 
+      console.log('[RoleSelect] ✅ REGISTRATION SUCCESS!')
       toast.success('Регистрация успешна!')
 
       // Redirect directly to dashboard
-      console.log('[RoleSelect] Redirecting to dashboard...')
+      console.log('[RoleSelect] ===== REDIRECTING =====')
 
       const dashboardPaths: { [key: string]: string } = {
         worker: '/worker/shifts',
@@ -136,7 +150,8 @@ export default function RoleSelectScreen() {
       }
 
       const dashboardPath = dashboardPaths[roleId] || '/worker/shifts'
-      console.log('[RoleSelect] Navigating to:', dashboardPath)
+      console.log('[RoleSelect] Dashboard path:', dashboardPath)
+      console.log('[RoleSelect] Redirecting via window.location.href...')
 
       window.location.href = dashboardPath
     } catch (error: any) {
