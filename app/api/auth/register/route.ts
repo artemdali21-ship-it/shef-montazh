@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
         roles: [role],
         user_type: role,
         full_name: fullName || 'User',
-        phone: phone || null,
+        phone: phone || '', // Empty string instead of null to satisfy NOT NULL constraint
         email: `${telegramId}@telegram.user`,
         has_completed_onboarding: true, // User already saw InitialOnboarding
         profile_completed: false,
