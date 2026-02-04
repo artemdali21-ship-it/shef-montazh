@@ -40,20 +40,26 @@ function RolePickerContent() {
     // Get telegramId directly from Telegram WebApp (same as TelegramSessionManager)
     if (typeof window !== 'undefined') {
       const webApp = (window as any).Telegram?.WebApp
+      const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true'
+      const mockTelegramId = process.env.NEXT_PUBLIC_MOCK_TELEGRAM_ID || '123456789'
 
-      if (!webApp) {
-        console.error('[RolePicker] Telegram WebApp not found')
+      if (!webApp && !isDevMode) {
+        console.error('[RolePicker] Telegram WebApp not found and not in dev mode')
         setLoading(false)
         return
       }
 
       // Wait for WebApp to be ready
       const initTelegram = () => {
-        const userId = webApp.initDataUnsafe?.user?.id
-        console.log('[RolePicker] Telegram user ID:', userId)
+        const userId = webApp?.initDataUnsafe?.user?.id
 
         if (userId) {
+          console.log('[RolePicker] Telegram user ID:', userId)
           setTelegramId(userId)
+        } else if (isDevMode) {
+          // Use mock ID in dev mode
+          console.warn('[RolePicker] No Telegram user ID, using MOCK ID for dev:', mockTelegramId)
+          setTelegramId(parseInt(mockTelegramId))
         } else {
           console.log('[RolePicker] No Telegram user ID, redirecting to home')
           setTimeout(() => {
@@ -62,11 +68,11 @@ function RolePickerContent() {
         }
       }
 
-      if (webApp.initDataUnsafe?.user?.id) {
+      if (webApp?.initDataUnsafe?.user?.id) {
         // Already initialized
         initTelegram()
       } else {
-        // Wait for initialization
+        // Wait for initialization or use mock in dev mode
         console.log('[RolePicker] Waiting for Telegram WebApp initialization...')
         setTimeout(initTelegram, 500)
       }

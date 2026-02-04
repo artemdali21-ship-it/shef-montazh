@@ -2,9 +2,29 @@ import { createClient } from '@supabase/supabase-js'
 
 export const useTelegram = () => {
   if (typeof window === 'undefined') return null;
-  
+
   const tg = (window as any).Telegram?.WebApp;
-  if (!tg) return null;
+
+  // Dev mode fallback - use mock data if Telegram WebApp not available or no user data
+  const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
+  const mockTelegramId = process.env.NEXT_PUBLIC_MOCK_TELEGRAM_ID || '123456789';
+
+  if (!tg) {
+    if (isDevMode) {
+      console.warn('[useTelegram] Telegram WebApp not found - using MOCK data for dev');
+      return {
+        user: {
+          id: parseInt(mockTelegramId),
+          first_name: 'Dev User',
+          last_name: 'Test',
+          username: 'devuser',
+        },
+        close: () => console.log('[useTelegram] Mock close'),
+        haptic: (style: string) => console.log('[useTelegram] Mock haptic:', style),
+      };
+    }
+    return null;
+  }
 
   // Ensure WebApp is ready
   if (!tg.isReady) {
@@ -12,11 +32,26 @@ export const useTelegram = () => {
     tg.ready();
   }
 
-  // Wait for initData to be available
-  if (!tg.initDataUnsafe?.user) {
+  // Check if user data is available
+  const hasUser = !!tg.initDataUnsafe?.user;
+
+  if (!hasUser) {
     console.warn('[useTelegram] initDataUnsafe.user not yet available');
-    // This might happen if called before Telegram finishes initialization
-    // The caller should retry or wait
+
+    // Use mock data in dev mode if no real user
+    if (isDevMode) {
+      console.warn('[useTelegram] Using MOCK user data for dev');
+      return {
+        user: {
+          id: parseInt(mockTelegramId),
+          first_name: 'Dev User',
+          last_name: 'Test',
+          username: 'devuser',
+        },
+        close: () => tg.close(),
+        haptic: (style: string) => tg.HapticFeedback?.impactOccurred(style),
+      };
+    }
   }
 
   tg.expand();
