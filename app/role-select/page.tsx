@@ -370,7 +370,7 @@ export default function RoleSelectScreen() {
 
         {/* FOOTER TEXT */}
         <p style={{ color: 'rgba(255, 255, 255, 0.5)' }} className="text-xs text-center tracking-tight leading-snug flex-shrink-0" style={{ fontFamily: 'Montserrat' }}>
-          Можно изменить роль в настройках позже
+          Можно изменить роль, выйдя из личного кабинета
         </p>
       </div>
     </div>
