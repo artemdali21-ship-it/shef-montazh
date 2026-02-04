@@ -9,6 +9,8 @@ interface ProfileHeaderProps {
 }
 
 export default function ProfileHeader({ user, onEdit, profileType }: ProfileHeaderProps) {
+  console.log('[ProfileHeader] Rendering with user.avatar_url:', user.avatar_url)
+
   return (
     <div
       className="relative rounded-2xl border border-white/10 p-6 bg-cover bg-center overflow-hidden"

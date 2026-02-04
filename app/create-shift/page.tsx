@@ -1,36 +1,55 @@
 'use client'
 
-import { useEffect, useState } from 'react';
-import CreateShiftScreen from '@/components/CreateShiftScreen';
-import ClientLayout from '@/components/layouts/ClientLayout';
-import ShefLayout from '@/components/layouts/ShefLayout';
-import { getUserRole } from '@/lib/auth';
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import CreateShiftScreen from '@/components/CreateShiftScreen'
+import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
 
 export default function CreateShiftPage() {
-  const [role, setRole] = useState<'worker' | 'client' | 'shef'>('client');
-  const [mounted, setMounted] = useState(false);
+  const router = useRouter()
+  const { session, loading: sessionLoading } = useTelegramSession()
 
   useEffect(() => {
-    const initRole = async () => {
-      const userRole = await getUserRole();
-      if (userRole === 'worker') {
-        // Workers can't create shifts
-        return;
+    if (!sessionLoading) {
+      if (!session) {
+        // Not logged in - redirect to home
+        router.push('/')
+        return
       }
-      setRole(userRole);
-      setMounted(true);
-    };
 
-    initRole();
-  }, []);
+      // Workers can't create shifts
+      if (session.role === 'worker') {
+        router.push('/worker/shifts')
+        return
+      }
 
-  if (!mounted) return null;
+      // Only client and shef can create shifts
+      if (session.role !== 'client' && session.role !== 'shef') {
+        router.push('/')
+      }
+    }
+  }, [sessionLoading, session, router])
 
-  const Layout = role === 'client' ? ClientLayout : ShefLayout;
+  // Show loading while session is loading
+  if (sessionLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-dashboard">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Загрузка...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Don't render until we have a valid session
+  if (!session || (session.role !== 'client' && session.role !== 'shef')) {
+    return null
+  }
 
   return (
-    <Layout>
+    <div className="min-h-screen bg-dashboard pb-24">
       <CreateShiftScreen />
-    </Layout>
-  );
+    </div>
+  )
 }

@@ -53,7 +53,9 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
 
       // Upload avatar if changed
       if (avatar) {
-        console.log('[EditProfile] Uploading avatar...')
+        console.log('[EditProfile] ===== STARTING AVATAR UPLOAD =====')
+        console.log('[EditProfile] File:', { name: avatar.name, size: avatar.size, type: avatar.type })
+        console.log('[EditProfile] User ID:', user.id)
 
         const formData = new FormData()
         formData.append('file', avatar)
@@ -64,18 +66,24 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
           body: formData,
         })
 
+        console.log('[EditProfile] Response status:', response.status)
         const result = await response.json()
+        console.log('[EditProfile] Response data:', result)
 
         if (!result.success) {
           throw new Error(result.error || 'Не удалось загрузить фото')
         }
 
         avatarUrl = result.avatarUrl
-        console.log('[EditProfile] Avatar uploaded:', avatarUrl)
+        console.log('[EditProfile] ===== AVATAR URL RECEIVED =====')
+        console.log('[EditProfile] Avatar URL to save:', avatarUrl)
       }
 
       // Update all profile data in users table (phone, bio, avatar_url are all in users)
-      console.log('[EditProfile] Updating profile with avatar_url:', avatarUrl)
+      console.log('[EditProfile] ===== UPDATING DATABASE =====')
+      console.log('[EditProfile] Saving avatar_url to DB:', avatarUrl)
+      console.log('[EditProfile] User ID:', user.id)
+
       const { error, data } = await supabase
         .from('users')
         .update({
@@ -87,10 +95,16 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
         .eq('id', user.id)
         .select()
 
-      if (error) throw error
+      if (error) {
+        console.error('[EditProfile] Database update error:', error)
+        throw error
+      }
 
-      console.log('[EditProfile] Profile updated successfully:', data)
-      console.log('[EditProfile] New avatar_url in DB:', data?.[0]?.avatar_url)
+      console.log('[EditProfile] ===== DATABASE UPDATED =====')
+      console.log('[EditProfile] Full updated user record:', data?.[0])
+      console.log('[EditProfile] Confirmed avatar_url in DB:', data?.[0]?.avatar_url)
+      console.log('[EditProfile] Calling onSave() to reload profile...')
+
       toast.success('Профиль обновлён!')
       onSave()
       onClose()

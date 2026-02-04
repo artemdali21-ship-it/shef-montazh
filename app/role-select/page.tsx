@@ -221,16 +221,8 @@ export default function RoleSelectScreen() {
                   console.log('[RoleSelect] onClick fired for role:', role.id)
                   handleSelectRole(role.id)
                 }}
-                onTouchStart={(e) => {
-                  // iOS touch handling
-                  e.currentTarget.style.opacity = '0.9'
-                }}
-                onTouchEnd={(e) => {
-                  e.currentTarget.style.opacity = ''
-                  handleSelectRole(role.id)
-                }}
                 disabled={loading}
-                className="relative group w-full flex items-start gap-4 p-6 rounded-2xl transition-all duration-300 text-left overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative group w-full flex items-start gap-4 p-6 rounded-2xl transition-all duration-300 text-left overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed active:opacity-90"
                 style={{
                   WebkitTapHighlightColor: 'transparent',
                   touchAction: 'manipulation',

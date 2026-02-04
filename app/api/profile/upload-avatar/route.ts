@@ -82,7 +82,10 @@ export async function POST(request: NextRequest) {
       .from('avatars')
       .getPublicUrl(filePath)
 
-    console.log('[API] Avatar uploaded successfully:', data.publicUrl)
+    console.log('[API] ===== AVATAR UPLOAD SUCCESS =====')
+    console.log('[API] File path in storage:', filePath)
+    console.log('[API] Public URL generated:', data.publicUrl)
+    console.log('[API] Returning to client:', { success: true, avatarUrl: data.publicUrl })
 
     return NextResponse.json({
       success: true,

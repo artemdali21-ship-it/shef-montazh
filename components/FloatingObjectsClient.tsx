@@ -36,23 +36,6 @@ export function FloatingObjectsClient() {
         filter: 'drop-shadow(0 4px 12px rgba(255, 214, 10, 0.28))',
       },
     },
-    // Объект 4: Отвертка (верхний левый)
-    {
-      src: '/images/screwdriver.png',
-      style: {
-        position: 'fixed' as const,
-        top: '14%',
-        left: '8%',
-        width: '95px',
-        height: 'auto',
-        opacity: 0.53,
-        transform: 'rotate(-32deg)',
-        zIndex: 1,
-        pointerEvents: 'none' as const,
-        animation: 'float 7s ease-in-out infinite 1.8s',
-        filter: 'drop-shadow(0 3px 10px rgba(0, 0, 0, 0.16))',
-      },
-    },
     // Объект 5: Болты (центр правый)
     {
       src: '/images/bolts.png',

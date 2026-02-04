@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { HardHat, Building2, Wrench, Plus } from 'lucide-react'
 import { Logo } from '@/components/ui/Logo'
-import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
+import { useTelegram } from '@/lib/telegram'
 import type { UserRole } from '@/types/session'
 import toast from 'react-hot-toast'
 
@@ -31,25 +31,26 @@ const roleInfo: Record<UserRole, { icon: React.ReactNode; title: string; descrip
 
 function RolePickerContent() {
   const router = useRouter()
-  const { session, loading: sessionLoading } = useTelegramSession()
+  const tg = useTelegram()
   const [roles, setRoles] = useState<UserRole[]>([])
   const [currentRole, setCurrentRole] = useState<UserRole | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null)
 
   useEffect(() => {
-    if (sessionLoading) return
+    // Get telegramId directly from Telegram WebApp
+    const telegramId = tg?.user?.id
 
-    if (!session?.telegramId) {
-      console.log('[RolePicker] No session, redirecting to home')
+    if (!telegramId) {
+      console.log('[RolePicker] No Telegram ID, redirecting to home')
       router.push('/')
       return
     }
 
     const fetchRoles = async () => {
       try {
-        // Use session from TelegramSessionManager
-        const response = await fetch(`/api/user/roles?telegramId=${session.telegramId}`)
+        // Use telegramId directly from Telegram WebApp
+        const response = await fetch(`/api/user/roles?telegramId=${telegramId}`)
         const data = await response.json()
 
         if (data.success) {
@@ -78,12 +79,13 @@ function RolePickerContent() {
     }
 
     fetchRoles()
-  }, [sessionLoading, session, router])
+  }, [tg, router])
 
   const handleSelectRole = async (role: UserRole) => {
     setSelectedRole(role)
 
-    if (!session?.telegramId) {
+    const telegramId = tg?.user?.id
+    if (!telegramId) {
       toast.error('Telegram ID не найден')
       return
     }
@@ -93,7 +95,7 @@ function RolePickerContent() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          telegramId: session.telegramId,
+          telegramId: telegramId,
           newRole: role,
         }),
       })
