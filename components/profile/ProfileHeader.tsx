@@ -82,8 +82,10 @@ export default function ProfileHeader({ user, onEdit, profileType }: ProfileHead
           {/* Contact info */}
           <div className="flex flex-col gap-2 flex-1 min-w-0">
             <div>
-              <p className="text-xs text-gray-400 mb-0.5">Email</p>
-              <p className="text-xs sm:text-sm text-white font-medium truncate">{user.email || 'Не указан'}</p>
+              <p className="text-xs text-gray-400 mb-0.5">Telegram</p>
+              <p className="text-xs sm:text-sm text-white font-medium truncate">
+                {user.telegram_id ? `@${user.telegram_id}` : user.email || 'Не указан'}
+              </p>
             </div>
             <div>
               <p className="text-xs text-gray-400 mb-0.5">Телефон</p>

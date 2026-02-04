@@ -43,11 +43,12 @@ export default function WorkerProfilePage() {
       // Load user profile by user ID
       const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('*')
+        .select('id, full_name, email, phone, bio, avatar_url, telegram_id, rating, total_shifts, total_earnings, successful_shifts, is_verified, gosuslugi_verified')
         .eq('id', session.userId)
         .single()
 
       console.log('[Profile] User data:', userData, 'Error:', userError)
+      console.log('[Profile] Avatar URL:', userData?.avatar_url)
 
       if (userError) {
         console.error('[Profile] User error:', userError)
