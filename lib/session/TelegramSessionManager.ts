@@ -72,10 +72,20 @@ export function useTelegramSession() {
 
       // Получаем Telegram ID из WebApp напрямую
       const webApp = (window as any).Telegram?.WebApp
-      const telegramId = webApp?.initDataUnsafe?.user?.id
+      let telegramId = webApp?.initDataUnsafe?.user?.id
+
+      // Dev mode fallback
+      const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true'
+      const mockTelegramId = process.env.NEXT_PUBLIC_MOCK_TELEGRAM_ID || '123456789'
+
+      if (!telegramId && isDevMode) {
+        console.log('[Session] No Telegram ID, using MOCK for dev mode:', mockTelegramId)
+        telegramId = parseInt(mockTelegramId)
+      }
 
       console.log('[Session] loadSession called')
       console.log('[Session] Telegram ID:', telegramId)
+      console.log('[Session] Dev mode:', isDevMode)
 
       if (!telegramId) {
         console.log('[Session] No Telegram ID available')
