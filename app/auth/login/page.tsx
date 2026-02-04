@@ -90,32 +90,50 @@ function LoginPageContent() {
 
     try {
       if (!tg?.user?.id) {
+        console.error('[LoginPage] NO TELEGRAM ID! tg:', tg)
         toast.error('Telegram ID не найден')
         setSigningIn(false)
         return
       }
 
-      console.log('[LoginPage] Signing in with role:', role)
+      console.log('[LoginPage] 🔵 SIGNING IN with telegramId:', tg.user.id, 'role:', role)
 
-      // Call switch-role API
+      // Call switch-role API with newRole parameter
+      const payload = {
+        telegramId: tg.user.id,
+        newRole: role,  // THIS IS THE KEY - must be newRole not role!
+      }
+      
+      console.log('[LoginPage] Sending payload:', JSON.stringify(payload))
+
       const response = await fetch('/api/auth/switch-role', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          telegramId: tg.user.id,
-          role,
-        }),
+        body: JSON.stringify(payload),
       })
+
+      console.log('[LoginPage] Response status:', response.status)
 
       if (!response.ok) {
         const data = await response.json()
+        console.error('[LoginPage] API Error:', data)
         toast.error(data.error || 'Ошибка входа')
         setSigningIn(false)
         setSelectedRole(null)
         return
       }
 
-      console.log('[LoginPage] ✅ Sign in successful!')
+      const data = await response.json()
+      console.log('[LoginPage] ✅ Sign in response:', data)
+      
+      if (!data.success) {
+        toast.error(data.error || 'Ошибка входа')
+        setSigningIn(false)
+        setSelectedRole(null)
+        return
+      }
+
+      console.log('[LoginPage] ✅ Sign in successful! Redirecting to dashboard...')
       toast.success('Добро пожаловать!')
 
       // Redirect to dashboard
@@ -125,9 +143,10 @@ function LoginPageContent() {
         shef: '/shef/dashboard',
       }
 
+      console.log('[LoginPage] Redirecting to:', dashboardPaths[role])
       window.location.href = dashboardPaths[role]
     } catch (error: any) {
-      console.error('[LoginPage] Error:', error)
+      console.error('[LoginPage] 🔴 Exception:', error)
       toast.error(error.message || 'Ошибка подключения')
       setSigningIn(false)
       setSelectedRole(null)
