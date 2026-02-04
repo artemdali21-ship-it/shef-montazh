@@ -3,10 +3,14 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check, TrendingUp } from 'lucide-react'
+import { useTelegram } from '@/lib/telegram'
+import toast from 'react-hot-toast'
 
 export default function RoleSelectScreen() {
   const router = useRouter()
+  const tg = useTelegram()
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   console.log('[RoleSelect] Component mounted/re-rendered, selectedRole:', selectedRole)
 
@@ -40,19 +44,82 @@ export default function RoleSelectScreen() {
     },
   ]
 
-  const handleSelectRole = (roleId: string) => {
+  const handleSelectRole = async (roleId: string) => {
+    console.log('[RoleSelect] ===== BUTTON CLICKED =====')
     console.log('[RoleSelect] Button clicked for role:', roleId)
+    console.log('[RoleSelect] Selected role:', roleId)
+    console.log('[RoleSelect] Current selectedRole state:', selectedRole)
+
+    // Haptic feedback for iOS
+    if (tg?.HapticFeedback) {
+      tg.HapticFeedback.impactOccurred('light')
+    }
+
     setSelectedRole(roleId)
-    console.log('[RoleSelect] Selected role state updated to:', roleId)
-    localStorage.setItem('userRole', roleId)
-    console.log('[RoleSelect] Stored role in localStorage:', roleId)
-    console.log('[RoleSelect] About to redirect to:', `/auth/register?role=${roleId}`)
-    
-    // Use setTimeout to ensure state updates are applied before navigation
-    setTimeout(() => {
-      console.log('[RoleSelect] Executing router.push()')
-      router.push(`/auth/register?role=${roleId}`)
-    }, 100)
+    setLoading(true)
+
+    try {
+      const telegramId = tg?.user?.id
+      console.log('[RoleSelect] Telegram object:', tg)
+      console.log('[RoleSelect] Telegram ID:', telegramId)
+      console.log('[RoleSelect] Telegram user:', tg?.user)
+
+      if (!telegramId) {
+        console.error('[RoleSelect] No Telegram ID found!')
+        toast.error('Telegram ID не найден. Откройте приложение через Telegram.')
+        setLoading(false)
+        setSelectedRole(null)
+        return
+      }
+
+      console.log('[RoleSelect] Starting registration...', { telegramId, role: roleId, fullName: tg?.user?.first_name })
+
+      // Register user with selected role via API
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          telegramId,
+          role: roleId,
+          fullName: tg?.user?.first_name || 'User',
+        }),
+      })
+
+      console.log('[RoleSelect] Response status:', response.status)
+
+      const data = await response.json()
+      console.log('[RoleSelect] Response data:', data)
+
+      if (!response.ok || !data.success) {
+        const errorMsg = data.error || 'Ошибка регистрации'
+        console.error('[RoleSelect] Registration error:', errorMsg)
+        toast.error(errorMsg)
+        setLoading(false)
+        setSelectedRole(null)
+        return
+      }
+
+      toast.success('Регистрация успешна!')
+
+      // Redirect directly to dashboard
+      console.log('[RoleSelect] Redirecting to dashboard...')
+
+      const dashboardPaths: { [key: string]: string } = {
+        worker: '/worker/shifts',
+        client: '/client/shifts',
+        shef: '/shef/dashboard',
+      }
+
+      const dashboardPath = dashboardPaths[roleId] || '/worker/shifts'
+      console.log('[RoleSelect] Navigating to:', dashboardPath)
+
+      window.location.href = dashboardPath
+    } catch (error: any) {
+      console.error('[RoleSelect] Error:', error)
+      toast.error('Ошибка подключения: ' + (error.message || 'Неизвестная ошибка'))
+      setLoading(false)
+      setSelectedRole(null)
+    }
   }
 
   return (
@@ -154,12 +221,22 @@ export default function RoleSelectScreen() {
                   console.log('[RoleSelect] onClick fired for role:', role.id)
                   handleSelectRole(role.id)
                 }}
-                disabled={selectedRole !== null && selectedRole !== role.id}
-                className="relative group w-full flex items-start gap-4 p-6 rounded-2xl transition-all duration-300 text-left overflow-hidden"
+                onTouchStart={(e) => {
+                  // iOS touch handling
+                  e.currentTarget.style.opacity = '0.9'
+                }}
+                onTouchEnd={(e) => {
+                  e.currentTarget.style.opacity = ''
+                  handleSelectRole(role.id)
+                }}
+                disabled={loading}
+                className="relative group w-full flex items-start gap-4 p-6 rounded-2xl transition-all duration-300 text-left overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
+                  WebkitTapHighlightColor: 'transparent',
+                  touchAction: 'manipulation',
                   animation: `slideUp 0.6s ease-out forwards`,
                   animationDelay: `${0.1 + index * 0.1}s`,
-                  opacity: 0,
+                  opacity: selectedRole !== null && !isSelected ? 0.4 : (0),
                   background: isSelected
                     ? `linear-gradient(135deg, ${role.colorLight} 0%, rgba(255, 255, 255, 0.05) 100%)`
                     : 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%)',
@@ -170,7 +247,6 @@ export default function RoleSelectScreen() {
                     ? `0 12px 40px ${role.colorLight}, inset 0 0 0 1px rgba(255,255,255,0.3)`
                     : '0 4px 16px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.1)',
                   cursor: selectedRole === null || isSelected ? 'pointer' : 'default',
-                  opacity: selectedRole !== null && !isSelected ? 0.4 : 1,
                   transform: isSelected ? 'scale(1.02)' : 'scale(1)',
                 }}
                 onMouseEnter={(e) => {

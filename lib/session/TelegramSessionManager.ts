@@ -105,6 +105,7 @@ export function useTelegramSession() {
       if (dbUser) {
         console.log('[Session] User found in database')
         console.log('[Session] has_completed_onboarding:', dbUser.has_completed_onboarding)
+        console.log('[Session] current_role:', dbUser.role)
 
         // КРИТИЧНО: Если пользователь не прошел onboarding - НЕ создаем сессию
         // Редирект на onboarding должен быть в роутере
@@ -115,7 +116,16 @@ export function useTelegramSession() {
           return
         }
 
-        // Create new session только если onboarding пройден
+        // КРИТИЧНО: Если role пустой (после logout) - НЕ создаем сессию
+        // Пользователь должен заново выбрать роль в RoleSelector
+        if (!dbUser.role) {
+          console.log('[Session] User has no role (logged out), NOT creating session')
+          setSession(null)
+          setLoading(false)
+          return
+        }
+
+        // Create new session только если onboarding пройден И role установлен
         const newSession: Session = {
           userId: dbUser.id,
           telegramId: telegramId,
@@ -293,7 +303,7 @@ async function fetchUserByTelegramId(telegramId: number): Promise<any | null> {
     if (data.exists) {
       return {
         id: data.id,
-        role: data.role,
+        role: data.role, // This is current_role from API (or fallback to role)
         has_completed_onboarding: data.hasSeenOnboarding,
       }
     }

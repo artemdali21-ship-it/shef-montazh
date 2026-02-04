@@ -53,28 +53,29 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
 
       // Upload avatar if changed
       if (avatar) {
-        const fileExt = avatar.name.split('.').pop()
-        const fileName = `${Date.now()}.${fileExt}`
-        const filePath = `${user.id}/${fileName}`
+        console.log('[EditProfile] Uploading avatar...')
 
-        const { error: uploadError } = await supabase.storage
-          .from('avatars')
-          .upload(filePath, avatar, {
-            upsert: true
-          })
+        const formData = new FormData()
+        formData.append('file', avatar)
+        formData.append('userId', user.id)
 
-        if (uploadError) {
-          throw uploadError
+        const response = await fetch('/api/profile/upload-avatar', {
+          method: 'POST',
+          body: formData,
+        })
+
+        const result = await response.json()
+
+        if (!result.success) {
+          throw new Error(result.error || 'Не удалось загрузить фото')
         }
 
-        const { data } = supabase.storage
-          .from('avatars')
-          .getPublicUrl(filePath)
-
-        avatarUrl = data.publicUrl
+        avatarUrl = result.avatarUrl
+        console.log('[EditProfile] Avatar uploaded:', avatarUrl)
       }
 
       // Update user basic info in users table
+      console.log('[EditProfile] Updating profile...')
       const { error: userError } = await supabase
         .from('users')
         .update({
@@ -111,11 +112,12 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
         throw profileError
       }
 
+      console.log('[EditProfile] Profile updated successfully')
       toast.success('Профиль обновлён!')
       onSave()
       onClose()
     } catch (error: any) {
-      console.error('Error updating profile:', error)
+      console.error('[EditProfile] Error updating profile:', error)
       toast.error(error.message || 'Не удалось обновить профиль')
     } finally {
       setLoading(false)

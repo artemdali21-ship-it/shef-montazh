@@ -22,13 +22,13 @@ export async function POST(request: NextRequest) {
       .eq('telegram_id', telegramId)
       .maybeSingle()
 
-    // Clear session (but don't reset onboarding - user keeps their profile)
+    // Clear session but keep onboarding completed (no infinite loop)
     const { error } = await supabase
       .from('users')
       .update({
         session_token: null,
         session_expires_at: null,
-        current_role: null, // Clear current role
+        current_role: null, // Clear current role to force role selection
       })
       .eq('telegram_id', telegramId)
 
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     const userRoles = user?.roles || []
     const multipleRoles = userRoles.length > 1
 
-    console.log('[API] Logout successful. User has', userRoles.length, 'role(s)')
+    console.log('[API] Logout successful, user must select role on next login. User has', userRoles.length, 'role(s)')
 
     return NextResponse.json<LogoutResponse>({
       success: true,
