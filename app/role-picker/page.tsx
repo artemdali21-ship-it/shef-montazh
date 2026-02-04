@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { HardHat, Building2, Wrench, Plus } from 'lucide-react'
 import { Logo } from '@/components/ui/Logo'
@@ -28,7 +28,7 @@ const roleInfo: Record<UserRole, { icon: React.ReactNode; title: string; descrip
   },
 }
 
-export default function RolePickerPage() {
+function RolePickerContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [roles, setRoles] = useState<UserRole[]>([])
@@ -186,5 +186,19 @@ export default function RolePickerPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function RolePickerPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center">
+          <div className="text-white">Загрузка...</div>
+        </div>
+      }
+    >
+      <RolePickerContent />
+    </Suspense>
   )
 }
