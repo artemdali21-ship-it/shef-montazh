@@ -70,17 +70,43 @@ export default function ShefProfilePage() {
   }
 
   const handleLogout = async () => {
+    if (!confirm('Вы уверены, что хотите выйти?')) {
+      return
+    }
+
     try {
-      // Call logout API to clear Telegram CloudStorage
-      await fetch('/api/auth/logout', {
+      if (!session) {
+        window.location.href = '/'
+        return
+      }
+
+      // Call logout API
+      const response = await fetch('/api/auth/logout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ telegramId: session.telegramId }),
       })
 
-      // Force reload to clear session
-      window.location.href = '/'
+      const data = await response.json()
+
+      // Clear CloudStorage
+      if (typeof window !== 'undefined' && (window as any).Telegram?.WebApp?.CloudStorage) {
+        const cloudStorage = (window as any).Telegram.WebApp.CloudStorage
+        cloudStorage.removeItem('shef-montazh-session', () => {
+          console.log('[Profile] CloudStorage cleared')
+        })
+      }
+
       toast.success('Вы вышли из системы')
+
+      // Redirect based on roles
+      if (data.multipleRoles) {
+        window.location.href = '/role-picker'
+      } else {
+        window.location.href = '/'
+      }
     } catch (error) {
+      console.error('[Profile] Logout error:', error)
       toast.error('Ошибка при выходе')
     }
   }

@@ -43,7 +43,7 @@ export default function WorkerProfilePage() {
       // Load user profile by user ID
       const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('id, full_name, email, phone, bio, avatar_url, telegram_id, rating, total_shifts, total_earnings, successful_shifts, is_verified, gosuslugi_verified')
+        .select('*')
         .eq('id', session.userId)
         .single()
 
@@ -86,6 +86,10 @@ export default function WorkerProfilePage() {
   }
 
   const handleLogout = async () => {
+    if (!confirm('Вы уверены, что хотите выйти?')) {
+      return
+    }
+
     try {
       if (!session) {
         console.log('[Profile] No session for logout')
@@ -96,18 +100,37 @@ export default function WorkerProfilePage() {
       console.log('[Profile] Logging out, telegramId:', session.telegramId)
 
       // Call logout API to clear database
-      await fetch('/api/auth/logout', {
+      const response = await fetch('/api/auth/logout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ telegramId: session.telegramId }),
       })
 
-      // Force reload to clear all state
-      window.location.href = '/'
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Ошибка выхода')
+      }
+
+      // Clear CloudStorage session
+      if (typeof window !== 'undefined' && (window as any).Telegram?.WebApp?.CloudStorage) {
+        const cloudStorage = (window as any).Telegram.WebApp.CloudStorage
+        cloudStorage.removeItem('shef-montazh-session', () => {
+          console.log('[Profile] CloudStorage cleared')
+        })
+      }
+
       toast.success('Вы вышли из системы')
-    } catch (error) {
+
+      // Redirect based on roles
+      if (data.multipleRoles) {
+        window.location.href = '/role-picker'
+      } else {
+        window.location.href = '/'
+      }
+    } catch (error: any) {
       console.error('[Profile] Logout error:', error)
-      toast.error('Ошибка при выходе')
+      toast.error(error.message || 'Ошибка при выходе')
     }
   }
 
