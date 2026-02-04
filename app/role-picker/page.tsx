@@ -4,7 +4,6 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { HardHat, Building2, Wrench, Plus } from 'lucide-react'
 import { Logo } from '@/components/ui/Logo'
-import { useTelegram } from '@/lib/telegram'
 import type { UserRole } from '@/types/session'
 import toast from 'react-hot-toast'
 
@@ -31,27 +30,58 @@ const roleInfo: Record<UserRole, { icon: React.ReactNode; title: string; descrip
 
 function RolePickerContent() {
   const router = useRouter()
-  const tg = useTelegram()
   const [roles, setRoles] = useState<UserRole[]>([])
   const [currentRole, setCurrentRole] = useState<UserRole | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null)
+  const [telegramId, setTelegramId] = useState<number | null>(null)
 
   useEffect(() => {
-    // Get telegramId directly from Telegram WebApp
-    const telegramId = tg?.user?.id
+    // Get telegramId directly from Telegram WebApp (same as TelegramSessionManager)
+    if (typeof window !== 'undefined') {
+      const webApp = (window as any).Telegram?.WebApp
 
-    if (!telegramId) {
-      console.log('[RolePicker] No Telegram ID, redirecting to home')
-      router.push('/')
-      return
+      if (!webApp) {
+        console.error('[RolePicker] Telegram WebApp not found')
+        setLoading(false)
+        return
+      }
+
+      // Wait for WebApp to be ready
+      const initTelegram = () => {
+        const userId = webApp.initDataUnsafe?.user?.id
+        console.log('[RolePicker] Telegram user ID:', userId)
+
+        if (userId) {
+          setTelegramId(userId)
+        } else {
+          console.log('[RolePicker] No Telegram user ID, redirecting to home')
+          setTimeout(() => {
+            router.push('/')
+          }, 1000)
+        }
+      }
+
+      if (webApp.initDataUnsafe?.user?.id) {
+        // Already initialized
+        initTelegram()
+      } else {
+        // Wait for initialization
+        console.log('[RolePicker] Waiting for Telegram WebApp initialization...')
+        setTimeout(initTelegram, 500)
+      }
     }
+  }, [router])
+
+  useEffect(() => {
+    if (!telegramId) return
 
     const fetchRoles = async () => {
       try {
-        // Use telegramId directly from Telegram WebApp
+        console.log('[RolePicker] Fetching roles for telegramId:', telegramId)
         const response = await fetch(`/api/user/roles?telegramId=${telegramId}`)
         const data = await response.json()
+        console.log('[RolePicker] Roles response:', data)
 
         if (data.success) {
           setRoles(data.roles || [])
@@ -79,12 +109,11 @@ function RolePickerContent() {
     }
 
     fetchRoles()
-  }, [tg, router])
+  }, [telegramId, router])
 
   const handleSelectRole = async (role: UserRole) => {
     setSelectedRole(role)
 
-    const telegramId = tg?.user?.id
     if (!telegramId) {
       toast.error('Telegram ID не найден')
       return

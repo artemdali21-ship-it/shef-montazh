@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check, TrendingUp } from 'lucide-react'
 import { useTelegram } from '@/lib/telegram'
@@ -11,8 +11,33 @@ export default function RoleSelectScreen() {
   const tg = useTelegram()
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [telegramReady, setTelegramReady] = useState(false)
 
   console.log('[RoleSelect] Component mounted/re-rendered, selectedRole:', selectedRole)
+  console.log('[RoleSelect] tg:', tg)
+  console.log('[RoleSelect] tg.user:', tg?.user)
+
+  // Wait for Telegram WebApp to initialize
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const webApp = (window as any).Telegram?.WebApp
+
+      const checkReady = () => {
+        const userId = webApp?.initDataUnsafe?.user?.id
+        console.log('[RoleSelect] Checking Telegram ready, userId:', userId)
+
+        if (userId) {
+          console.log('[RoleSelect] Telegram WebApp ready!')
+          setTelegramReady(true)
+        } else {
+          console.log('[RoleSelect] Telegram WebApp not ready yet, waiting...')
+          setTimeout(checkReady, 300)
+        }
+      }
+
+      checkReady()
+    }
+  }, [])
 
   const roles = [
     {
@@ -120,6 +145,19 @@ export default function RoleSelectScreen() {
       setLoading(false)
       setSelectedRole(null)
     }
+  }
+
+  // Show loading while waiting for Telegram WebApp
+  if (!telegramReady) {
+    return (
+      <div className="w-screen h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A]">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white text-lg">Загрузка...</p>
+          <p className="text-gray-400 text-sm mt-2">Инициализация Telegram WebApp</p>
+        </div>
+      </div>
+    )
   }
 
   return (
