@@ -9,6 +9,12 @@ export const useTelegram = () => {
   const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
   const mockTelegramId = process.env.NEXT_PUBLIC_MOCK_TELEGRAM_ID || '123456789';
 
+  console.log('[useTelegram] Environment check:', {
+    NEXT_PUBLIC_DEV_MODE: process.env.NEXT_PUBLIC_DEV_MODE,
+    isDevMode,
+    mockTelegramId
+  });
+
   if (!tg) {
     if (isDevMode) {
       console.warn('[useTelegram] Telegram WebApp not found - using MOCK data for dev');
