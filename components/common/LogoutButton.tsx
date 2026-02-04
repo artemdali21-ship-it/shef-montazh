@@ -53,7 +53,7 @@ export default function LogoutButton({ variant = 'button', className = '' }: Log
 
       // If multiple roles, show role picker. Otherwise go to home
       if (data.multipleRoles) {
-        router.push(`/role-picker?telegramId=${telegramId}`)
+        router.push('/role-picker')
       } else {
         router.push('/')
       }

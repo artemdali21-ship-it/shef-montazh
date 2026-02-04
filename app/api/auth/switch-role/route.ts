@@ -38,11 +38,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Update role and reset onboarding for new role
-    const updatedRoles = user.roles || []
-    if (!updatedRoles.includes(newRole)) {
-      updatedRoles.push(newRole)
-    }
+    // Check if this is a new role or existing role
+    const existingRoles = user.roles || []
+    const isNewRole = !existingRoles.includes(newRole)
+
+    // Add new role to array if not present
+    const updatedRoles = isNewRole ? [...existingRoles, newRole] : existingRoles
 
     const { error } = await supabase
       .from('users')
@@ -50,7 +51,8 @@ export async function POST(request: NextRequest) {
         current_role: newRole,
         role: newRole,
         roles: updatedRoles,
-        has_completed_onboarding: false, // Reset onboarding for new role
+        // Only reset onboarding if this is a NEW role (not a switch between existing roles)
+        has_completed_onboarding: isNewRole ? false : true,
         last_login_at: new Date().toISOString(),
       })
       .eq('telegram_id', telegramId)

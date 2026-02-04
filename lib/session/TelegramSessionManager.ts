@@ -106,6 +106,7 @@ export function useTelegramSession() {
         console.log('[Session] User found in database')
         console.log('[Session] has_completed_onboarding:', dbUser.has_completed_onboarding)
         console.log('[Session] current_role:', dbUser.role)
+        console.log('[Session] roles array:', dbUser.roles)
 
         // КРИТИЧНО: Если пользователь не прошел onboarding - НЕ создаем сессию
         // Редирект на onboarding должен быть в роутере
@@ -116,29 +117,74 @@ export function useTelegramSession() {
           return
         }
 
-        // КРИТИЧНО: Если role пустой (после logout) - НЕ создаем сессию
-        // Пользователь должен заново выбрать роль в RoleSelector
-        if (!dbUser.role) {
-          console.log('[Session] User has no role (logged out), NOT creating session')
+        // Получаем массив ролей
+        const userRoles = dbUser.roles || []
+        const currentRole = dbUser.role
+
+        // ЛОГИКА МУЛЬТИРОЛЬ:
+        // 1. Если current_role установлен → автологин
+        if (currentRole) {
+          console.log('[Session] User has current_role, creating session')
+          const newSession: Session = {
+            userId: dbUser.id,
+            telegramId: telegramId,
+            role: currentRole as UserRole,
+            roles: userRoles as UserRole[],
+            hasSeenOnboarding: true,
+            expiresAt: Date.now() + SESSION_DURATION,
+          }
+          await saveSessionToStorage(newSession)
+          setSession(newSession)
+          return
+        }
+
+        // 2. Если roles пустой (после logout) → онбординг/регистрация
+        if (userRoles.length === 0) {
+          console.log('[Session] User has no roles, need to register')
           setSession(null)
           setLoading(false)
           return
         }
 
-        // Create new session только если onboarding пройден И role установлен
-        const newSession: Session = {
-          userId: dbUser.id,
-          telegramId: telegramId,
-          role: dbUser.role as UserRole,
-          hasSeenOnboarding: true,
-          expiresAt: Date.now() + SESSION_DURATION,
+        // 3. Если одна роль → автоустановить и залогинить
+        if (userRoles.length === 1) {
+          console.log('[Session] User has 1 role, auto-setting current_role')
+
+          // Установить current_role в БД
+          const singleRole = userRoles[0]
+          try {
+            const response = await fetch('/api/auth/switch-role', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                telegramId: telegramId,
+                newRole: singleRole,
+              }),
+            })
+
+            if (response.ok) {
+              const newSession: Session = {
+                userId: dbUser.id,
+                telegramId: telegramId,
+                role: singleRole as UserRole,
+                roles: userRoles as UserRole[],
+                hasSeenOnboarding: true,
+                expiresAt: Date.now() + SESSION_DURATION,
+              }
+              await saveSessionToStorage(newSession)
+              setSession(newSession)
+              return
+            }
+          } catch (error) {
+            console.error('[Session] Error auto-setting role:', error)
+          }
         }
 
-        console.log('[Session] Creating new session:', newSession)
-
-        // Save to CloudStorage
-        await saveSessionToStorage(newSession)
-        setSession(newSession)
+        // 4. Если несколько ролей → НЕ создаем сессию (пользователь должен выбрать в role-picker)
+        console.log('[Session] User has multiple roles, need to show role picker')
+        setSession(null)
+        setLoading(false)
+        return
       } else {
         console.log('[Session] User not found in database')
         setSession(null)
@@ -303,7 +349,8 @@ async function fetchUserByTelegramId(telegramId: number): Promise<any | null> {
     if (data.exists) {
       return {
         id: data.id,
-        role: data.role, // This is current_role from API (or fallback to role)
+        role: data.role, // This is current_role from API
+        roles: data.roles || [], // Array of all user roles
         has_completed_onboarding: data.hasSeenOnboarding,
       }
     }

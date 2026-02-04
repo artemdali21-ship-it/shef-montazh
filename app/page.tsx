@@ -26,7 +26,15 @@ export default function HomePage() {
       console.log('[HomePage] Session found after onboarding:', session)
       setIsRedirecting(true)
 
-      // User is logged in - redirect to dashboard directly (no second onboarding!)
+      // МУЛЬТИРОЛЬ ЛОГИКА:
+      // Если у пользователя несколько ролей но нет активной - показать role-picker
+      if (!session.role && session.roles && session.roles.length > 1) {
+        console.log('[HomePage] User has multiple roles, redirecting to role-picker')
+        router.push('/role-picker')
+        return
+      }
+
+      // User is logged in - redirect to dashboard directly
       const dashboardPaths = {
         worker: '/worker/shifts',
         client: '/client/shifts',

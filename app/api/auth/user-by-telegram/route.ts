@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     // Query user by telegram_id
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, telegram_id, role, current_role, has_completed_onboarding')
+      .select('id, telegram_id, role, current_role, roles, has_completed_onboarding')
       .eq('telegram_id', telegramId)
       .maybeSingle()
 
@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
       exists: true,
       id: user.id,
       role: user.current_role, // No fallback to old role - respect logout!
+      roles: user.roles || [], // Array of all user roles
       hasSeenOnboarding: user.has_completed_onboarding || false,
       telegramId: user.telegram_id,
     })

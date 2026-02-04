@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { HardHat, Building2, Wrench, Plus } from 'lucide-react'
 import { Logo } from '@/components/ui/Logo'
+import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
 import type { UserRole } from '@/types/session'
 import toast from 'react-hot-toast'
 
@@ -30,24 +31,25 @@ const roleInfo: Record<UserRole, { icon: React.ReactNode; title: string; descrip
 
 function RolePickerContent() {
   const router = useRouter()
-  const searchParams = useSearchParams()
+  const { session, loading: sessionLoading } = useTelegramSession()
   const [roles, setRoles] = useState<UserRole[]>([])
   const [currentRole, setCurrentRole] = useState<UserRole | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null)
 
-  const telegramId = searchParams.get('telegramId')
-
   useEffect(() => {
-    if (!telegramId) {
-      toast.error('Telegram ID не найден')
-      router.push('/role-select')
+    if (sessionLoading) return
+
+    if (!session?.telegramId) {
+      console.log('[RolePicker] No session, redirecting to home')
+      router.push('/')
       return
     }
 
     const fetchRoles = async () => {
       try {
-        const response = await fetch(`/api/user/roles?telegramId=${telegramId}`)
+        // Use session from TelegramSessionManager
+        const response = await fetch(`/api/user/roles?telegramId=${session.telegramId}`)
         const data = await response.json()
 
         if (data.success) {
@@ -76,17 +78,22 @@ function RolePickerContent() {
     }
 
     fetchRoles()
-  }, [telegramId, router])
+  }, [sessionLoading, session, router])
 
   const handleSelectRole = async (role: UserRole) => {
     setSelectedRole(role)
+
+    if (!session?.telegramId) {
+      toast.error('Telegram ID не найден')
+      return
+    }
 
     try {
       const response = await fetch('/api/auth/switch-role', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          telegramId: parseInt(telegramId!),
+          telegramId: session.telegramId,
           newRole: role,
         }),
       })
