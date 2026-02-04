@@ -74,41 +74,19 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
         console.log('[EditProfile] Avatar uploaded:', avatarUrl)
       }
 
-      // Update user basic info in users table
+      // Update all profile data in users table (phone, bio, avatar_url are all in users)
       console.log('[EditProfile] Updating profile...')
-      const { error: userError } = await supabase
+      const { error } = await supabase
         .from('users')
         .update({
           full_name: formData.full_name,
+          bio: formData.bio,
+          phone: formData.phone,
           avatar_url: avatarUrl
         })
         .eq('id', user.id)
 
-      if (userError) throw userError
-
-      // Update worker profile with bio and phone in worker_profiles table
-      const { error: profileError } = await supabase
-        .from('worker_profiles')
-        .update({
-          bio: formData.bio,
-          phone: formData.phone
-        })
-        .eq('user_id', user.id)
-
-      // If worker profile doesn't exist, insert it
-      if (profileError?.code === 'PGRST116') {
-        const { error: insertError } = await supabase
-          .from('worker_profiles')
-          .insert({
-            user_id: user.id,
-            bio: formData.bio,
-            phone: formData.phone
-          })
-
-        if (insertError) throw insertError
-      } else if (profileError) {
-        throw profileError
-      }
+      if (error) throw error
 
       console.log('[EditProfile] Profile updated successfully')
       toast.success('Профиль обновлён!')
