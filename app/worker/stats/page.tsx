@@ -4,12 +4,18 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, TrendingUp, DollarSign, Star, Calendar, Loader2, Users } from 'lucide-react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase-client'
 import { useToast } from '@/components/ui/ToastProvider'
 import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
-import EarningsChart from '@/components/stats/EarningsChart'
-import ShiftsBreakdown from '@/components/stats/ShiftsBreakdown'
-import RatingTrend from '@/components/stats/RatingTrend'
+
+// Lazy load chart components to reduce initial bundle size
+const EarningsChart = dynamic(() => import('@/components/stats/EarningsChart'), {
+  loading: () => <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 h-[400px] flex items-center justify-center"><Loader2 className="animate-spin text-orange-400" size={32} /></div>,
+  ssr: false
+})
+const ShiftsBreakdown = dynamic(() => import('@/components/stats/ShiftsBreakdown'), { ssr: false })
+const RatingTrend = dynamic(() => import('@/components/stats/RatingTrend'), { ssr: false })
 
 interface StatsData {
   totalShifts: number

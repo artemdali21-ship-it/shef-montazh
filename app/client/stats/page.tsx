@@ -4,10 +4,17 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Calendar, DollarSign, Star, CheckCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase-client'
 import { useToast } from '@/components/ui/ToastProvider'
-import SpendingChart from '@/components/stats/SpendingChart'
-import TopWorkers from '@/components/stats/TopWorkers'
+import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
+
+// Lazy load chart components to reduce initial bundle size
+const SpendingChart = dynamic(() => import('@/components/stats/SpendingChart'), {
+  loading: () => <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 h-[400px] flex items-center justify-center"><Loader2 className="animate-spin text-orange-400" size={32} /></div>,
+  ssr: false
+})
+const TopWorkers = dynamic(() => import('@/components/stats/TopWorkers'), { ssr: false })
 
 interface ClientStats {
   totalShifts: number
@@ -20,38 +27,39 @@ export default function ClientStatsPage() {
   const router = useRouter()
   const supabase = createClient()
   const toast = useToast()
+  const { session, loading: sessionLoading } = useTelegramSession()
 
   const [stats, setStats] = useState<ClientStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [userId, setUserId] = useState<string>('')
 
   useEffect(() => {
-    loadStats()
-  }, [])
+    if (!sessionLoading && session) {
+      loadStats()
+    } else if (!sessionLoading && !session) {
+      router.push('/')
+    }
+  }, [sessionLoading, session])
 
   const loadStats = async () => {
+    if (!session) return
+
     try {
       setLoading(true)
 
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/auth/login')
-        return
-      }
-
-      setUserId(user.id)
+      setUserId(session.userId)
 
       // Total shifts
       const { count: totalShifts } = await supabase
         .from('shifts')
         .select('*', { count: 'exact', head: true })
-        .eq('client_id', user.id)
+        .eq('client_id', session.userId)
 
       // Total spending (from completed shifts)
       const { data: completedShifts } = await supabase
         .from('shifts')
         .select('price')
-        .eq('client_id', user.id)
+        .eq('client_id', session.userId)
         .eq('status', 'completed')
 
       const totalSpending = completedShifts?.reduce((sum, s) => sum + (s.price || 0), 0) || 0
@@ -60,7 +68,7 @@ export default function ClientStatsPage() {
       const { data: ratings } = await supabase
         .from('worker_ratings')
         .select('rating')
-        .eq('client_id', user.id)
+        .eq('client_id', session.userId)
 
       const avgRating = ratings && ratings.length > 0
         ? ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length
@@ -70,7 +78,7 @@ export default function ClientStatsPage() {
       const { count: completedCount } = await supabase
         .from('shifts')
         .select('*', { count: 'exact', head: true })
-        .eq('client_id', user.id)
+        .eq('client_id', session.userId)
         .eq('status', 'completed')
 
       const successRate = totalShifts && completedCount

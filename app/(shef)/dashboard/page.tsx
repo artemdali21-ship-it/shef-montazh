@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase-client'
 import { useRouter } from 'next/navigation'
+import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
 import ShefToday from '@/components/shef/ShefToday'
 import ShefTeam from '@/components/shef/ShefTeam'
 import ShefRequestPersonnel from '@/components/shef/ShefRequestPersonnel'
@@ -12,6 +13,7 @@ import ShefRequestPersonnel from '@/components/shef/ShefRequestPersonnel'
 export default function ShefDashboard() {
   const supabase = createClient()
   const router = useRouter()
+  const { session, loading: sessionLoading } = useTelegramSession()
   const [user, setUser] = useState<any>(null)
   const [activeTab, setActiveTab] = useState<'today' | 'team' | 'request'>('today')
   const [shifts, setShifts] = useState<any[]>([])
@@ -19,23 +21,22 @@ export default function ShefDashboard() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    loadData()
-  }, [])
+    if (!sessionLoading && session) {
+      loadData()
+    } else if (!sessionLoading && !session) {
+      router.push('/')
+    }
+  }, [sessionLoading, session])
 
   const loadData = async () => {
+    if (!session) return
+
     setLoading(true)
     try {
-      // Get current user
-      const { data: { user: authUser } } = await supabase.auth.getUser()
-      if (!authUser) {
-        router.push('/auth/login')
-        return
-      }
-
       const { data: userData } = await supabase
         .from('users')
         .select('*')
-        .eq('id', authUser.id)
+        .eq('id', session.userId)
         .single()
 
       setUser(userData)
@@ -45,7 +46,7 @@ export default function ShefDashboard() {
       const { data: shiftsData } = await supabase
         .from('shifts')
         .select('*, shift_assignments(worker_id, status, check_in_time, users(full_name))')
-        .eq('shef_id', authUser.id)
+        .eq('shef_id', session.userId)
         .eq('date', today)
 
       if (shiftsData) setShifts(shiftsData)
@@ -54,7 +55,7 @@ export default function ShefDashboard() {
       const { data: teamData } = await supabase
         .from('team_members')
         .select('*, users(id, full_name, avatar_url, worker_profiles(verification_level, endorsement_count))')
-        .eq('team_id', authUser.id)
+        .eq('team_id', session.userId)
 
       if (teamData) setTeam(teamData)
     } catch (error) {

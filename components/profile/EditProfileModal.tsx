@@ -75,8 +75,8 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
       }
 
       // Update all profile data in users table (phone, bio, avatar_url are all in users)
-      console.log('[EditProfile] Updating profile...')
-      const { error } = await supabase
+      console.log('[EditProfile] Updating profile with avatar_url:', avatarUrl)
+      const { error, data } = await supabase
         .from('users')
         .update({
           full_name: formData.full_name,
@@ -85,10 +85,12 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
           avatar_url: avatarUrl
         })
         .eq('id', user.id)
+        .select()
 
       if (error) throw error
 
-      console.log('[EditProfile] Profile updated successfully')
+      console.log('[EditProfile] Profile updated successfully:', data)
+      console.log('[EditProfile] New avatar_url in DB:', data?.[0]?.avatar_url)
       toast.success('Профиль обновлён!')
       onSave()
       onClose()
@@ -101,8 +103,8 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-[#2A2A2A] border border-white/10 rounded-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="bg-[#2A2A2A] border border-white/10 rounded-2xl max-w-md w-full p-6 my-4 max-h-[calc(100vh-2rem)]">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-white">Редактировать профиль</h2>

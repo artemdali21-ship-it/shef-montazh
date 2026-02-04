@@ -25,9 +25,13 @@ export default function ProfileHeader({ user, onEdit, profileType }: ProfileHead
             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gray-700 flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
               {user.avatar_url ? (
                 <img
-                  src={user.avatar_url}
+                  src={`${user.avatar_url}?t=${Date.now()}`}
                   alt={user.full_name}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.error('[ProfileHeader] Avatar failed to load:', user.avatar_url)
+                    e.currentTarget.style.display = 'none'
+                  }}
                 />
               ) : (
                 <User className="w-10 h-10" />

@@ -1,6 +1,6 @@
 import { createServerClient as createClient } from '@/lib/supabase-server'
 import { DollarSign, TrendingUp, ArrowUpRight, Download } from 'lucide-react'
-import RevenueChart from '@/components/admin/RevenueChart'
+import RevenueChartWrapper from '@/components/admin/RevenueChartWrapper'
 import TransactionsTable from '@/components/admin/TransactionsTable'
 import ExportButton from '@/components/admin/ExportButton'
 import Link from 'next/link'
@@ -109,7 +109,7 @@ export default async function AdminFinancePage() {
 
       {/* Revenue Chart */}
       <div className="mb-8">
-        <RevenueChart data={stats.payments} />
+        <RevenueChartWrapper data={stats.payments} />
       </div>
 
       {/* Transactions Table */}

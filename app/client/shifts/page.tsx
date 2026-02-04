@@ -5,26 +5,28 @@ import { useRouter } from 'next/navigation'
 import { Plus, Calendar, MapPin, Users, Clock } from 'lucide-react'
 import { createClient } from '@/lib/supabase-client'
 import { Logo } from '@/components/ui/Logo'
+import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
 
 export default function ClientShiftsPage() {
   const router = useRouter()
   const supabase = createClient()
+  const { session, loading: sessionLoading } = useTelegramSession()
   const [shifts, setShifts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    loadShifts()
-  }, [])
+    if (!sessionLoading && session) {
+      loadShifts()
+    } else if (!sessionLoading && !session) {
+      router.push('/')
+    }
+  }, [sessionLoading, session])
 
   const loadShifts = async () => {
+    if (!session) return
+
     try {
       setLoading(true)
-
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/auth/login')
-        return
-      }
 
       const { data: shiftsData } = await supabase
         .from('shifts')
@@ -32,7 +34,7 @@ export default function ClientShiftsPage() {
           *,
           applications:shift_applications(count)
         `)
-        .eq('client_id', user.id)
+        .eq('client_id', session.userId)
         .order('date', { ascending: false })
 
       setShifts(shiftsData || [])

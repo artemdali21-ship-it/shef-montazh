@@ -3,6 +3,10 @@ const nextConfig = {
   images: {
     domains: ['lh3.googleusercontent.com', 'felookybqmganfvpnpnq.supabase.co'],
   },
+  // Performance optimizations
+  experimental: {
+    optimizePackageImports: ['recharts', 'framer-motion', 'lucide-react'],
+  },
   // Временно исключаем admin страницы из build
   async rewrites() {
     return {

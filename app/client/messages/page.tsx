@@ -5,36 +5,35 @@ import { useRouter } from 'next/navigation'
 import { ChevronLeft } from 'lucide-react'
 import ChatList from '@/components/messages/ChatList'
 import { getChats } from '@/lib/api/messages'
-import { createClient } from '@/lib/supabase-client'
+import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
 import type { Chat } from '@/lib/api/messages'
 
 export default function ClientMessagesPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const { session, loading: sessionLoading } = useTelegramSession()
 
   const [chats, setChats] = useState<Chat[]>([])
   const [loading, setLoading] = useState(true)
   const [userId, setUserId] = useState<string | null>(null)
 
   useEffect(() => {
-    loadChats()
-  }, [])
+    if (!sessionLoading && session) {
+      loadChats()
+    } else if (!sessionLoading && !session) {
+      router.push('/')
+    }
+  }, [sessionLoading, session])
 
   const loadChats = async () => {
+    if (!session) return
+
     try {
       setLoading(true)
 
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/auth/login')
-        return
-      }
-
-      setUserId(user.id)
+      setUserId(session.userId)
 
       // Load chats
-      const { data, error } = await getChats(user.id)
+      const { data, error } = await getChats(session.userId)
       if (error) {
         console.error('Error loading chats:', error)
         return

@@ -2,14 +2,18 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { ChevronLeft, DollarSign, Calendar, Briefcase, LogOut } from 'lucide-react'
 import ProfileHeader from '@/components/profile/ProfileHeader'
-import EditProfileModal from '@/components/profile/EditProfileModal'
 import { createClient } from '@/lib/supabase-client'
 import { useToast } from '@/components/ui/ToastProvider'
 import SkeletonProfile from '@/components/ui/SkeletonProfile'
 import { Logo } from '@/components/ui/Logo'
 import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
+
+// Lazy load modal - не нужен при первой загрузке
+const EditProfileModal = dynamic(() => import('@/components/profile/EditProfileModal'), { ssr: false })
 
 export default function ClientProfilePage() {
   const router = useRouter()
@@ -211,45 +215,50 @@ export default function ClientProfilePage() {
             <span className="text-orange-400">+</span>
           </button>
 
-          <button
-            onClick={() => router.push('/client/stats')}
+          <Link
+            href="/client/stats"
+            prefetch={true}
             className="w-full flex items-center justify-between p-3 bg-white/5 hover:bg-white/10 rounded-xl transition"
           >
             <span className="text-white font-medium">Статистика</span>
             <span className="text-gray-400">→</span>
-          </button>
+          </Link>
 
-          <button
-            onClick={() => router.push('/shifts')}
+          <Link
+            href="/shifts"
+            prefetch={true}
             className="w-full flex items-center justify-between p-3 bg-white/5 hover:bg-white/10 rounded-xl transition"
           >
             <span className="text-white font-medium">Мои смены</span>
             <span className="text-gray-400">→</span>
-          </button>
+          </Link>
 
-          <button
-            onClick={() => router.push('/documents')}
+          <Link
+            href="/documents"
+            prefetch={true}
             className="w-full flex items-center justify-between p-3 bg-white/5 hover:bg-white/10 rounded-xl transition"
           >
             <span className="text-white font-medium">Документы</span>
             <span className="text-gray-400">→</span>
-          </button>
+          </Link>
 
-          <button
-            onClick={() => router.push('/client/payments')}
+          <Link
+            href="/client/payments"
+            prefetch={true}
             className="w-full flex items-center justify-between p-3 bg-white/5 hover:bg-white/10 rounded-xl transition"
           >
             <span className="text-white font-medium">История платежей</span>
             <span className="text-gray-400">→</span>
-          </button>
+          </Link>
 
-          <button
-            onClick={() => router.push('/settings')}
+          <Link
+            href="/settings"
+            prefetch={true}
             className="w-full flex items-center justify-between p-3 bg-white/5 hover:bg-white/10 rounded-xl transition"
           >
             <span className="text-white font-medium">Настройки</span>
             <span className="text-gray-400">→</span>
-          </button>
+          </Link>
         </div>
       </div>
 

@@ -6,26 +6,28 @@ import { Plus, Users, ArrowLeft } from 'lucide-react'
 import TeamCard from '@/components/teams/TeamCard'
 import { createClient } from '@/lib/supabase-client'
 import { LoadingScreen } from '@/components/ui/LoadingSpinner'
+import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
 
 export default function TeamsPage() {
   const router = useRouter()
   const supabase = createClient()
+  const { session, loading: sessionLoading } = useTelegramSession()
   const [teams, setTeams] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    loadTeams()
-  }, [])
+    if (!sessionLoading && session) {
+      loadTeams()
+    } else if (!sessionLoading && !session) {
+      router.push('/')
+    }
+  }, [sessionLoading, session])
 
   const loadTeams = async () => {
+    if (!session) return
+
     try {
       setLoading(true)
-
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/auth/login')
-        return
-      }
 
       const { data: teamsData } = await supabase
         .from('teams')
@@ -42,7 +44,7 @@ export default function TeamsPage() {
             )
           )
         `)
-        .eq('shef_id', user.id)
+        .eq('shef_id', session.userId)
         .order('created_at', { ascending: false })
 
       // Transform data to match TeamCard interface

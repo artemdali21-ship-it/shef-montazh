@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Users, Calendar, CheckCircle, Star, Plus, Briefcase } from 'lucide-react'
 import { getShefTeams, getTeamStats } from '@/lib/api/teams'
@@ -9,6 +10,7 @@ import TeamCard from '@/components/shef/TeamCard'
 import ShiftMonitoring from '@/components/shef/ShiftMonitoring'
 import { LoadingScreen } from '@/components/ui/LoadingSpinner'
 import { AnimatedCard } from '@/components/ui/AnimatedCard'
+import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
 import toast from 'react-hot-toast'
 import type { TeamWithWorkers } from '@/lib/api/teams'
 
@@ -33,6 +35,8 @@ interface TeamStats {
 type TabType = 'shifts' | 'teams'
 
 export default function ShefDashboard() {
+  const router = useRouter()
+  const { session, loading: sessionLoading } = useTelegramSession()
   const [activeTab, setActiveTab] = useState<TabType>('shifts')
   const [teams, setTeams] = useState<TeamWithWorkers[]>([])
   const [shifts, setShifts] = useState<ShiftWithWorkers[]>([])
@@ -44,15 +48,16 @@ export default function ShefDashboard() {
     averageRating: 0,
   })
   const [loading, setLoading] = useState(true)
-  const [shefId, setShefId] = useState<string>('')
 
   useEffect(() => {
-    // In production, get shefId from auth/session
-    // For now, using a placeholder
-    const mockShefId = 'shef-123'
-    setShefId(mockShefId)
-    loadData(mockShefId)
-  }, [])
+    if (!sessionLoading && session) {
+      console.log('[ShefDashboard] Loading data for user:', session.userId)
+      loadData(session.userId)
+    } else if (!sessionLoading && !session) {
+      console.log('[ShefDashboard] No session, redirecting to home')
+      router.push('/')
+    }
+  }, [sessionLoading, session])
 
   const loadData = async (shefId: string) => {
     try {
@@ -124,6 +129,8 @@ export default function ShefDashboard() {
   }
 
   const handleCompleteShift = async (shiftId: string) => {
+    if (!session) return
+
     try {
       toast.loading('Завершение смены...')
       const { error } = await completeShift(shiftId)
@@ -132,7 +139,7 @@ export default function ShefDashboard() {
       if (!error) {
         toast.success('Смена успешно завершена!')
         // Reload data
-        loadData(shefId)
+        loadData(session.userId)
       } else {
         toast.error('Ошибка при завершении смены')
       }
@@ -158,8 +165,14 @@ export default function ShefDashboard() {
     console.log('Create team')
   }
 
-  if (loading) {
+  // Show loading while session is loading OR data is loading
+  if (sessionLoading || loading) {
     return <LoadingScreen message="Загрузка панели управления..." />
+  }
+
+  // If no session after loading - don't render (will redirect in useEffect)
+  if (!session) {
+    return <LoadingScreen message="Проверка авторизации..." />
   }
 
   return (

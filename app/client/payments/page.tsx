@@ -15,10 +15,12 @@ import {
 import PaymentCard from '@/components/payments/PaymentCard'
 import PaymentFilters from '@/components/payments/PaymentFilters'
 import PaymentStatusBadge from '@/components/payments/PaymentStatusBadge'
+import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
 
 export default function ClientPaymentsPage() {
   const router = useRouter()
   const supabase = createClient()
+  const { session, loading: sessionLoading } = useTelegramSession()
 
   const [clientId, setClientId] = useState<string | null>(null)
   const [payments, setPayments] = useState<Payment[]>([])
@@ -42,8 +44,12 @@ export default function ClientPaymentsPage() {
   const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
-    loadClientData()
-  }, [])
+    if (!sessionLoading && session) {
+      loadClientData()
+    } else if (!sessionLoading && !session) {
+      router.push('/')
+    }
+  }, [sessionLoading, session])
 
   useEffect(() => {
     if (clientId) {
@@ -52,17 +58,13 @@ export default function ClientPaymentsPage() {
   }, [clientId, filters])
 
   const loadClientData = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/auth/login')
-        return
-      }
+    if (!session) return
 
-      setClientId(user.id)
+    try {
+      setClientId(session.userId)
 
       // Load summary
-      const summaryData = await getClientPaymentsSummary(user.id)
+      const summaryData = await getClientPaymentsSummary(session.userId)
       setSummary({
         totalSpent: summaryData.totalSpent || 0,
         toPay: summaryData.toPay || 0,

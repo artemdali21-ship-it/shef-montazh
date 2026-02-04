@@ -6,6 +6,7 @@ import { LayoutDashboard, Users, MessageCircle, User } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { FloatingObjectsShef } from '@/components/FloatingObjectsShef'
 import { hapticLight } from '@/lib/haptic'
+import { useTelegramSession } from '@/lib/session/TelegramSessionManager'
 
 export default function ShefLayout({
   children,
@@ -14,16 +15,18 @@ export default function ShefLayout({
 }) {
   const pathname = usePathname()
   const router = useRouter()
+  const { session, loading: sessionLoading } = useTelegramSession()
   const [userId, setUserId] = useState<string | undefined>(undefined)
   const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUserId(user?.id)
+    if (!sessionLoading && session) {
+      console.log('[ShefLayout] Session loaded, userId:', session.userId)
+      setUserId(session.userId)
+    } else if (!sessionLoading && !session) {
+      console.log('[ShefLayout] No session in layout')
     }
-    getUser()
-  }, [])
+  }, [sessionLoading, session])
 
   // Fetch unread messages count
   useEffect(() => {
