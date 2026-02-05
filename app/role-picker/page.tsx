@@ -118,14 +118,26 @@ function RolePickerContent() {
   }, [telegramId, router])
 
   const handleSelectRole = async (role: UserRole) => {
-    setSelectedRole(role)
+    console.log('[RolePicker] ===== BUTTON CLICKED =====')
+    console.log('[RolePicker] Role:', role)
+    console.log('[RolePicker] telegramId:', telegramId)
+    console.log('[RolePicker] selectedRole:', selectedRole)
 
+    // Check telegramId BEFORE setting selectedRole
     if (!telegramId) {
-      toast.error('Telegram ID не найден')
+      console.error('[RolePicker] No telegramId, cannot proceed')
+      toast.error('Telegram ID не найден. Перезагрузите приложение.')
       return
     }
 
+    // Now set selected role (after validation)
+    setSelectedRole(role)
+    console.log('[RolePicker] Starting role switch...')
+
     try {
+      console.log('[RolePicker] Calling API /api/auth/switch-role')
+      console.log('[RolePicker] Request body:', { telegramId, newRole: role })
+
       const response = await fetch('/api/auth/switch-role', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -135,14 +147,18 @@ function RolePickerContent() {
         }),
       })
 
+      console.log('[RolePicker] Response status:', response.status)
       const data = await response.json()
+      console.log('[RolePicker] Response data:', data)
 
       if (!data.success) {
+        console.error('[RolePicker] ❌ API error:', data.error)
         toast.error(data.error || 'Ошибка переключения роли')
         setSelectedRole(null)
         return
       }
 
+      console.log('[RolePicker] ✅ Role switched successfully!')
       toast.success('Роль успешно переключена!')
 
       // Redirect to dashboard
@@ -152,9 +168,12 @@ function RolePickerContent() {
         client: '/client/shifts',
       }
 
-      window.location.href = dashboardPaths[role]
-    } catch (error) {
-      console.error('[RolePicker] Error:', error)
+      const redirectPath = dashboardPaths[role]
+      console.log('[RolePicker] Redirecting to:', redirectPath)
+      window.location.href = redirectPath
+    } catch (error: any) {
+      console.error('[RolePicker] ❌ Exception:', error)
+      console.error('[RolePicker] Error message:', error.message)
       toast.error('Ошибка подключения')
       setSelectedRole(null)
     }
