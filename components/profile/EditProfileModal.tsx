@@ -106,8 +106,15 @@ export default function EditProfileModal({ user, onClose, onSave }: Props) {
       console.log('[EditProfile] Calling onSave() to reload profile...')
 
       toast.success('Профиль обновлён!')
-      onSave()
+
+      // Close modal first, then reload to ensure clean state
       onClose()
+
+      // Small delay to ensure modal is closed before reload
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      console.log('[EditProfile] Now calling onSave() to refresh data...')
+      onSave()
     } catch (error: any) {
       console.error('[EditProfile] Error updating profile:', error)
       toast.error(error.message || 'Не удалось обновить профиль')

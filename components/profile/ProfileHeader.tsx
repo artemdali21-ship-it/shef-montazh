@@ -9,7 +9,9 @@ interface ProfileHeaderProps {
 }
 
 export default function ProfileHeader({ user, onEdit, profileType }: ProfileHeaderProps) {
-  console.log('[ProfileHeader] Rendering with user.avatar_url:', user.avatar_url)
+  console.log('[ProfileHeader] ===== RENDERING =====')
+  console.log('[ProfileHeader] user.avatar_url:', user.avatar_url)
+  console.log('[ProfileHeader] Full user object:', user)
 
   return (
     <div
@@ -30,8 +32,13 @@ export default function ProfileHeader({ user, onEdit, profileType }: ProfileHead
                   src={`${user.avatar_url}?t=${Date.now()}`}
                   alt={user.full_name}
                   className="w-full h-full object-cover"
+                  onLoad={() => {
+                    console.log('[ProfileHeader] ✅ Avatar loaded successfully!')
+                  }}
                   onError={(e) => {
-                    console.error('[ProfileHeader] Avatar failed to load:', user.avatar_url)
+                    console.error('[ProfileHeader] ❌ Avatar failed to load!')
+                    console.error('[ProfileHeader] URL that failed:', user.avatar_url)
+                    console.error('[ProfileHeader] Full src:', e.currentTarget.src)
                     e.currentTarget.style.display = 'none'
                   }}
                 />

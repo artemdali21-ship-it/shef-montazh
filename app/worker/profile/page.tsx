@@ -36,7 +36,8 @@ export default function WorkerProfilePage() {
 
   const loadProfile = async () => {
     try {
-      console.log('[Profile] Loading profile...', { session })
+      console.log('[Profile] ===== LOADING PROFILE =====')
+      console.log('[Profile] Session:', session)
 
       if (!session) {
         console.log('[Profile] No session')
@@ -51,8 +52,10 @@ export default function WorkerProfilePage() {
         .eq('id', session.userId)
         .single()
 
-      console.log('[Profile] User data:', userData, 'Error:', userError)
-      console.log('[Profile] Avatar URL:', userData?.avatar_url)
+      console.log('[Profile] ===== USER DATA LOADED =====')
+      console.log('[Profile] Full user data:', userData)
+      console.log('[Profile] Avatar URL from DB:', userData?.avatar_url)
+      console.log('[Profile] Error:', userError)
 
       if (userError) {
         console.error('[Profile] User error:', userError)
@@ -67,7 +70,10 @@ export default function WorkerProfilePage() {
         return
       }
 
-      setUser(userData)
+      console.log('[Profile] ===== SETTING USER STATE =====')
+      console.log('[Profile] Setting user with avatar_url:', userData.avatar_url)
+      // Force new object reference to trigger React re-render
+      setUser({ ...userData })
 
       // Load worker categories
       const { data: workerProfile } = await supabase

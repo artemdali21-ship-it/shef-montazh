@@ -85,7 +85,23 @@ export async function POST(request: NextRequest) {
     console.log('[API] ===== AVATAR UPLOAD SUCCESS =====')
     console.log('[API] File path in storage:', filePath)
     console.log('[API] Public URL generated:', data.publicUrl)
+    console.log('[API] URL components:', {
+      protocol: new URL(data.publicUrl).protocol,
+      host: new URL(data.publicUrl).host,
+      pathname: new URL(data.publicUrl).pathname
+    })
     console.log('[API] Returning to client:', { success: true, avatarUrl: data.publicUrl })
+
+    // Verify the URL is accessible (optional - just for logging)
+    try {
+      const testResponse = await fetch(data.publicUrl, { method: 'HEAD' })
+      console.log('[API] URL accessibility test:', {
+        status: testResponse.status,
+        accessible: testResponse.ok
+      })
+    } catch (err) {
+      console.error('[API] ⚠️ URL may not be publicly accessible:', err)
+    }
 
     return NextResponse.json({
       success: true,
