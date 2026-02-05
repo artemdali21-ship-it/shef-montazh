@@ -9,22 +9,22 @@ import toast from 'react-hot-toast'
 
 const roleInfo: Record<UserRole, { icon: React.ReactNode; title: string; description: string; color: string }> = {
   worker: {
-    icon: <HardHat className="w-8 h-8" />,
+    icon: <HardHat className="w-7 h-7 text-white" />,
     title: 'Специалист',
-    description: 'Работайте монтажником',
-    color: 'bg-orange-50 border-orange-200',
+    description: 'Работаю руками, выхожу на смены',
+    color: 'from-orange-500 to-orange-600',
   },
   shef: {
-    icon: <Wrench className="w-8 h-8" />,
+    icon: <Wrench className="w-7 h-7 text-white" />,
     title: 'Шеф-монтажник',
-    description: 'Управляйте командой',
-    color: 'bg-purple-50 border-purple-200',
+    description: 'Управляю командой и отвечаю за монтаж',
+    color: 'from-purple-500 to-purple-600',
   },
   client: {
-    icon: <Building2 className="w-8 h-8" />,
+    icon: <Building2 className="w-7 h-7 text-white" />,
     title: 'Компания',
-    description: 'Постройте смены',
-    color: 'bg-blue-50 border-blue-200',
+    description: 'Нанимаю специалистов и организую проекты',
+    color: 'from-blue-500 to-blue-600',
   },
 }
 
@@ -188,17 +188,51 @@ function RolePickerContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex flex-col">
-      <div className="flex-1 flex flex-col items-center justify-center p-4">
-        <Logo className="mb-12" />
+    <div className="min-h-screen bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex flex-col relative overflow-hidden">
+      {/* Floating Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <img
+          src="/images/tape-3.png"
+          alt=""
+          style={{
+            position: 'absolute',
+            top: '15%',
+            right: '5%',
+            width: '100px',
+            height: 'auto',
+            opacity: 0.4,
+            transform: 'rotate(-20deg)',
+            zIndex: 0,
+          }}
+        />
+        <img
+          src="/images/bolts.png"
+          alt=""
+          style={{
+            position: 'absolute',
+            bottom: '20%',
+            left: '3%',
+            width: '80px',
+            height: 'auto',
+            opacity: 0.3,
+            transform: 'rotate(15deg)',
+            zIndex: 0,
+          }}
+        />
+      </div>
+
+      <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10">
+        <div className="flex items-center justify-center mb-8">
+          <Logo size="lg" showText={true} />
+        </div>
 
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">Добро пожаловать!</h1>
-            <p className="text-gray-300">Выберите роль для входа</p>
+            <h1 className="text-2xl font-bold text-white mb-2">Добро пожаловать!</h1>
+            <p className="text-gray-400">Выберите роль для входа</p>
           </div>
 
-          <div className="space-y-3 mb-8">
+          <div className="space-y-4 mb-8">
             {roles.map((role) => {
               const info = roleInfo[role]
               const isSelected = selectedRole === role
@@ -209,25 +243,27 @@ function RolePickerContent() {
                   key={role}
                   onClick={() => handleSelectRole(role)}
                   disabled={isLoading || selectedRole !== null}
-                  className={`w-full p-4 rounded-lg border-2 transition-all text-left group ${
+                  className={`w-full p-6 rounded-2xl border transition-all duration-200 ${
                     isLoading
-                      ? 'border-gray-500 bg-gray-700 opacity-75'
-                      : 'border-gray-600 bg-gray-800 hover:border-white hover:bg-gray-700'
-                  }`}
+                      ? 'bg-white/10 border-orange-500 opacity-75'
+                      : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 active:scale-95'
+                  } ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="text-gray-300 group-hover:text-white transition-colors mt-1">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${info.color} flex items-center justify-center flex-shrink-0`}>
                       {info.icon}
                     </div>
-                    <div className="flex-1">
-                      <div className="font-semibold text-white group-hover:text-white transition-colors">
+                    <div className="text-left flex-1">
+                      <h3 className="text-lg font-bold text-white mb-1">
                         {info.title}
-                      </div>
-                      <div className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">
+                      </h3>
+                      <p className="text-sm text-gray-400">
                         {info.description}
-                      </div>
+                      </p>
                     </div>
-                    {isLoading && <div className="text-gray-400 mt-1">...</div>}
+                    {isLoading && (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    )}
                   </div>
                 </button>
               )
@@ -235,7 +271,7 @@ function RolePickerContent() {
           </div>
 
           {roles.length > 0 && (
-            <div className="text-center text-sm text-gray-400">
+            <div className="text-center text-sm text-gray-500">
               <p>Вы сможете изменить роль, выйдя из личного кабинета</p>
             </div>
           )}
