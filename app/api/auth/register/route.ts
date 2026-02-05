@@ -37,10 +37,27 @@ export async function POST(request: NextRequest) {
       const userRoles = existingUser.roles || []
 
       if (userRoles.includes(role)) {
-        return NextResponse.json<RegisterResponse>(
-          { success: false, error: 'Вы уже зарегистрированы в этой роли' },
-          { status: 409 }
-        )
+        // User already has this role - just log them in instead of error
+        console.log('[API] User already has role, logging in:', { telegramId, role })
+
+        // Update current_role and last_login_at
+        await supabase
+          .from('users')
+          .update({
+            current_role: role,
+            last_login_at: new Date().toISOString(),
+          })
+          .eq('telegram_id', telegramId)
+
+        return NextResponse.json<RegisterResponse>({
+          success: true,
+          user: {
+            id: existingUser.id,
+            telegram_id: telegramId,
+            role: role as UserRole,
+            has_completed_onboarding: true,
+          },
+        })
       }
 
       // Add new role to existing user
