@@ -236,14 +236,7 @@ function RolePickerContent() {
 
           {roles.length > 0 && (
             <div className="text-center text-sm text-gray-400">
-              <p>Нужна другая роль?</p>
-              <button
-                onClick={() => router.push('/settings/add-role')}
-                className="mt-2 inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                Добавить роль
-              </button>
+              <p>Вы сможете изменить роль, выйдя из личного кабинета</p>
             </div>
           )}
         </div>
